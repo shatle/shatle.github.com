@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: go | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/go/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[start Golang]]></title>
+    <link href="http://shatle.github.io/blog/2015/03/22/start-golang/"/>
+    <updated>2015-03-22T23:54:45+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/03/22/start-golang</id>
+    <content type="html"><![CDATA[<p>Go 语言前几年出来之时，火了一段时间，然后相对寂静了些时间，最近似乎又开始热了。
+促使我了解这一语言的动力是 <a href="https://ruby-china.org">Ruby-China</a> 上老大居然用 go 搭建了简单的 类似 web 程序，看来rubyist都是堆喜欢折腾的妖人。</p>
+
+<p>为此，我也打算浅尝一下：</p>
+
+<ul>
+<li>ubuntu 环境安装</li>
+<li>Sublime plugin: GoSumlime</li>
+</ul>
+
+
+<p>go 安装不麻烦，就是它那类似先编译再执行的传统变化的东西有点烦，安装完go 后，可以<code>go env</code>得到：</p>
+
+<pre><code class="go">GOROOT="/usr/lib/go"
+GOBIN=""
+GOARCH="amd64"
+GOCHAR="6"
+GOOS="linux"
+GOEXE=""
+GOHOSTARCH="amd64"
+GOHOSTOS="linux"
+GOTOOLDIR="/usr/lib/go/pkg/tool/linux_amd64"
+GOGCCFLAGS="-g -O2 -fPIC -m64 -pthread"
+CGO_ENABLED="1"
+</code></pre>
+
+<ul>
+<li>入门指导书：the way to go， 中文翻译：<a href="https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md">https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md</a></li>
+</ul>
+
+
+<p>初略看了第一部分，确实有点意思，但亦些难受。</p>
+
+<blockquote><p>因为 Go 语言没有类和继承的概念，所以它和 Java 或 C++ 看起来并不相同。但是它通过接口（interface）的概念来实现多态性</p></blockquote>
+
+<p>这个有意思，大家玩对象编程时，出个直接接口编程；但是，很多平时觉得必要的功能没有，也可能这书太落后的原因，它列出了个人觉得应该它却说没有的特性：</p>
+
+<blockquote><ul>
+<li>为了简化设计，不支持函数重载和操作符重载</li>
+<li>不支持动态链接库</li>
+<li>不支持静态变量</li>
+</ul>
+</blockquote>
+
+<p>或许也是go 的优势，以后仔细看看再深入吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

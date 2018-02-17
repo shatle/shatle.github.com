@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: set | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/set/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 In Depth: Collections]]></title>
+    <link href="http://shatle.github.io/blog/2016/01/27/es6-in-depth-collections/"/>
+    <updated>2016-01-27T22:33:13+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/01/27/es6-in-depth-collections</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-collections/">ES6 in Depth: Collections</a></p></blockquote>
+
+<p>在本周早些时候，ES6的规格说明文档，官方名称为<em>ECMA-262, 6th Edition, ECMAScript 2015 Language Specification</em>，已经解决所有问题并得到了Ecma标准委员会的认可，感谢 TC39 及每一位为此做出贡献的人。庆祝ES6。</p>
+
+<p>更为令人兴奋的消息：下一版本将不超过六年的时间。标准委员会现在的目标是在每十二月出一个粗略的版本，<a href="https://github.com/tc39/ecma262">第七版本的计划</a>已经在开发中。</p>
+
+<p>为了庆祝这一事件，我将适宜地讨论些特性，这特性是我很长时间内、一直渴望在JS看到的。同时，我认为它仍然在将来存在着提升的空间。</p>
+
+<h4>JS进化的难点</h4>
+
+<p>JS并不像其它编程语言，它在有些方面影响着JS语言的发展。</p>
+
+<p>ES6 模块是一个好的例子。其它语言都有模块的系统，Racket有个好的，Python也有。当标准委员会决定为ES6加入模块时，为什么不直接复制现有的系统呢？</p>
+
+<p>JS是不一样的，因为它运行于网页浏览器中，输入输出(I/O)可能会需要很长的时间。因此，JS需要一个的模块系统是能够支持异步加载代码的，同时它也不同连续地在不同的目录中检索模块。复制现有的系统是好的，但ES6的模块需要做些新的东西。</p>
+
+<p>这是怎么影响到最终的设计的呢？这是个有意思的故事。但是，我们并不在这文章中讨论模块。</p>
+
+<p>这文章讨论的是ES6的Keyed collections: Set、Map、WeakSet、WeakMap。这特性在很多程度上说类似于其它语言的Hash Table。但是，标准委员会做了些折中的方法，因为JS是不同的。</p>
+
+<h4>为什么集合</h4>
+
+<p>每个人都很熟知JS中已经内置了类似于哈希表(hash table)的结构：对象(object)。</p>
+
+<p>毕竟，一个普通的对象并没有什么奇特的，只是一个打开的key-value的键值对。你可以获取、设置，还有删除属性，还可迭代它们 &#8211; 所有哈希表能做的事情。但为什么还要加这个新的特性呢？</p>
+
+<p>好了，许多程序使用普通的对象存储k/v的键值对，对程序来说这是可行的，所以没有特殊的原因去转换到Map或者Set中。同时，使用对象存在着此众所周知的问题：</p>
+
+<ul>
+<li>对象在查找表时并不会查找对象中的方法，这可以避免些冲突</li>
+<li>因此，程序必须使用<code>Object.create(null)</code>(而不是普通的<code>{}</code>)或者编码时特别小心，从而避免无意的内置方法(如<code>Object.prototype.toString)</code>被当成数据。</li>
+<li>属性的关键字永远是字符串，在ES6中也可以是标志符(symbol)。对象不能当作是关键字。</li>
+<li>没有有效的方法查询一个对象拥有多少个属性。</li>
+</ul>
+
+
+<p>ES6添加个新点：普通的对象并不作为迭代器，所以它不能使用<code>for-of</code>循环、<code>...</code>操作符，等等。</p>
+
+<p>再次，大多数程序并不会有什么问题，普通的对象将是个继续可用的方案。<code>Map</code>和<code>Set</code>可作为其它的选择。</p>
+
+<p>因为它们被设计为 避免用户数据和内置方法的冲突。ES6的集合不会用属性暴露它们的数据，这意味着表达式如<code>obj.key</code>或者<code>obj[key]</code>并不能访问哈希表数据，你将不得不编写<code>map.get(key)</code>。哈希表的实体，并不像属性，它并不会继承原型链。</p>
+
+<p>这样的优势，它不像<code>Object</code>s，<code>Map</code>和<code>Set</code>可以拥有方法，它可以在标准库中或者你自己的子类中可以添加更多的方法，并不会冲突。</p>
+
+<h4>Set</h4>
+
+<p>Set 是值的集合，它是可变的，所以你的程序可以在任意时候添加或删除值。目前，它就像是数组。但是，就像相同点，set和数组中也有许多不同点。</p>
+
+<p>首先，不像数组，Set不会包括两个相同的值。如果你试图添加一个已经存在的值，并不会影响到什么。</p>
+
+<pre><code class="javascript">&gt; var desserts = new Set("🍪🍦🍧🍩");
+&gt; desserts.size
+    4
+&gt; desserts.add("🍪");
+    Set [ "🍪", "🍦", "🍧", "🍩" ]
+&gt; desserts.size
+    4
+</code></pre>
+
+<p>这例子使用的是字符串，但是Set可以包含任意JS的值。类似字符串，多次添加同一对象或者数值也是没有影响的。</p>
+
+<p>其次，Set 有自己的数据管理，可以使得其一的操作更加快速：</p>
+
+<pre><code class="javascript">&gt; // Check whether "zythum" is a word.
+&gt; arrayOfWords.indexOf("zythum") !== -1 // slow
+    true
+
+&gt; setOfWords.has("zythum") // fast
+    true
+</code></pre>
+
+<p>你不能通过index索引访问：</p>
+
+<pre><code class="javascript">&gt; arrayOfWords[15000]
+    "anapanapa"
+&gt; setOfWords[15000] // sets don't support indexing
+    undefined
+</code></pre>
+
+<p>以下是Set的操作：</p>
+
+<ul>
+<li><code>new Set</code>创建一个新的、空的Set。</li>
+<li><code>new Set(iterable)</code>可以创建一个新的set，并将迭代器的值放到set中。</li>
+<li><code>set.size</code> 得到set的值的数量</li>
+<li><code>set.has(value)</code>如果set中包含有给定的值，它返回<code>true</code>。</li>
+<li><code>set.add(value)</code> 添加一个值到set中。如果set中已经存在这个值，就不会有作用。</li>
+<li><code>set.delete(value)</code> 从set中移除一个值。如果这个值并不在set中，不会有作用。<code>.add()</code>和<code>.delete()</code>都会返回set的本身，所以你可以链式地使用它们。</li>
+<li><code>set[Symbol.iterator]()</code>会返回一个包含set的值的迭代器，你通常不用显示地调用，但是它是通过此方法来实现set的迭代器的。这意味着你可以使用<code>for (v of set){ ... }</code>，等等。</li>
+<li><code>set.forEach(f)</code>是最简单解释的代码，它就像是缩写：</li>
+</ul>
+
+
+<pre><code class="javascript">for (let value of set)
+   f(value, value, set);
+</code></pre>
+
+<p>这个方法类似于数组中的<code>.forEach()</code>方法。</p>
+
+<ul>
+<li><code>set.clear()</code> 删除set中的所有值。</li>
+<li><code>set.keys()</code>，<code>set.values()</code> 和<code>set.entires()</code>返回相应的迭代器。它们可以适配于<code>Map</code>，所以我们将在下面提到Map。</li>
+</ul>
+
+
+<p>众多特性，<code>new Set(iterable)</code>这个构建器是十分出众的，因为它操作着整个数据结构。你可以使用它来将数组转为一个set，用一行代码来消除重复的值。或者，传递一个生成器：它会完整的运行这个生成器并收集所有处理过的值放到一个set中。这构建器还可以让你复制一个已经存在的set。</p>
+
+<p>上周我们承诺会提到ES6集合中的一些让人抱怨的地方，我将在这里提到。正如Set有各种的好处，但它同时也缺失部分方法，这些方法将会在以后工作增加：</p>
+
+<ul>
+<li><p>功能性的帮助方法已经在现在有数组中存在了，如 <code>.map()</code>、<code>.filter()</code>、<code>.some()</code>和<code>.every()</code>。</p></li>
+<li><p>不作变化的 <code>set1.union(set2)</code>和<code>set1.intersection(set2)</code>。</p></li>
+<li><p>可以操作多个值的方法：<code>set.addAll(iterable)</code>、<code>set.removeAll(iterable)</code>、<code>set.hasAll(iterable)</code>。</p></li>
+</ul>
+
+
+<p>好消息是可以通过ES6的特性可以有效地实现这些方法。</p>
+
+<h4>Map</h4>
+
+<p>Map 是一个 key/value的键值对的集合，Map可以做：</p>
+
+<ul>
+<li><code>new Map</code>返回一个新的、空的map</li>
+<li><code>new Map(pairs)</code>创建一个新的map，并把存在的<code>[key, value]</code>键值对集合填充到这里面。键值对可以是一个已经存在的map对象，一个两个元素的数组，一个处理两个元素的数组的生成器，等等。</li>
+<li><code>map.size</code>返回map的实体数量。</li>
+<li><code>map.has(key)</code>测试是否包含有key，类似 <code>key in obj</code>。</li>
+<li><code>map.get(key)</code>获取关联key的值，或者，如果没有这个实体，会返回 undefined，类似<code>obje[key] = value</code>。</li>
+<li><code>map.set(key, value)</code>为 map 添加一个实体，包含key和value。如果已经存在有相同的key，旧实体会被覆盖，类似 <code>obj[key] = value</code>。</li>
+<li><code>map.delete(key)</code>删除一个实体，类似<code>delete obj[key]</code>。</li>
+<li><code>map.clear()</code>删除map的所有实体。</li>
+<li><code>map[Symbol.iterator]()</code>返回map中所有实体的迭代器，这迭代器的每个实体是一个<code>[key, value]</code>数组。</li>
+<li><code>map.forEach(f)</code>工作如：</li>
+</ul>
+
+
+<pre><code class="javascript">for (let [key, value] of map)
+    f(value, key, map);
+</code></pre>
+
+<p>这奇怪的参数是有顺序的，同样的，其类似于<code>Array.prototype.forEach()</code>。</p>
+
+<ul>
+<li><code>map.keys()</code> 返回map的所有key的一个迭代器。</li>
+<li><code>map.values()</code> 返回map的所有值的一个迭代器。</li>
+<li><code>map.entries()</code> 返回map的所有实体的一个迭代器，就像<code>map[Symbol.iterator]()</code>。实际 上，这只是另一个名称而已。</li>
+</ul>
+
+
+<p>那么有哪些不满意的呢？下面有些ES6没有的特性，但我觉得有用的：</p>
+
+<ul>
+<li><p>默认值的工厂，如 Python 中的 <a href="https://docs.python.org/3/library/collections.html#defaultdict-examples">collections.defaultdict</a>。</p></li>
+<li><p><code>Map.fromObject(obj)</code>一个帮助的方法，可以将一个对象方便地写到map中，这样可以使用object-literal的方法。</p></li>
+</ul>
+
+
+<p>好了。回到文章开始谈到的我们所关心的点，在浏览器中运行是怎么影响到这些JS特性的设计？这是我们开始所提到的。我有三个例子，这里讨论前两个。</p>
+
+<h4>JS是特殊的，部分一：哈希表没有哈希码？</h4>
+
+<p>这是一个有用的特性，然而ES6集合类并没有支持，至少目前我可以这么说。</p>
+
+<p>比如，我们这里有 URL 对象的Set。</p>
+
+<pre><code class="javascript">var urls = new Set;
+urls.add(new URL(location.href)); // two URL objects.
+urls.add(new URL(location.href)); // are the the same?
+alert(urls.size); //2
+</code></pre>
+
+<p>这两个URL对象应该被认为是相等的，它们拥有相同的字段。但是，在JS中，这里的两个对象是不同的，这里也没有方法重写JS语言的相等比较方法。</p>
+
+<p>其它语言则支持重写，在Java、Python、Ruby中，独立的类可以重写相等比较方法。在许多的实现机制中，独立的哈希表可以创建并使用不同的相等比较方法，C++就支持。</p>
+
+<p>但是，这些所有的处理机制都是要求用户自己去实现哈希函数，和所有的暴露在外面的默认的哈希函数。委员会的选择是不暴露JS的哈希码，至少现在还没有。因为现在考虑的是数据的操作和安全，关注的而不是优于其它语言。</p>
+
+<h4>JS是特殊的，部分二：惊奇又可预测</h4>
+
+<p>你可能会认为从计算机出现的确定性的特为没有什么可以令人惊奇的，但是当我告知他们，Map和 Set 在迭代时会按照它们的插入顺序来访问实体，他们都觉得很惊奇，而且这特性是确定的。</p>
+
+<p>我们习惯于哈希表是不确定的，我们学习并接受了这点。但是，我们有理由来避免这一点，就如我在2012年写道的：</p>
+
+<ul>
+<li><p>首先，有很多证据证明一些编程人员对不确定的迭代顺序感到怪异或者困惑。<a href="http://stackoverflow.com/questions/2453624/unsort-hashtable">1</a> <a href="http://stackoverflow.com/questions/1872329/storing-python-dictionary-entries-in-the-order-they-are-pushed">2</a> <a href="https://groups.google.com/group/comp.lang.python/browse_thread/thread/15f3b4a5cd6221b1/1b6621daf5d78d73">3</a> <a href="http://bytes.com/topic/c-sharp/answers/439203-hashtable-items-order">4</a> <a href="http://stackoverflow.com/questions/1419708/how-to-keep-the-order-of-elements-in-hashtable">5</a> <a href="http://stackoverflow.com/questions/7105540/hashtable-values-reordered">6</a></p></li>
+<li><p>ECMAScript并没有对枚举的属性进行详细的说明，同时为了网络上的兼容性，所有主流的实现是强制为插入的顺序。但是，某些比如TC39并没有明确迭代的顺序，“对我们来说，网络会逐渐具体的”<a href="https://mail.mozilla.org/pipermail/es-discuss/2012-February/020576.html">7</a></p></li>
+<li><p>哈希表的迭代顺序会暴露些对象哈希码，这会导致哈希实现函数的部分怪异的安全问题。比如，当一个对象暴露其哈希码时，其寻址方式必须是不可恢复的。(当展示对象的地址是由非信任的ECMAScript代码操作的，而不是ECMAScript主动操作的，这会是一个坏坏的安全Bug。)</p></li>
+</ul>
+
+
+<p>所有的这些在2012年二月已经被讨论过了，我当时是赞成迭代器可以任意顺序。然后，我根据经验展示了根据插入顺序进行排序的哈希表是有多慢，我用C++做了测试，结果令人惊讶&#8211;<a href="https://wiki.mozilla.org/User:Jorend/Deterministic_hash_tables">文章</a>。</p>
+
+<p>所以，我们在JS中结束以插入顺序排序的哈希表。</p>
+
+<h4>使用弱集合是有决定性原因的</h4>
+
+<p>上周，我们讨论了例子涉及到JS的动画库，我们希望在每个DOM元素中存储一个布尔的标志，如：</p>
+
+<pre><code class="js">if (element.isMoving) {
+  smoothAnimations(element);
+}
+element.isMoving = true;
+</code></pre>
+
+<p>不幸的是，为DOM元素设置一个可读写的属性是个不好主意，在之前的文章已经讨论过了。</p>
+
+<p>那文章展示了怎么使用标志符来解决这一问题，但是，我们难道不能使用Set来做同样的事情吗？它看起来会如：</p>
+
+<pre><code class="js">if (movingSet.has(element)) {
+  smoothAnimations(element);
+}
+movingSet.add(element);
+</code></pre>
+
+<p>这样只有一个缺点：Map 和 Set 对象会在它们中的每个key和value中建立强关联。这意味着，如果文档中的一个DOM元素被移除时，垃圾回收器并不能回收内存，而是需要<code>movingset</code>被移除才行。典型的类库包括复杂的功能，在最好的情况下，它会进行根据用户需求进行复杂的clean-up-after-yourself，但，这可能会导致内存的泄露。</p>
+
+<p>ES6提供了一惊奇的方法来解决它。将<code>movingSet</code>作为<code>WeakSet，而不是</code>Set`，内存泄露的问题就公被解决。</p>
+
+<p>对于这特殊的问题，可以使用一个弱的集合或者标志符来解决。但是，哪个会更好呢？所有的讨论都是个权衡的过程，很不幸，在这文章说的话会有些长。如果你可以在整个网页的生命周期中使用简单的标志符，那可能是好的。如果你只想结束些生命周期短的标志符，会有个危险的地方，这时，考虑使用 WeakMap 可能避免内存泄露。</p>
+
+<h4>WeakMap 和 WeakSet</h4>
+
+<p>WeakMap 和 WeakSet 具体操作实际上类似于 Map 和 Set，但有些限制：</p>
+
+<ul>
+<li>WeakMap 仅支持 <code>new</code>、<code>.has()</code>、<code>get()</code>、<code>.set()</code>和<code>.delete()</code>。</li>
+<li>WeakSet 公支持 <code>new</code>、<code>.has()</code>、<code>add()</code>和<code>.delete()</code>。</li>
+<li>存在在 WeakSet 中的值和 WeakMap 中的关键字必须是对象。</li>
+</ul>
+
+
+<p>这些限制性的条件可以保证垃圾回收器正常地回收 弱集合 中的超期的死亡对象。这类似于你可以获取弱关联或者弱key的字典，但ES6的弱集合的内存管理并不是这样子，而是决定于GC的脚本。</p>
+
+<h4>JS是特殊的，部分三：隐藏GC操作是不确定性的</h4>
+
+<p>在上面的场景中，这些弱的集合的实现方式类似于<a href="http://www.jucs.org/jucs_14_21/eliminating_cycles_in_weak/jucs_14_21_3481_3497_barros.pdf">蜉蝣表ephemeron tables</a>。</p>
+
+<p>简单来说，一个WeakSet不会对其包含的对象保持着链接。当一个WeakSet中的对象被回收时，就会被简单从WeakSet中移除。WeakMap也类似这样子。它不会与其任意的关键字key建立强链接，只要key是活动的，这关联就是可用的。</p>
+
+<p>为什么要接受这些限制？为什么不为JS增加一个弱链接？</p>
+
+<p>再次，标准委员会还非常不情愿将不确定的行为暴露给外部脚本，较低的跨浏览器兼容性是网站开发的毒药。弱链接会暴露垃圾回收器底层的实现细节，也就是，特定平台的可确定的任意行为。应用不应该依赖于特定平台的细节，同时，弱链接也很难让你知道，你当前的在浏览器中的测试是怎么依赖于GC行为操作的。它们是很难推断的。</p>
+
+<p>相反，ES6的弱集合有一堆受限的特性，并且这些特性是确定的。实际上，当一个Key或者value被回收是不会受到监视的，所以一个应用是否结束并不依赖于它，即使是出现事故。</p>
+
+<p>这也是为了网站开发，从而致使的一个令人惊奇的设计决定，它可以让JS成为更好的语言。</p>
+
+<h4>什么时候可以使用集合</h4>
+
+<p>现在，所有的集合类都在 Firefox、Chrome、Microsoft Edge、Safari 得到支持，为了在旧的浏览器中使用，可以使用工具，如 <a href="https://github.com/WebReflection/es6-collections">es6-collections</a>。</p>
+
+<p>WeakMap 在Firefox中刚开始是由Andreas Gal实现的，他后台做了Mozilla的CTO。Tom Schuster实现了WeakSet，我实现了 Map 和 Set。感谢 Tooru Fujisawa 对这些地方提供也补丁包。</p>
+
+<p>下周，深入ES6系列文章会中断两周，可以戏称为暑假吧。这系列文章已经包含了ES6的很多特性，但是一些更为强大的特性即将要到来。所以，请在7月9号我们归来时，加入我们吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

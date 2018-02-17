@@ -1,0 +1,294 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Rails Cache - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Rails Cache cache, rails 在完成 rails 应用的功能之后，要考虑优化（重构）！ 关于 rails 的 cache 问题，网络上已经有很多说法了，我主要参考以下： http://guides.rubyonrails.org/caching_with_rails.html &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/07/02/Rails-Cache/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Rails Cache</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/cache/'>cache</a>, <a class='category' href='/blog/categories/rails/'>rails</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>在完成 rails 应用的功能之后，要考虑优化（重构）！</p>
+
+<p>关于 rails 的 cache 问题，网络上已经有很多说法了，我主要参考以下：</p>
+
+<p>http://guides.rubyonrails.org/caching_with_rails.html</p>
+
+<p>http://hawkins.io/2011/05/advanced_caching_in_rails/</p>
+
+<p>http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works</p>
+
+<p>或许有版本问题，虽然我没遇到，但是学习精华在于领会方法。</p>
+
+<p>缓存，个人觉得是根据访问频度和更新频度的数据，估计并平衡两者，才能进而提高响应速度。</p>
+
+<h3>Fragment Cache</h3>
+
+<p>对于碎片化的缓存，主流还是在这的，因为现今多数网站都是动态的。对于 Page Cache 大多数人并不推崇！</p>
+
+<p>相信多数人会用 layout：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in application.haml</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="o">%</span><span class="n">body</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;header&#39;</span>
+</span><span class='line'>  <span class="o">=</span> <span class="k">yield</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;bottom&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in _header.haml</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">%</span><span class="nb">p</span> <span class="n">header</span> <span class="n">content</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在重构加入 cache 时，可以通过两种简单的方法：</p>
+
+<h4>方法一</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in application.haml</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="o">%</span><span class="n">body</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;header&#39;</span>
+</span><span class='line'>  <span class="o">=</span> <span class="k">yield</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;bottom&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in _header.haml</span>
+</span><span class='line'><span class="o">=</span> <span class="n">cache</span><span class="p">(</span><span class="s2">&quot;header_part&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="o">%</span><span class="nb">p</span> <span class="n">header</span> <span class="n">content</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>方法二</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in application.haml</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="o">%</span><span class="n">body</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">cache</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>    <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;header&#39;</span>
+</span><span class='line'>  <span class="o">=</span> <span class="k">yield</span>
+</span><span class='line'>  <span class="o">=</span> <span class="n">render</span> <span class="s1">&#39;bottom&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># in _header.haml</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">%</span><span class="nb">p</span> <span class="n">header</span> <span class="n">content</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>明显第二种方法较好，其产生的效果：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Read</span> <span class="n">fragment</span> <span class="n">views</span><span class="o">/</span><span class="n">header</span> <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="n">ms</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而第一种会有：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Read</span> <span class="n">fragment</span> <span class="n">views</span><span class="o">/</span><span class="n">header</span> <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">2</span><span class="n">ms</span><span class="p">)</span>
+</span><span class='line'>  <span class="no">Rendered</span> <span class="n">share</span><span class="o">/</span><span class="n">header</span><span class="o">.</span><span class="n">haml</span> <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="n">ms</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>其实，最好在设置 cache 时，同时设置时时效，<a href="http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works">David: 4 This generates a lot of cache garbage</a>。虽然有些存储设备自动清理访问较少的资源（memcached 有这样的机制），但是对于明确的资源，手动设置时效可以很好地清理或者更新内容。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">=</span> <span class="n">cache</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="ss">:expires_in</span> <span class="o">=&gt;</span> <span class="mi">7</span><span class="o">.</span><span class="n">days</span><span class="p">)</span> <span class="k">do</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/07/02/Rails-Cache/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/07/02/Rails-Cache/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

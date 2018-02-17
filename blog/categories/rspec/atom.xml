@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rspec | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/rspec/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rspec practices 1]]></title>
+    <link href="http://shatle.github.io/blog/2016/04/23/rspec-practices-1/"/>
+    <updated>2016-04-23T18:17:16+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/04/23/rspec-practices-1</id>
+    <content type="html"><![CDATA[<p>U should add gem <code>rspec-rails</code> in ur project&#8217;s Gemfile, then bundle.</p>
+
+<p>Then, u need run command <code>rails g rspec:install</code>.</p>
+
+<p>When u use rails commands, likes <code>rails g model User xx:xx</code>. It will help u to create <code>spec/models/user_spec.rb</code> file.</p>
+
+<p>Yes, Rspec will check <code>_spec.rb</code> file as test file.</p>
+
+<p>Give me some codes:</p>
+
+<pre><code class="ruby">require 'rails_helper'
+
+RSpec.describe User, :type =&gt; :model do
+  context "signup with" do
+    it "email and password, then success." do
+      expect(User.signup("123@exmaple.com", "123456").errors.size).to eq(0)
+    end
+    it "illege email and password, then fail." do
+      expect(User.signup("123sdf", "123456").errors.size).to eq(1)
+    end
+
+    it "email and no password, then fail. " do
+      expect( User.signup("123@example.com", "").errors.size ).to eq(1)
+    end
+  end
+end
+</code></pre>
+
+<p>and then, u can use <code>rspec</code> to test all <code>_spec</code> files,
+or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/user_spec.rb</code> command.</p>
+
+<p>if no error, u can get</p>
+
+<pre><code class="ruby">3 examples, 0 failures
+</code></pre>
+
+<p>It is not a good view. We just not work for testing, but say something to others.</p>
+
+<p>U can run <code>rspec --format doc</code>,  will get result:</p>
+
+<pre><code class="ruby">User
+  signup with
+    email and password, then success.
+    illege email and password, then fail.
+    email and no password, then fail.
+
+3 examples, 0 failures
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

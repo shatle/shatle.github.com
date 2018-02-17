@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: broccoli | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/broccoli/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 In Depth: Using ES6 today with Babel and Broccoli]]></title>
+    <link href="http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli/"/>
+    <updated>2015-12-16T21:23:09+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">ES6 In Depth: Using ES6 today with Babel and Broccoli</a></p></blockquote>
+
+<p>ES6已经存在了，还有些人已经开始谈论 ES7了。新的标准中有哪些特性会被保留，又有哪些闪亮的特性提供？作为一位网络开发人员，我们会对怎么使用它产生疑问。不仅一次，在之前的 <a href="http://shatle.github.io/blog/categories/shen-ru-es6/">深入ES6系列</a>  中，我们一直在鼓励你们开始使用 ES6 来编码，通过用些有意思的工具来实现，我们之前已经有提到这方法：</p>
+
+<blockquote><p>If you’d like to use this new syntax on the Web, you can use <a href="https://babeljs.io/">Babel</a> or <a href="https://github.com/google/traceur-compiler">Google’s Traceur</a> to translate your ES6 code to web-friendly ES5.</p></blockquote>
+
+<p>今天，我们将一步步地向你展示它是怎么做的。之前提到的工具都称为是 <em>transpilers(transcompiler暂译为 转换编译器)</em>。转换编译器是为人熟知的 资源到资源的编译器，这编译器在不同的编程语言之间进行抽象层面中的转换。转换编译器可以让我们编写ES6的代码，同时也保证代码能够在每个浏览器中运行。</p>
+
+<h4>转换编译器是我们的救赎</h4>
+
+<p>转换编译器十分易用，你可以按以下描述进行，只要两步：</p>
+
+<ol>
+<li>我们用ES6语法编写代码</li>
+</ol>
+
+
+<pre><code class="js">let q = 99;
+let myVariable = `${q} bottles of beer on the wall, ${q} bottles of beer.`;
+</code></pre>
+
+<ol>
+<li>我们使用上面的代码作为转换编译器的输入，它会处理这代码，并产出下面的代码：</li>
+</ol>
+
+
+<pre><code class="js">"use strict";
+var q = 99;
+var myVariable = "" + q + " bottles of beer on the wall, " + q + " bottles of beer."
+</code></pre>
+
+<p>我们知道这是旧JS的写法，它能运行于任意的浏览器。</p>
+
+<p>转换编译器内部是怎么从输入到产生，这是是复杂的过程，也超出了这文章的范围。让我们就像开车，而不要去管其所有的内部机械引擎。今天，我们把转换编译器看作是一个黑盒子，来处理我们的代码。</p>
+
+<h4>Babel的作用</h4>
+
+<p>在项目中使用Bable有不几种不同的方法，首先是命令行工具，你可以通过下面的命令来实现：</p>
+
+<pre><code class="javascript">babel script.js --out-file script-compiled.js
+</code></pre>
+
+<p>在浏览器中预置Babel的版本也是可用的，你可以将Babel作为常规的js库文件，然后你可以将ES6的代码中的script标签中的类型修改为&#8221;text/babel&#8221;。</p>
+
+<pre><code class="javascript">\&lt;script src="node_modules/babel-core/browser.js"&gt;&lt;/script&gt;
+\&lt;script type="text/babel"&gt;
+// Your ES6 code
+&lt;/script&gt;
+</code></pre>
+
+<p>但是，这方法不能扩展：你的代码增长时，你会将代码分离成多个文件和目录，这方法是不允许的。这时，你需要一个构建工具，通过管道式来整合Babel。</p>
+
+<p>在下面的部分，我们将Babel整合到一个构建工具中，<a href="http://broccolijs.com/">Broccoli.js</a>，接着我们将通过几个例子来编写并执行我们的ES6代码。当你运行出现错误时，你可以在这里回头查看完整的资源代码：<a href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>。在这资源库中，你将找到三个例子项目：</p>
+
+<ol>
+<li>es6-fruits</li>
+<li>es6-website</li>
+<li>es6-modules</li>
+</ol>
+
+
+<p>每个会建立在之前的例子之上(没发现)。我们开始会代码最小化，并且会是个一般的解决方案，它可以胜任于为个伟大的项目打关阵。在这文章中，我们将详细地讨论前两个例子。在我们做完之后，你自己可以去阅读、去理解第三个例子中的代码。</p>
+
+<p>如果你认为，你可以等待浏览器支持这些特性，你将会被甩到后面。完全的浏览器支持，如果这会实现，那它将是个漫长的过程。转换编译器已经在这里，新的ECMAScript标准也将计划在年内发布。所以 ，我们将继续、经常地看到新的标准发布出来，而这会先于统一的浏览器平台。跳起来吧，利用这些新的ES6特性吧。</p>
+
+<h4>我们的第一个Broccoli 和 Babel项目</h4>
+
+<p>Broccoli是个被设计为尽量快的速度来构建项目的工具。你可以压缩和最小化文件，通过这些<a href="https://www.npmjs.com/browse/keyword/broccoli-plugin">插件</a>  操作的使用，还有其它很多其它的功能。它帮助我们负担了一大堆的事情，包括处理文件、目录，还有当我们每次修改项目时需要执行的命令。可以把它当成为：</p>
+
+<blockquote><p>在一定范围上，它类似 Rails 的资源文件的管理，只是它运行于Node，也没有纯粹的后端。</p></blockquote>
+
+<h5>开始项目</h5>
+
+<p><strong>Node</strong></p>
+
+<p>正如你猜测一样，你将不得不<a href="https://nodejs.org/">安装 Node</a> 0.11 或者更高版本。</p>
+
+<p>如果你是在unix系统，避免使用包管理工具，如apt, yum。这样可以避免在安装过程中使用root权限。最好的方法是，从刚才提供的链接地址中，使用你当前的用户手动下载二进制文件。你可以在<a href="http://givan.se/do-not-sudo-npm/">这里</a> 看到为什么不建议使用 root 权限。你也可以在<a href="http://givan.se/do-not-sudo-npm/#install-npm-properly">这里</a> 选择其它的安装方式。</p>
+
+<p><strong>Broccoli</strong></p>
+
+<p>我们首先将建立我们的Broccoli的项目：</p>
+
+<pre><code class="bash">mkdir es6-fruits
+cd es6-fruits
+npm init
+# Create an empty file called Brocfile.js
+touch Brocfile.js
+</code></pre>
+
+<p>现在，我们安装 broccoli 和 broccoli-cli</p>
+
+<pre><code class="bash"># the broccoli library
+npm install --save-dev broccoli
+# command line tool
+npm install -g broccoli-cli
+</code></pre>
+
+<h5>编写些ES6代码</h5>
+
+<p>我们创建 src 目录，接着在里面编辑文件 fruits.js：</p>
+
+<pre><code class="bash">mkdir src
+vim src/fruits.js
+</code></pre>
+
+<p>在我们的新文件中，我们使用 ES6 的语法编写些小的脚本：</p>
+
+<pre><code class="javascript">let fruites = [
+  {id: 100, name: 'strawberry'},
+  {id: 101, name: 'grapefruit'},
+  {id;102, name: 'plum'}
+];
+
+for (let fruit fo fruits) {
+  let message = `ID: ${fruit.id} Name: ${fruit.name}`;
+  console.log(message);
+}
+
+console.lgo(`List total: ${fruits.length}`);
+</code></pre>
+
+<p>上面的代码使用到了 ES6 的三个特性：</p>
+
+<ol>
+<li><code>let</code>，用于本作用域内的声明(在之前的文章中已经有讨论过)</li>
+<li>for-of 循环</li>
+<li>模板字符串</li>
+</ol>
+
+
+<p>保存文件，并试着执行它。</p>
+
+<pre><code class="bash">node src/fruits.js
+</code></pre>
+
+<p>它还不能运行，但我们希望它可以在Node和任意的浏览器中都能够执行。</p>
+
+<pre><code class="js">let fruits = [
+     ^^^^^
+SyntaxError: Unexpected identifier
+</code></pre>
+
+<h5>到转换代码的时间了</h5>
+
+<p>现在，我们将使用 Broccoli 来加载我们的代码，并通过Babel来处理。我们将编辑文件 Brocfile.js 并添加以下的代码：</p>
+
+<pre><code class="javascript">// import the babel plugin
+var babel = require('broccoli-babel-transpiler');
+
+// grab the source and transpile it in 1 step
+fruits = babel(src'); // src/*.js
+
+module.export = fruits;
+</code></pre>
+
+<p>注意到，我们加载了 <code>broccoli-babel-transpiler</code>，这是个 Broccoli 的插件，它包括了 Babel 的库，所以我们必须安装它：</p>
+
+<pre><code class="bash">npm install --save-dev broccolli-babel-transpiler
+</code></pre>
+
+<p>现在我们可以构建我们的项目，并通过下面代码来执行脚本：</p>
+
+<pre><code class="bash">broccoli build dist # compile
+node dist/fruits.js # execute ES5
+</code></pre>
+
+<p>这个输出会看到：</p>
+
+<pre><code>ID: 100 Name: strawberry
+ID: 101 Name: grapefruit
+ID: 102 Name: plum
+List total: 3
+</code></pre>
+
+<p>这十分的简单！你可以打开 <code>dist/fruits.js</code>来看看，转换后的代码文件是什么样子。Babel转换编译器的其中一个好的特性就是可产生良好可读性的代码。</p>
+
+<h4>为网站编写ES6代码</h4>
+
+<p>在第二个例子中，我们将提升个等级。首先，退出 es6-fruits 目录，并参照之前的【项目开始】的步骤来创建一个新的目录 <code>es6-website</code>。</p>
+
+<p>在 src 的目录中，我们创建三个文件：</p>
+
+<p><code>src/index.html</code></p>
+
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+      &lt;title&gt;ES6 Today&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;style&gt;
+      body {
+        border: 2px solid #9a9a9a;
+        border-radius: 10px;
+        padding: 6px;
+        font-family: monospace;
+        text-align: center;
+      }
+      .color {
+        padding: 1rem;
+        color: #fff;
+      }
+    &lt;/style&gt;
+    &lt;body&gt;
+      &lt;h1&gt;ES6 Today&lt;/h1&gt;
+      &lt;div id="info"&gt;&lt;/div&gt;
+      &lt;hr&gt; 
+      &lt;div id="content"&gt;&lt;/div&gt;
+
+      &lt;script src="//code.jquery.com/jquery-2.1.4.min.js"&gt;&lt;/script&gt;
+      &lt;script src="js/my-app.js"&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p><code>src/print-info.js</code></p>
+
+<pre><code class="js">function printInfo() {
+  $('#info')
+  .append('&lt;p&gt;minimal website example with' +
+                'Broccoli and Babel&lt;/p&gt;');
+}
+
+$(printInfo);
+</code></pre>
+
+<p><code>src/print-colors.js</code></p>
+
+<pre><code class="js">// ES6 Generator
+function* hexRange(start, stop, step) {
+  for (var i = start; i &lt; stop; i += step) {
+    yield i;
+  }
+}
+
+function printColors() {
+  var content$ = $('#content');
+
+  // contrived example
+  for ( var hex of hexRange(900, 999, 10) ) {
+    var newDiv = $('&lt;div&gt;')
+          .attr('class', 'color')
+          .css({ 'background-color': `#${hex}` })
+          .append(`hex code: #${hex}`);
+    content$.append(newDiv);
+  }
+}
+
+$(printColors);
+</code></pre>
+
+<p>你应该注意到这一点：<code>function* hexRange</code>。是的，这是 ES6 的生成器。这一个特性并没有在所有的浏览器得到支持。为了能够使用它(生成器)，我们需要个工具。Babel 可以提供，我们也很快地使用到它。</p>
+
+<p>下一步是合并所有的JS文件，并在网站中使用它。这最难的部分是编写我们的Brocfile 文件。这时，我们安装四个插件：</p>
+
+<pre><code class="bash">npm install --save-dev broccoli-babel-transpiler
+npm install --save-dev broccoli-funnel
+npm install --save-dev broccoli-concat
+npm install --save-dev broccoli-merge-trees
+</code></pre>
+
+<p>然后，使用它们 ：</p>
+
+<pre><code class="js">// Babel transpiler
+var babel = require('broccoli-babel-transpiler');
+// filter trees (subsets of files)
+var funnel = require('broccoli-funnel');
+// concatenate trees
+var concat = require('broccoli-concat');
+// merge trees
+var mergeTrees = require('broccoli-merge-trees');
+
+
+// Transpile the source files
+var appJs = babel('src');
+
+
+// Grab the polyfill file provided by the Babel library
+var babelPath = require.resolve('broccoli-babel-transpiler');
+babelPath = babelPath.replace(/\/index.js$/, '');
+babelPath += '/node_modules/babel-core';
+var browserPolyfill = funnel(babelPath, {
+  files: ['browser-polyfill.js']
+});
+
+// Add the Babel polyfill to the tree of transpiled files
+appJs = mergeTrees([browserPolyfill, appJs]);
+// Concatenate all the JS files into a single file
+appJs = concat(appJs, {
+  // we specify a concatenation order
+  inputFiles: ['browser-polyfill.js', '**/*.js'],
+  outputFile: '/js/my-app.js'
+});
+
+// Grab the index file
+var index = funnel('src', {files: ['index.html']});
+
+
+// Grab all our trees and
+// export them as a single and final tree
+module.exports = mergeTrees([index, appJs]);
+</code></pre>
+
+<p>是时候构建并执行我们的代码了：</p>
+
+<pre><code class="bash">broccoli build dist
+</code></pre>
+
+<p>这里，你应该在dist目录中看到如下的结构：</p>
+
+<pre><code class="bash">$&gt; tree dist/
+dist/
+|--index.html
+|--js
+|--|-- my-app.js
+</code></pre>
+
+<p>这是个静态的网站，你可以部署到任意的服务器中，检查这代码是可行的。例如，</p>
+
+<pre><code class="bash">cd dist/
+python -m SimpleHTTPServer
+# visit http://localhost:8000/
+</code></pre>
+
+<p>你可以看到：</p>
+
+<p><img src="https://raw.githubusercontent.com/givanse/broccoli-babel-examples/master/es6-website/screenshot.png" alt="es6 today" /></p>
+
+<h4>更多乐趣在 Babel 和 Broccoli 中</h4>
+
+<p>上面的第二个例子提供我们一方法来怎么使用Babel，从而完成项目。它应该可以让你理解一些时间了，如果你通过Babel、Broccoli更多地使用ES6，你可以查看一下这个项目：<a href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a>。它也是用 Broccoli + Babel 开始的，它至少提高了两个点。这模板例子包括了 模块、引入、和单元测试。</p>
+
+<p>你可以试试这里的配置例子：<a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">es6-modules</a>，Brocfile 有很多魔法的地方，其类似与我们上面做的事件。</p>
+]]></content>
+  </entry>
+  
+</feed>

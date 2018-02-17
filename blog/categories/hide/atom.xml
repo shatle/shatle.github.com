@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hide | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/hide/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[show and hide element in angularjs]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/30/show-and-hide-element-in-angularjs/"/>
+    <updated>2013-12-30T11:35:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/30/show-and-hide-element-in-angularjs</id>
+    <content type="html"><![CDATA[<p>由于是开始接触angularjs，所以很多效果都是用jquery/js的思维去做的，但是angularjs是不提倡直接操作dom元素的。这一直很让我纠结，慢慢去修正吧。</p>
+
+<p>相信，显示与隐藏是十分常见的功能／效果。刚开始，我是用jquery去实现，</p>
+
+<pre><code class="javascript">$('.ele')
+  .mouseenter(function(){
+    $(this).find('.text').show();
+  })
+  .mouseleave(function(){
+    $(this).find('.text').hide();
+  });
+</code></pre>
+
+<p>但是这就直接操作dom了，怎么避免这些不好的操作呢，就要使用angular提供的或者自己编写的directives。</p>
+
+<p>从<a href="http://docs.angularjs.org/api/ng.directive">官网</a>页面中可以找到相关的directives：<code>ngHide</code>、<code>ngShow</code>、<code>ngMouseenter</code>、<code>ngMouseleave</code>。</p>
+
+<pre><code class="haml">%a( ng-repeat="item in items" 
+    ng-mouseenter="hover(item)"
+    ng-mouseleave="hover(item)"
+  )
+  %img(ng-src="...")
+  .text(ng-show="item.show")
+    %span item.name
+</code></pre>
+
+<pre><code class="javascript">app.controller('indexCtrl', ['$scope', function($scope){
+  $scope.items = [
+    {
+      name: '..'
+    }
+    ,{
+      name: '....'
+    }
+  ];
+
+  $scope.hover = function(item){
+    item.show = !item.show;
+  };
+
+}]);
+</code></pre>
+
+<p>效果是，默认的文字名称是隐藏的，因为开始时<code>item.show</code>是没有设置的，为false。
+当鼠标移进移出时，会触发<code>hover</code>方法 ，修改相应<code>item.show</code>的值。</p>
+]]></content>
+  </entry>
+  
+</feed>

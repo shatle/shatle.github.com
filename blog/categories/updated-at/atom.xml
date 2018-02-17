@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: updated_at | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/updated-at/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[update column in mongoid without update updated_at attribute]]></title>
+    <link href="http://shatle.github.io/blog/2015/04/25/update-column-in-mongoid-without-update-updated-at-attribute/"/>
+    <updated>2015-04-25T17:15:12+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/04/25/update-column-in-mongoid-without-update-updated-at-attribute</id>
+    <content type="html"><![CDATA[<p>没有　update_column 的方法，只能看源代码　https://github.com/mongoid/mongoid/blob/master/lib/mongoid/timestamps/updated.rb
+发现其代码中有，</p>
+
+<pre><code class="ruby">set_callback :create, :before, :set_updated_at
+set_callback :update, :before, :set_updated_at
+</code></pre>
+
+<p>联想rails中方法，需要在方法中，特定的方法重新设置此内容, 如</p>
+
+<pre><code class="ruby">def skip_auto_updated_at(&amp;block)
+  User.skip_callback(:update, :before, :set_updated_at)
+  yield
+  User.set_callback(:update, :before, :set_updated_at)
+end
+
+def update_some_column(attrs)
+  skip_auto_updated_at do
+    update_attributes(attrs)
+  end
+end
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

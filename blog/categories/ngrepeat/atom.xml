@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ngrepeat | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/ngrepeat/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ngRepeat with ngModel in RadioBtn]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn/"/>
+    <updated>2013-12-21T23:05:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn</id>
+    <content type="html"><![CDATA[<p>相信大家开始接触<code>ng-repeat</code>时，很容易就明白了以下代码的作用：</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %span 
+</code></pre>
+
+<p>那么，当<code>ng-repeat</code>和<code>ng-model</code>结合起来呢：</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %input(type="radio" ng-model="select_item" value="")
+
+%input(type="text" value="select_item")
+</code></pre>
+
+<p>从代码上看，多个RadioBtn分在同一组，然后显示选择项的值。但是，这在实际操作中是不行的。</p>
+
+<blockquote><p>The ngRepeat directive instantiates a template once per item from a collection. <strong>Each template instance gets its own scope</strong>, where the given loop variable is set to the current collection item, and $index is set to the item index or key.</p></blockquote>
+
+<p><code>ng-repeat</code>会为每个实例产生自己的作用域。也就是说，<code>ng-model="select_item"</code>与<code>items</code>不是同一作用层级的；而相似的，<code>ng-model="select_item"</code>和<code>value="select_item"</code>是同一作用层级的。所以，<code>value="select_item"</code>并不能正常访问<code>ng-model="select_item"</code>中的变化值，需要将<code>ng-model</code>提升层级，</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %input(type="radio" ng-model="$parent.select_item" name="item" value="")
+
+%input(type="text" value="select_item")
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

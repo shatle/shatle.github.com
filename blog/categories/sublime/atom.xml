@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: sublime | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/sublime/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[sublime ppa]]></title>
+    <link href="http://shatle.github.io/blog/2013/07/21/sublime-ppa/"/>
+    <updated>2013-07-21T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/07/21/sublime-ppa</id>
+    <content type="html"><![CDATA[<p>最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。</p>
+
+<p>这第三方为：webupd8</p>
+
+<h3>Install</h3>
+
+<pre><code>sudo add-apt-repository ppa:webupd8team/sublime-text-2 
+sudo apt-get update
+sudo apt-get install sublime-text
+</code></pre>
+
+<p>当前，你还可以安装开发版本：sublime-text-dev</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: js | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/js/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[es6 in depth: an introduction]]></title>
+    <link href="http://shatle.github.io/blog/2015/09/01/es6-in-depth-an-introduction/"/>
+    <updated>2015-09-01T22:45:07+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/09/01/es6-in-depth-an-introduction</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/">ES6 In Depth: An Introduction</a></p></blockquote>
+
+<p>欢迎来到<a href="https://hacks.mozilla.org/category/es6-in-depth">【深入ES6】(ES6 in Depth)</a>。 从这周开始，我们将要进入ES6(ECMAScript 6)系列, ES6是一个即将要来临的Javascript语言的新版本。ES6 包含了许多新的特性，它让JS(Javascirpt)更加强大、更有表现力，我们也将在以后一周周地对其进行详细探讨。但是，在详细探讨之前，我们应该花点时间来说明 ES6 是什么，你能从中期待些什么。</p>
+
+<h4>ECMAScript 是做什么的</h4>
+
+<p>现在有 JS 语言的标准化是由 ECMA 组织维护的ECMAScript项目，这组织类似 W3C。ECMAScript 对 JS 进行了以下工作：</p>
+
+<ul>
+<li>语法 &#8211; 解释规则、关键字、表达式、声明、操作符 等等</li>
+<li>类型 &#8211; 布尔、数值、字符串、对象 等等</li>
+<li>原型和继承</li>
+<li>对象(object)和函数(function)中的标准库: JSON, Math, Array 方法，Object自省方法( Object introspection methods), 等等</li>
+</ul>
+
+
+<p>他们不会对其它语言进行定义，如HTML 、CSS, 或者 Web APIs，如 DOM(Document Object Model)，这些是语言等的标准化是不同的。ECMAScript 负责的不仅仅是现今在浏览器中运行的 JS，还有 非浏览器运行环境中的JS，如 node.js。</p>
+
+<h4>新标准</h4>
+
+<p>上周，ECMAScript 第6版本的最终草稿的说明书已经提交到 Ecma General Assembly ，这意味着什么呢？</p>
+
+<p>这意味着，这个夏天，我们将有一个对JS语言核心的新标准了。</p>
+
+<p>这是一个大新闻。JS语言的标准化从未停止过，之前的于2009年第5版本，ES 标准委员会就开始着手 ES6 了。</p>
+
+<p>ES6 对于 JS 语言来说，是一个比较大的升级。同时，你之前的JS也可以继续运行。ES6 在设计时已经考虑到最大程度地兼容现有的JS代码。实际上，很多浏览器已经支持 ES6 的特性，并且不断地完善中，这意味着你的代码可能已经使用上了ES6的特性。如果你现在没有发现兼容性的问题，你很可能在以后也不会遇到。</p>
+
+<h4>版本回顾</h4>
+
+<p>ECMAScript 在之前发布有 1，2，3，5 版本。</p>
+
+<p>版本4 在哪里 ？其实，版本4是有计划的，并且已经做了大量的工作在上面，但是最后因其设计过于庞大（野心太大）而不得不放弃了。例如，其还包括有静态类型语言中的泛型和类型推断（generics and type inference）。（强类型？）</p>
+
+<p>ES4 一直都有争论，当标准化委员会最后停止这项工作之后 ，成员们同意发布一个相对合适的版本ES5，并继续开发些新特性。准确来说，这次可以说是“妥协的”，这就是为什么在ES5的说明中有这两句话：</p>
+
+<blockquote><p>ECMAScript 是个有活力的(JS)语言，其改进并不完整。此版本说明中的一些重要技术会在以后的发布版本在出现。</p></blockquote>
+
+<p>这话也可以理解为对某些事情的承诺。</p>
+
+<h4>兑现承诺</h4>
+
+<p>2009年发布的ES5，介绍了 <code>Object.create()</code> <code>Object.defineProperty()</code>、<em>getters</em> 、<em>setters</em>、<em>strict mode</em> ，和 JSON 对象。我已经使用了这些所有的特性，我喜欢ES5为JS语言增加的特性。我使用这些特性写出很多有魔法效果的JS代码，以致不能一一点出这些好的特性。对我来说，最重要的改进可能就是Array方法: <code>.map()</code> <code>.filter()</code>，等等。</p>
+
+<p>不同的是， ES6是这些年和谐工作的产物。新的语言、库、原有JS语言大量的升级，使得ES6是个未曾挖掘的宝藏。新的特性主要从易用性出发，如箭头函数(arrow function)和简单的字符吕报插值方法，还有些脑洞大开的概念，如 <code>proxies</code> 和 <code>generators</code>。</p>
+
+<p>ES6 将会改变你写JS代码的方式。</p>
+
+<p>这系列文章将通过代码检查的方式，给JS程度大大展示ES6中的新特性。</p>
+
+<p>我们将从经典的“易忽略特性”开始，这是我一直渴望去深入的部分。所以，下周我们将对 <code>for-of</code> 循环进行探究。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[new Date Syntax]]></title>
+    <link href="http://shatle.github.io/blog/2013/10/12/new-Date-Syntax/"/>
+    <updated>2013-10-12T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/10/12/new-Date-Syntax</id>
+    <content type="html"><![CDATA[<p><img src="/images/photo/date2013.jpg" alt="date2013.jpg" /></p>
+
+<p>前两天笔试时，多选 Date 的语法，我经常用的有</p>
+
+<pre><code>new Date(1999,10,10);
+new Date("1999-10-10");
+</code></pre>
+
+<p>其它的不敢多选，回来查看了 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date ，基本语法有：</p>
+
+<pre><code>new Date();
+new Date(value);
+new Date(dateString);
+new Date(year, month, day [, hour, minute, second, millisecond]);
+</code></pre>
+
+<p>好吧，这个<code>dateString</code>很恼人啊，幸好链接了 http://tools.ietf.org/html/rfc2822#page-14 。</p>
+
+<p>下面形象地列出些<code>dateString</code>实例：</p>
+
+<pre><code>new Date("1999-10-10");
+new Date("1999/10/10");
+new Date("Oct* 10, 1999");
+new Date("October 10, 1999");
+new Date("1999-Oct-10");
+new Date("1999/Oct/10");
+</code></pre>
+
+<p><code>#Date</code> <code>#js</code></p>
+
+<hr />
+]]></content>
+  </entry>
+  
+</feed>

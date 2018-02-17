@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: carrierwave | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/carrierwave/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Use Carrierwave to crop image with MiniMagick]]></title>
+    <link href="http://shatle.github.io/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick/"/>
+    <updated>2013-07-16T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick</id>
+    <content type="html"><![CDATA[<p>做Web应用，常常要涉及到文件的上传，图片的上传就是其中之一。在Rails中，上传文件经常用到的是Carrierwave。</p>
+
+<h3><a href="https://github.com/carrierwaveuploader/carrierwave">Carrierwave</a></h3>
+
+<h4><a href="https://github.com/carrierwaveuploader/carrierwave#getting-started">创建方法</a></h4>
+
+<pre><code>rails g uploader avatar
+</code></pre>
+
+<p>之后会产生，文件<code>app/uploaders/avatar_uploader.rb</code>:</p>
+
+<pre><code>class AvatarUploader &lt; CarrierWave::Uploader::Base
+  storage :file
+end
+</code></pre>
+
+<h4>使用</h4>
+
+<p>1.直接使用：</p>
+
+<pre><code>uploader = AvatarUploader.new
+uploader.store!(my_file)
+uploader.retrieve_from_store!('my_file.png')
+</code></pre>
+
+<p>2.运用于 model 中:</p>
+
+<pre><code>class User &lt; ActiveRecord::Base
+  mount_uploader :avatar, AvatarUploader
+end
+</code></pre>
+
+<p>这样有个好处，可以利用 model 传入各种操作参数，如：</p>
+
+<pre><code>def crop
+  if model.crop_x.present?
+    resize_to_limit(700, 700)
+
+    manipulate! do |img|
+      x = model.crop_x
+      y = model.crop_y
+      w = model.crop_w
+      h = model.crop_h
+
+      size = w &lt;&lt; 'x' &lt;&lt; h
+      offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
+
+      img.crop("#{size}#{offset}") # Doesn't return an image...
+      img # ...so you'll neet to call it yourself
+    end
+  end
+end
+</code></pre>
+
+<p>可能会遇到这种情况：想传入参数，但是并不要 ActiveRecord、MongoMapper、MongoId 等等 ORM 的中间件，那么可以这样子：</p>
+
+<pre><code>class Avatar
+  extend CarrierWave::Mount
+
+  attr_accessor :crop_w, :crop_h, :crop_x, :crop_y
+  mount_uploader :image, AvatarUploader
+end
+</code></pre>
+
+<p><code>CarrierWave::Mount</code>之中包含了<code>mount_uploader</code>方法的定义。</p>
+
+<h3><a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/RMagick.html">RMagick</a> vs <a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/MiniMagick.html">MiniMagick</a></h3>
+
+<blockquote><p>http://stackoverflow.com/questions/8418973/undefined-method-crop-using-carrierwave-with-minimagick-on-rails-3-1-3#answer-9961434</p></blockquote>
+
+<p>RMagick 和 MiniMagick 是不一样的，MiniMagick 较 RMagick 更为轻量级。RMagick 根据 Ruby 的语法规则定义了许多操作图片的方法，如：</p>
+
+<pre><code>rmagick_image.crop(x_offset, y_offset, width, height) # Returns an image object
+rmagick_image.crop!(x_offset, y_offset, width, height) # Edits object in place
+</code></pre>
+
+<p>而 MiniMagick 运用了元编程的方法，动态的创建请求的方法（创建的<a href="https://github.com/minimagick/minimagick/blob/c12decb8bf45383a3b1ea602c320ff79f49d2b79/lib/mini_magick.rb#L456">规则</a>）。方法直接访问 <a href="http://www.imagemagick.org/www/mogrify.html">mogrify</a>，并不会返回图片本身对象：</p>
+
+<pre><code>minimagick_image.crop('100x200') # Translates to `mogrify -crop 100x200 image.ext`
+minimagick_image.polaroid('12')  # Executes `mogrify -polaroid 12 image.ext`
+</code></pre>
+
+<p>所以 MiniMagick 中没有 Ruby 语法式的 crop! 方法。</p>
+
+<h3>MiniMagick</h3>
+
+<h4>crop</h4>
+
+<p>要裁剪图片，不得不谈到 crop 方法。使用的方法</p>
+
+<pre><code># 'w' means width 宽
+# 'h' means height 高
+# 'x' means x-offset x轴偏移量
+# 'y' means y-offset y轴偏移量
+image.crop("wxh+x+y")
+</code></pre>
+
+<h4>resize</h4>
+
+<p>参照 <a href="http://www.imagemagick.org/Usage/resize/#noaspect">imagemagick</a></p>
+
+<p>在 MiniMagick 使用中，前面四种方法对应有</p>
+
+<pre><code>resize("64x64!") # 固定大小，64x64
+resize("64x64&gt;") # 使大图像变小，小的不变；调整后，宽和高都不能大于64
+resize("64x64&lt;") # 使小图像变大，大的不变；调整后，宽和高都不小于64
+resize("64x64^") # 使最小的宽或高变为64，另外一个按比例放大或者缩小
+</code></pre>
+
+<p>这四种方法对照链接中的图片，理解会更加容易些。</p>
+
+<p>在　process 中不能直接使用　resize 方法：</p>
+
+<pre><code>process resize: "300x300^" # 这会找不到resize方法
+</code></pre>
+
+<p>有一场景：在页面中，将上传的图片以300x300显示来预览，即缩放后的图片最大的边变成300。并且，进行特定格式的截图，如　100x100，代码有：</p>
+
+<pre><code>version :thumb do 
+  process :lazy_resize_300
+  process :cropper
+  process :force_resize_100x100!
+end
+
+def lazy_resize_300
+  manipulate! do |img| 
+    img.resize "300x300^" if img[:width].to_i &lt; 300 &amp;&amp; img[:height].to_i &lt; 300
+    img.resize "300x300&gt;"
+    img
+  end
+end
+
+def force_resize_100x100!
+  manipulate! do |img| 
+    img.resize "100x100!"
+    img
+  end
+end
+
+def cropper
+  manipulate! do |img|      
+    x = model.crop_x
+    y = model.crop_y
+    w = model.crop_w
+    h = model.crop_h
+    size = w &lt;&lt; 'x' &lt;&lt; h
+    offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
+    img.crop("#{size}#{offset}") # Doesn't return an image...
+    img # ...so you'll neet to call it yourself
+  end 
+end
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

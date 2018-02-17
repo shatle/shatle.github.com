@@ -1,0 +1,671 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ES6 In Depth: Using ES6 today with Babel and Broccoli - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ES6 in Depth: Using ES6 Today With Babel and Broccoli babel, broccoli, es6, 深入es6 ES6 In Depth: Using ES6 today with Babel and Broccoli ES6已经存在了， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ES6 in Depth: Using ES6 Today With Babel and Broccoli</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/babel/'>babel</a>, <a class='category' href='/blog/categories/broccoli/'>broccoli</a>, <a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-babel-and-broccoli/">ES6 In Depth: Using ES6 today with Babel and Broccoli</a></p></blockquote>
+
+<p>ES6已经存在了，还有些人已经开始谈论 ES7了。新的标准中有哪些特性会被保留，又有哪些闪亮的特性提供？作为一位网络开发人员，我们会对怎么使用它产生疑问。不仅一次，在之前的 <a href="http://shatle.github.io/blog/categories/shen-ru-es6/">深入ES6系列</a>  中，我们一直在鼓励你们开始使用 ES6 来编码，通过用些有意思的工具来实现，我们之前已经有提到这方法：</p>
+
+<blockquote><p>If you’d like to use this new syntax on the Web, you can use <a href="https://babeljs.io/">Babel</a> or <a href="https://github.com/google/traceur-compiler">Google’s Traceur</a> to translate your ES6 code to web-friendly ES5.</p></blockquote>
+
+<p>今天，我们将一步步地向你展示它是怎么做的。之前提到的工具都称为是 <em>transpilers(transcompiler暂译为 转换编译器)</em>。转换编译器是为人熟知的 资源到资源的编译器，这编译器在不同的编程语言之间进行抽象层面中的转换。转换编译器可以让我们编写ES6的代码，同时也保证代码能够在每个浏览器中运行。</p>
+
+<h4>转换编译器是我们的救赎</h4>
+
+<p>转换编译器十分易用，你可以按以下描述进行，只要两步：</p>
+
+<ol>
+<li>我们用ES6语法编写代码</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="nx">q</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+</span><span class='line'><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">q</span><span class="p">}</span> <span class="nx">bottles</span> <span class="nx">of</span> <span class="nx">beer</span> <span class="nx">on</span> <span class="nx">the</span> <span class="nx">wall</span><span class="p">,</span> <span class="nx">$</span><span class="p">{</span><span class="nx">q</span><span class="p">}</span> <span class="nx">bottles</span> <span class="nx">of</span> <span class="nx">beer</span><span class="p">.</span><span class="err">`</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>我们使用上面的代码作为转换编译器的输入，它会处理这代码，并产出下面的代码：</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">q</span> <span class="o">+</span> <span class="s2">&quot; bottles of beer on the wall, &quot;</span> <span class="o">+</span> <span class="nx">q</span> <span class="o">+</span> <span class="s2">&quot; bottles of beer.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们知道这是旧JS的写法，它能运行于任意的浏览器。</p>
+
+<p>转换编译器内部是怎么从输入到产生，这是是复杂的过程，也超出了这文章的范围。让我们就像开车，而不要去管其所有的内部机械引擎。今天，我们把转换编译器看作是一个黑盒子，来处理我们的代码。</p>
+
+<h4>Babel的作用</h4>
+
+<p>在项目中使用Bable有不几种不同的方法，首先是命令行工具，你可以通过下面的命令来实现：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">babel</span> <span class="nx">script</span><span class="p">.</span><span class="nx">js</span> <span class="o">--</span><span class="nx">out</span><span class="o">-</span><span class="nx">file</span> <span class="nx">script</span><span class="o">-</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在浏览器中预置Babel的版本也是可用的，你可以将Babel作为常规的js库文件，然后你可以将ES6的代码中的script标签中的类型修改为&#8221;text/babel&#8221;。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">\</span><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;node_modules/babel-core/browser.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="err">\</span><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/babel&quot;</span><span class="o">&gt;</span>
+</span><span class='line'><span class="c1">// Your ES6 code</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，这方法不能扩展：你的代码增长时，你会将代码分离成多个文件和目录，这方法是不允许的。这时，你需要一个构建工具，通过管道式来整合Babel。</p>
+
+<p>在下面的部分，我们将Babel整合到一个构建工具中，<a href="http://broccolijs.com/">Broccoli.js</a>，接着我们将通过几个例子来编写并执行我们的ES6代码。当你运行出现错误时，你可以在这里回头查看完整的资源代码：<a href="https://github.com/givanse/broccoli-babel-examples">broccoli-babel-examples</a>。在这资源库中，你将找到三个例子项目：</p>
+
+<ol>
+<li>es6-fruits</li>
+<li>es6-website</li>
+<li>es6-modules</li>
+</ol>
+
+
+<p>每个会建立在之前的例子之上(没发现)。我们开始会代码最小化，并且会是个一般的解决方案，它可以胜任于为个伟大的项目打关阵。在这文章中，我们将详细地讨论前两个例子。在我们做完之后，你自己可以去阅读、去理解第三个例子中的代码。</p>
+
+<p>如果你认为，你可以等待浏览器支持这些特性，你将会被甩到后面。完全的浏览器支持，如果这会实现，那它将是个漫长的过程。转换编译器已经在这里，新的ECMAScript标准也将计划在年内发布。所以 ，我们将继续、经常地看到新的标准发布出来，而这会先于统一的浏览器平台。跳起来吧，利用这些新的ES6特性吧。</p>
+
+<h4>我们的第一个Broccoli 和 Babel项目</h4>
+
+<p>Broccoli是个被设计为尽量快的速度来构建项目的工具。你可以压缩和最小化文件，通过这些<a href="https://www.npmjs.com/browse/keyword/broccoli-plugin">插件</a>  操作的使用，还有其它很多其它的功能。它帮助我们负担了一大堆的事情，包括处理文件、目录，还有当我们每次修改项目时需要执行的命令。可以把它当成为：</p>
+
+<blockquote><p>在一定范围上，它类似 Rails 的资源文件的管理，只是它运行于Node，也没有纯粹的后端。</p></blockquote>
+
+<h5>开始项目</h5>
+
+<p><strong>Node</strong></p>
+
+<p>正如你猜测一样，你将不得不<a href="https://nodejs.org/">安装 Node</a> 0.11 或者更高版本。</p>
+
+<p>如果你是在unix系统，避免使用包管理工具，如apt, yum。这样可以避免在安装过程中使用root权限。最好的方法是，从刚才提供的链接地址中，使用你当前的用户手动下载二进制文件。你可以在<a href="http://givan.se/do-not-sudo-npm/">这里</a> 看到为什么不建议使用 root 权限。你也可以在<a href="http://givan.se/do-not-sudo-npm/#install-npm-properly">这里</a> 选择其它的安装方式。</p>
+
+<p><strong>Broccoli</strong></p>
+
+<p>我们首先将建立我们的Broccoli的项目：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir es6-fruits
+</span><span class='line'><span class="nb">cd </span>es6-fruits
+</span><span class='line'>npm init
+</span><span class='line'><span class="c"># Create an empty file called Brocfile.js</span>
+</span><span class='line'>touch Brocfile.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在，我们安装 broccoli 和 broccoli-cli</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># the broccoli library</span>
+</span><span class='line'>npm install --save-dev broccoli
+</span><span class='line'><span class="c"># command line tool</span>
+</span><span class='line'>npm install -g broccoli-cli
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>编写些ES6代码</h5>
+
+<p>我们创建 src 目录，接着在里面编辑文件 fruits.js：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir src
+</span><span class='line'>vim src/fruits.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在我们的新文件中，我们使用 ES6 的语法编写些小的脚本：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">let</span> <span class="nx">fruites</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>  <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;strawberry&#39;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">101</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;grapefruit&#39;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="nx">id</span><span class="p">;</span><span class="mi">102</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;plum&#39;</span><span class="p">}</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">fruit</span> <span class="nx">fo</span> <span class="nx">fruits</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="err">`</span><span class="nx">ID</span><span class="o">:</span> <span class="nx">$</span><span class="p">{</span><span class="nx">fruit</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="nx">Name</span><span class="o">:</span> <span class="nx">$</span><span class="p">{</span><span class="nx">fruit</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="err">`</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">lgo</span><span class="p">(</span><span class="err">`</span><span class="nx">List</span> <span class="nx">total</span><span class="o">:</span> <span class="nx">$</span><span class="p">{</span><span class="nx">fruits</span><span class="p">.</span><span class="nx">length</span><span class="p">}</span><span class="err">`</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的代码使用到了 ES6 的三个特性：</p>
+
+<ol>
+<li><code>let</code>，用于本作用域内的声明(在之前的文章中已经有讨论过)</li>
+<li>for-of 循环</li>
+<li>模板字符串</li>
+</ol>
+
+
+<p>保存文件，并试着执行它。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>node src/fruits.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>它还不能运行，但我们希望它可以在Node和任意的浏览器中都能够执行。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>     <span class="o">^^^^^</span>
+</span><span class='line'><span class="nx">SyntaxError</span><span class="o">:</span> <span class="nx">Unexpected</span> <span class="nx">identifier</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>到转换代码的时间了</h5>
+
+<p>现在，我们将使用 Broccoli 来加载我们的代码，并通过Babel来处理。我们将编辑文件 Brocfile.js 并添加以下的代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// import the babel plugin</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">babel</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;broccoli-babel-transpiler&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// grab the source and transpile it in 1 step</span>
+</span><span class='line'><span class="nx">fruits</span> <span class="o">=</span> <span class="nx">babel</span><span class="p">(</span><span class="nx">src</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// src/*.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="kr">export</span> <span class="o">=</span> <span class="nx">fruits</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意到，我们加载了 <code>broccoli-babel-transpiler</code>，这是个 Broccoli 的插件，它包括了 Babel 的库，所以我们必须安装它：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>npm install --save-dev broccolli-babel-transpiler
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在我们可以构建我们的项目，并通过下面代码来执行脚本：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>broccoli build dist <span class="c"># compile</span>
+</span><span class='line'>node dist/fruits.js <span class="c"># execute ES5</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个输出会看到：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ID: <span class="m">100</span> Name: strawberry
+</span><span class='line'>ID: <span class="m">101</span> Name: grapefruit
+</span><span class='line'>ID: <span class="m">102</span> Name: plum
+</span><span class='line'>List total: 3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这十分的简单！你可以打开 <code>dist/fruits.js</code>来看看，转换后的代码文件是什么样子。Babel转换编译器的其中一个好的特性就是可产生良好可读性的代码。</p>
+
+<h4>为网站编写ES6代码</h4>
+
+<p>在第二个例子中，我们将提升个等级。首先，退出 es6-fruits 目录，并参照之前的【项目开始】的步骤来创建一个新的目录 <code>es6-website</code>。</p>
+
+<p>在 src 的目录中，我们创建三个文件：</p>
+
+<p><code>src/index.html</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;head&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;title&gt;</span>ES6 Today<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>      <span class="nt">body</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">border</span><span class="o">:</span> <span class="m">2px</span> <span class="k">solid</span> <span class="m">#9a9a9a</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">padding</span><span class="o">:</span> <span class="m">6px</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">font-family</span><span class="o">:</span> <span class="k">monospace</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="nc">.color</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">padding</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">color</span><span class="o">:</span> <span class="m">#fff</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;body&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;h1&gt;</span>ES6 Today<span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;info&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;hr&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;content&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;//code.jquery.com/jquery-2.1.4.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/my-app.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>src/print-info.js</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">printInfo</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#info&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;minimal website example with&#39;</span> <span class="o">+</span>
+</span><span class='line'>                <span class="s1">&#39;Broccoli and Babel&lt;/p&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nx">printInfo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>src/print-colors.js</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// ES6 Generator</span>
+</span><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">hexRange</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">stop</span><span class="p">,</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">stop</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">yield</span> <span class="nx">i</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">printColors</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">content$</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#content&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// contrived example</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span> <span class="kd">var</span> <span class="nx">hex</span> <span class="nx">of</span> <span class="nx">hexRange</span><span class="p">(</span><span class="mi">900</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">newDiv</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div&gt;&#39;</span><span class="p">)</span>
+</span><span class='line'>          <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">)</span>
+</span><span class='line'>          <span class="p">.</span><span class="nx">css</span><span class="p">({</span> <span class="s1">&#39;background-color&#39;</span><span class="o">:</span> <span class="err">`#</span><span class="nx">$</span><span class="p">{</span><span class="nx">hex</span><span class="p">}</span><span class="err">`</span> <span class="p">})</span>
+</span><span class='line'>          <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="err">`</span><span class="nx">hex</span> <span class="nx">code</span><span class="o">:</span> <span class="err">#</span><span class="nx">$</span><span class="p">{</span><span class="nx">hex</span><span class="p">}</span><span class="err">`</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">content$</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">newDiv</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nx">printColors</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你应该注意到这一点：<code>function* hexRange</code>。是的，这是 ES6 的生成器。这一个特性并没有在所有的浏览器得到支持。为了能够使用它(生成器)，我们需要个工具。Babel 可以提供，我们也很快地使用到它。</p>
+
+<p>下一步是合并所有的JS文件，并在网站中使用它。这最难的部分是编写我们的Brocfile 文件。这时，我们安装四个插件：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>npm install --save-dev broccoli-babel-transpiler
+</span><span class='line'>npm install --save-dev broccoli-funnel
+</span><span class='line'>npm install --save-dev broccoli-concat
+</span><span class='line'>npm install --save-dev broccoli-merge-trees
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后，使用它们 ：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// Babel transpiler</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">babel</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;broccoli-babel-transpiler&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// filter trees (subsets of files)</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">funnel</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;broccoli-funnel&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// concatenate trees</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">concat</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;broccoli-concat&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// merge trees</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">mergeTrees</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;broccoli-merge-trees&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Transpile the source files</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">appJs</span> <span class="o">=</span> <span class="nx">babel</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Grab the polyfill file provided by the Babel library</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">babelPath</span> <span class="o">=</span> <span class="nx">require</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;broccoli-babel-transpiler&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">babelPath</span> <span class="o">=</span> <span class="nx">babelPath</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\/index.js$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">babelPath</span> <span class="o">+=</span> <span class="s1">&#39;/node_modules/babel-core&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">browserPolyfill</span> <span class="o">=</span> <span class="nx">funnel</span><span class="p">(</span><span class="nx">babelPath</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">files</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;browser-polyfill.js&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Add the Babel polyfill to the tree of transpiled files</span>
+</span><span class='line'><span class="nx">appJs</span> <span class="o">=</span> <span class="nx">mergeTrees</span><span class="p">([</span><span class="nx">browserPolyfill</span><span class="p">,</span> <span class="nx">appJs</span><span class="p">]);</span>
+</span><span class='line'><span class="c1">// Concatenate all the JS files into a single file</span>
+</span><span class='line'><span class="nx">appJs</span> <span class="o">=</span> <span class="nx">concat</span><span class="p">(</span><span class="nx">appJs</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// we specify a concatenation order</span>
+</span><span class='line'>  <span class="nx">inputFiles</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;browser-polyfill.js&#39;</span><span class="p">,</span> <span class="s1">&#39;**/*.js&#39;</span><span class="p">],</span>
+</span><span class='line'>  <span class="nx">outputFile</span><span class="o">:</span> <span class="s1">&#39;/js/my-app.js&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Grab the index file</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">funnel</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">files</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;index.html&#39;</span><span class="p">]});</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Grab all our trees and</span>
+</span><span class='line'><span class="c1">// export them as a single and final tree</span>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">mergeTrees</span><span class="p">([</span><span class="nx">index</span><span class="p">,</span> <span class="nx">appJs</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>是时候构建并执行我们的代码了：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>broccoli build dist
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里，你应该在dist目录中看到如下的结构：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$&gt;</span> tree dist/
+</span><span class='line'>dist/
+</span><span class='line'><span class="p">|</span>--index.html
+</span><span class='line'><span class="p">|</span>--js
+</span><span class='line'><span class="p">|</span>--<span class="p">|</span>-- my-app.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是个静态的网站，你可以部署到任意的服务器中，检查这代码是可行的。例如，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>dist/
+</span><span class='line'>python -m SimpleHTTPServer
+</span><span class='line'><span class="c"># visit http://localhost:8000/</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以看到：</p>
+
+<p><img src="https://raw.githubusercontent.com/givanse/broccoli-babel-examples/master/es6-website/screenshot.png" alt="es6 today" /></p>
+
+<h4>更多乐趣在 Babel 和 Broccoli 中</h4>
+
+<p>上面的第二个例子提供我们一方法来怎么使用Babel，从而完成项目。它应该可以让你理解一些时间了，如果你通过Babel、Broccoli更多地使用ES6，你可以查看一下这个项目：<a href="https://github.com/jayphelps/broccoli-babel-boilerplate">broccoli-babel-boilerplate</a>。它也是用 Broccoli + Babel 开始的，它至少提高了两个点。这模板例子包括了 模块、引入、和单元测试。</p>
+
+<p>你可以试试这里的配置例子：<a href="https://github.com/givanse/broccoli-babel-examples/tree/master/es6-modules">es6-modules</a>，Brocfile 有很多魔法的地方，其类似与我们上面做的事件。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli/';
+        var disqus_url = 'http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: terminal | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/terminal/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[居然有这命令]]></title>
+    <link href="http://shatle.github.io/blog/2013/10/08/accident-from-tmux/"/>
+    <updated>2013-10-08T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/10/08/accident-from-tmux</id>
+    <content type="html"><![CDATA[<p>刚刚折腾 tmux ，不小心按错键，导致终端的字体变大了。哪个快捷键啊！</p>
+
+<p>网上搜了一下，居然有这命令：</p>
+
+<pre><code>放大快捷键：Ctrl shift + 
+缩小快捷键：Ctrl  -
+</code></pre>
+
+<p>倒！！！</p>
+]]></content>
+  </entry>
+  
+</feed>

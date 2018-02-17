@@ -1,0 +1,623 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ES6 In Depth: Subclassing - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ES6 in Depth: Subclassing es6, subclass, 深入es6 ES6 In Depth: Subclassing 两周之前，我们介绍了ES6中新增加的一个类的系统，它可以用来做面向对象式的创建对象。我们可以展示一下，你可以怎么使用它来编写代码，如下： 1
+2
+3 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2016/03/20/es6-in-depth-subclassing/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ES6 in Depth: Subclassing</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/subclass/'>subclass</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-subclassing/">ES6 In Depth: Subclassing</a></p></blockquote>
+
+<p>两周之前，我们介绍了ES6中新增加的一个类的系统，它可以用来做面向对象式的创建对象。我们可以展示一下，你可以怎么使用它来编写代码，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Circle</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">Circle</span><span class="p">.</span><span class="nx">circlesMade</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">circle</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">){</span>
+</span><span class='line'>    <span class="c1">// Canvas drawing code</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">get</span> <span class="nx">chiclesMade</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">set</span> <span class="nx">circlesMade</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">area</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">radius</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">radius</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">radius</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">radius</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Circle radius must be an integer.&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>很不幸的是，就如一些人指出的，这并没有体现ES6中类的其它作用。就像传统的类系统(如，C++ 或者 Java)，ES6允许继承，也就是一个类可以将另外一个作为基类，然后为自己增加更多的特性进而实现扩展。让我们更为接近这一新特性，查看其操作的可能性。</p>
+
+<p>在我们开始讨论子类化之前，还需要花些时间来复习一下属性的继承和动态的原型链。</p>
+
+<h4>JS的继承</h4>
+
+<p>当我们创建一个对换昌，我们可以为其增加属性，同时它继承于其本身原型对象的属性。JS程序大大应该会很熟悉存在的<code>Object.create</code>这个API，它让我们可以简单地做到这点：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">value</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">method</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">14</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">proto</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span> <span class="c1">//4</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">method</span><span class="p">();</span> <span class="c1">//14</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接着，当我们为<code>obj</code>添加在<code>proto</code>拥有相同名称的属性时，这些<code>obj</code>属性就相当于<code>proto</code>的影子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span> <span class="c1">//5</span>
+</span><span class='line'><span class="nx">proto</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span> <span class="c1">//4</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>子类化的基础</h4>
+
+<p>这时，我们应该知道我们应该怎么通过类来处理对象创建时的原型链。再次重复一下，当我们创建一个类时，我们在类定义的内部为<code>constructor</code>方法创建一个新的函数，它可以处理所有的静态方法。我们也可以为创建好的函数增加一个包含原型属性的对象，它可以处理实例对象的方法。为了创建一个能继承所有静态属性的新类，我们不得不创建一个函数对象来继承基类的函数对象。类似的，对于实例方法，我们不得不为创建一个新的原型链上的函数，并继承于基类的原型类对象。</p>
+
+<p>这描述有点让人迷惑，让我们来看一个例子，它会显示我们是怎么不用新语法来实现继承，接着进行些细小的扩展来让其更美观些。</p>
+
+<p>继续我们之前例子，假设我们有一个类<code>Shape</code>，我们希望其可以子类化：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Shape</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">color</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_color</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">color</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_color</span> <span class="o">=</span> <span class="nx">parseColorAsRGB</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">markChanged</span><span class="p">();</span>  <span class="c1">// repaint the canvas later</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当我们试图编写这样的代码时，对于<code>static</code>的属性我们依然会遇到之前文章同样的问题：没有语法来改变原型链的函数定义。当你可以有一方法类如<code>Object.setPrototypeOf</code>来解决这问题时，这方法比那些直接在原型链上创建函数要显得性能更为低劣。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Circle</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// As above</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Hook up the instance properties</span>
+</span><span class='line'><span class="nb">Object</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Shape</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Hook up the static properties</span>
+</span><span class='line'><span class="nx">Ojbect</span><span class="p">.</span><span class="nx">setPrototypeOf</span><span class="p">(</span><span class="nx">Circle</span><span class="p">,</span> <span class="nx">Shape</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码是十分丑陋的。我们增加了类的语法，可以让我们将对象的所有逻辑都封装在一个地方中，而不是像刚才的包括其它的&#8221;hooking things up(使用勾子方法提升功能)&#8221;的逻辑。Java、Ruby和其它的面向对象的语言中，都有一个方式来声明一个子类化的类，并指出来源于哪个类，所以我们也应该这样。我们使用关键字<code>extends</code>，所以我们可以编写成：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Circle</span> <span class="kr">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// As above</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以在<code>extends</code>的后面添加任意的表达式，只要它是一个合法的<code>prototype</code>的原型构建器，如：</p>
+
+<ul>
+<li>其它类</li>
+<li>由存在的继承框架产生的与类相似的函数</li>
+<li>一个普通的函数</li>
+<li>一个包含一个函数或者类的变量</li>
+<li>一个对象的访问属性(obj[name])</li>
+<li>一个函数调用</li>
+</ul>
+
+
+<p>如何你不想实例继承于<code>Object.prototype</code>，你甚至可以使用 <code>null</code>。</p>
+
+<h4>Super 属性</h4>
+
+<p>所以现在我们可以进行子类化，同时我们可以继承属性，可以通过我们的继承为方法创建影子方法。但是，如果你想避免这些影子方法呢？</p>
+
+<p>想象一下我们希望为我们的<code>Circle</code>编写一个子类，它可以通过某些因素进行缩放。为了做到这点，我们可以编写下面显得不太自然的类：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">ScalableCircle</span> <span class="kr">extends</span> <span class="nx">Circle</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">radius</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">scalingFactor</span> <span class="o">*</span> <span class="kr">super</span><span class="p">.</span><span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">raadius</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;ScalableCircle radius is constants.&quot;</span> <span class="o">+</span>
+</span><span class='line'>                                   <span class="s2">&quot;Set scaling factor instead.&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Code to handle scalingFactor</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意在<code>radius</code>的getter方法中使用了<code>super.radius</code>。这个<code>super</code>的关键字可以让我们忽略自身的属性，而开始从我们的原型链中查找属性，因此也会过滤所有之前我们提到的影子方法。</p>
+
+<p>我们可以在任意方法的函数定义中访问super属性(随便提醒，<code>super[expr]</code>也能工作)。当这些函数从原始对象中脱离出来后，super的方法访问实际上关联的是方法第一次定义的对象。这就意味着将一个方法脱离原有操作并定义到一个本地变量中，并不会改变<code>super</code>的方法访问产生的行为。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">toString</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;MyObject: &quot;</span> <span class="o">+</span> <span class="kr">super</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span> <span class="c1">// MyObject: [object Object]</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">toString</span><span class="p">;</span>
+</span><span class='line'><span class="nx">a</span><span class="p">();</span> <span class="c1">// MyObject: [object Object]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>子类化后的内置操作(基类方法的继承)</h4>
+
+<p>另外，你们可能希望在JS语言内部编写些扩展功能。JS内部的数据结构赋予其巨大的能力，可以利用这些能力来创建新的数据类型，其也是子类化设计中的基础。JS支持你编写一个具有版本的数组。（我知道，相信我，我知道）。版本数组应该可以修改，可能提交修改，回退到之前的提交变化。有一种方式来快速的编写版本数组，就是创建<code>Array</code>的子类。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">VersionedArray</span> <span class="kr">extends</span> <span class="nb">Array</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="p">[[]];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">commit</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Save changes to history</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">slice</span><span class="p">());</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">revert</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>VersionedArray</code>的实例保持有数组中的一些重要属性，它们可以说是<code>Array</code>的实例，方法包括有<code>map</code>，<code>filter</code>和<code>sort</code>。<code>Array.isArray()</code>会将其实例认为是数组，它们还可以自动地更新数组的<code>length</code>属性。再者，返回数组的函数此时会返回一个<code>VersionedArray</code>（如<code>Array.prototype.slice()</code>）！</p>
+
+<h4>类构建器的派生</h4>
+
+<p>你可能已经注意到了上面的例子中的<code>constructor</code>方法有<code>super()</code>。</p>
+
+<p>在传统的类模型中，构建器是用来初始化类实例的内部状态的。每个连续的子类负责初始化状态和相关的具体子类(什么叫连续的子类？晕)。我们希望这些能起作用，所以需要子类可以通过扩展来操作相同的初始化代码。</p>
+
+<p>为了调用基类的构建器，我们可以再次使用<code>super</code>这关键字，它是操作就是个函数。这语法只有在使用<code>extends</code>的类的<code>constructor</code>的方法中是合法的，我们可能重新编写我们形状（Shape）类。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Shape</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_color</span> <span class="o">=</span> <span class="nx">color</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Circle</span> <span class="kr">extends</span> <span class="nx">Shape</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">color</span><span class="p">,</span> <span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">(</span><span class="nx">color</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// As from above</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在JS中，我们通过编写构建器，来操作<code>this</code>对象、安装属性和初始化内部的状态。一般来说，当我们通过<code>new</code>调用构建器时<code>this</code>对象就创建成功了，就像是<code>Object.create()</code>会处理其构建器的<code>prototype</code>的属性。但是，有些内置操作会在不同的内部对象布局上。例如，数组在内存中的位置不同于常规的对象。因为，我们想看到子类的内置操作，我们需要让基类分配到<code>this</code>对象。如果它是内置操作，我们会得到我们想要的对象行为，如果它是普通的构建器，我们会得到期望中的默认的<code>this</code>对象。</p>
+
+<p>可能会得到个奇怪的结论，认为<code>this</code>绑定的是子类的构建器。当我们运行到基类的构建器时，允许其指定<code>this</code>对象，但<strong>我们子类实际上并不会有<code>this</code>的值</strong>。因此，在没有调用基类构建器之前，所有访问子类构建器会导致一个<code>ReferenceError</code>错误。</p>
+
+<p>就如之前的文章，你可以省略掉<code>contructor</code>方法，派生出来的构建器也是可能省略的，它就如你编写：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">constructor</span><span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">super</span><span class="p">(...</span><span class="nx">args</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有时，构建器并不能作用于<code>this</code>对象。相反，它们会通过其它的方式来创建对象，并初始化，接着直接返回此对象。如果是这一情况，那就不用使用<code>super</code>了。所有的构建器都会直接返回一个对象，不依赖于其基类构建器是否调用。</p>
+
+<h4><code>new.target</code></h4>
+
+<p>基类指定<code>this</code>对象时会有其它怪异的效果，那就是有时基类并不知道指定哪类的对象。假设，你正在编写一个对象框架的库，你希望有个基类<code>Collection</code>，某些子类会是数组，某些子类会是映射(Map)。然后，这时你运行<code>Collection</code>构建器，你并不会被告知是创建了哪类对象。</p>
+
+<p>因此我们在进行内置操作时，当我们运行内置的构建器，我们需要知道其原始类的<code>prototype</code>。没有原型，我们是不能创建一个对象，使其有相应的实例方法的。为了解决这<code>Collection</code>的怪异情况，我们需要增加语法来暴露其信息给JS代码。我们已经增加了一个新的<em>元属性(Meta Property)</em> <code>new.target</code>，它关联构建器，可能直接调用<code>new</code>。通过<code>new</code>调用一个函数时，<code>new.target</code>会设置到其调用的函数中。调用<code>super</code>的函数中的<code>new.target</code>会作用<code>new.target</code>的值 。</p>
+
+<p>这很难理解，所以让我用代码来解释我说的意思吧：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">foo</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">bar</span> <span class="kr">extends</span> <span class="nx">foo</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// This is included explicitly for clarity. It is not necessary</span>
+</span><span class='line'>  <span class="c1">// to get these results.</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//foo directly invoked, so new.target is foo</span>
+</span><span class='line'><span class="k">new</span> <span class="nx">foo</span><span class="p">();</span> <span class="c1">// foo</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// 1) bar directly invoked, so new.target is bar</span>
+</span><span class='line'><span class="c1">// 2) bar invokes foo via super(), so new.target is still bar</span>
+</span><span class='line'><span class="k">new</span> <span class="nx">bar</span><span class="p">();</span> <span class="c1">// bar</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们已经解决了上面<code>Collection</code>所描述的问题，因为<code>Collection</code>构建器只检查<code>new.target</code>，就可以知道其类的家族，查看其是否是内置操作。</p>
+
+<p><code>new.target</code>在任何的函数中都是合法的，如果一个方法没有由<code>new</code>调用时，它会被设置了<code>undefined</code>。</p>
+
+<h4>最好的两个世界(多继承)</h4>
+
+<p>希望你已经从这新特性的头脑风暴中生还出来，十分感谢能一直走到现在。现在，让我们花点时间来讨论，这些新特性怎么解决我们的问题。很多人很直率地质疑在JS加入继承这一特性是否好的。你可能会认为继承在创建对象上并不如<a href="https://en.wikipedia.org/wiki/Composition_over_inheritance">组合</a>一般好，或者认为相比于旧式的原型链模型，这精简的新语法会减少其设计上的灵活性。不容质疑的是，混入(mixin)通过扩展的方式来分享代码从而创建对象已经成为惯用手法。同时，它还有个好的原因：它提供了简单方式来将不相关的代码放置到同一个对象中，而不需要理解这两部分不相关代码是否适合在同一继承结构中。</p>
+
+<p>在这主题上有很多不同的激烈信仰，但是我认为这并不值得讨论。首先，对一个语言增加类的特性，并不一定要求开发人员使用。第二，也同等的重要，语言中有类这一特性并不意味着它总是解决继承问题的最好方法！实际上，部分问题使用原型链继承的方式更为合适。到今天为此，类只是为你提供了额外的工具；它并不是唯一的，也不是最为必要的。</p>
+
+<p>如果你想继续使用混入的方式，你可以理解那些由不同事情整合继承出来的类，才能通过混入来实现继承，以保证每件事能正常进行。不幸的是，现在这方式可能会修改继承模型，这显得十分刺耳。所以，JS并不对继承多个类进行实现。不过，它还是有一混合的方式来允许在类框架中使用混入方式的。详细看一下下面的函数，它是基于众所周知的<code>extend</code>混入的。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">mix</span><span class="p">(...</span><span class="nx">mixins</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">class</span> <span class="nx">Mix</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Programatically add all the methods and accessors </span>
+</span><span class='line'>  <span class="c1">// of the mixins to class Mix.</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">mixin</span> <span class="nx">of</span> <span class="nx">mixins</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">Mix</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">Mix</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">mixin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">Mix</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">copyProperties</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="nx">of</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">ownKeys</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s2">&quot;constructor&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span><span class="o">!==</span> <span class="s2">&quot;prototype&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s2">&quot;name&quot;</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">let</span> <span class="nx">desc</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyDescriptor</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+</span><span class='line'>      <span class="nb">Object</span><span class="p">.</span><span class="nx">definProperty</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">desc</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在我们可以使用<code>mix</code>函数还创建一个组合型的超级类，通过变量mixins，我们不需要创建详细的继承关系。细想一下，当你编写一个协作编辑工具时，需要记录编辑的动作，同时需要将其内容序列化。你可以使用<code>mix</code>函数来编写一个<code>DistributedEdit</code>的类。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">DistributedEdit</span> <span class="kr">extends</span> <span class="nx">mix</span><span class="p">(</span><span class="nx">Loggable</span><span class="p">,</span> <span class="nx">Serializable</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">//Event methods</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这对两个世界都很好。通过这例子，可以简单地看到怎么处理使得模型可以混入多个基类：我们可以简单地将基类放到<code>mix</code>函数中，并用类进行扩展继承。</p>
+
+<h4>当前可用性</h4>
+
+<p>好了，我们已经谈到许多有关子类化的内置等所有新功能，但是你是否现在可能使用它呢？</p>
+
+<p>好吧，部分吧。在主要的浏览器商家中，Chrome已经支持我们今天所讨论到大部分的内容。在严格模式中，你可以我们讨论过的所有所有事情，除了<code>Array</code>的子类化。其它内置操作也可以使用，但是<code>Array</code>会出现一些额外的问题，所以可以不奇怪地确定还没有完成。我在firefox实现此功能，并快要接近尾声了（所有除了<code>Array</code>）。可以检查一下 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1141863">bug 1141863</a> 看到更多的信息，但是它会在几周后的日更新版本中出现。</p>
+
+<p>再者，Edge已经支持<code>super</code>，但并不支持子类化的内置操作。Safari并不支持任何函数功能。</p>
+
+<p>转换编译器在部分会有些不利的地方。它们可能创建类，可能使用<code>super</code>，但它们并没有一种方式来子类化内部操作，因为你需要一个引擎来支持一个类的实例能回溯到内置的操作方法(参考<code>Array.prototype.splice</code>)。</p>
+
+<p>好了，这真是长啊。下周，Jason Orendorff 会回来并一起讨论ES6的模块系统。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2016/03/20/es6-in-depth-subclassing/';
+        var disqus_url = 'http://shatle.github.io/blog/2016/03/20/es6-in-depth-subclassing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

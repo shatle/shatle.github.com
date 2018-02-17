@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mongodb | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/mongodb/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[修改mongodb配置]]></title>
+    <link href="http://shatle.github.io/blog/2013/09/07/modify-mongodb-setting/"/>
+    <updated>2013-09-07T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/09/07/modify-mongodb-setting</id>
+    <content type="html"><![CDATA[<p>之前没有注意数据库安全问题，简单进行部署，于是有了安全问题。</p>
+
+<p>从 #ruby-china@rei 的博文中看到了这一问题，由于内容是晚上在手机上看到的，地址忘记是哪了。</p>
+
+<p>通过 10gen 下载安装 mongodb 默认是对所有的ip进行开放:</p>
+
+<blockquote><p>http://docs.mongodb.org/manual/reference/program/mongod/</p>
+
+<p>&#8211;bind_ip <ip address></p>
+
+<p>The IP address that the mongod process will bind to and listen for connections. By default mongod listens for connections all interfaces. You may attach mongod to any interface; however, when attaching mongod to a publicly accessible interface ensure that you have implemented proper authentication and/or firewall restrictions to protect the integrity of your database.</p></blockquote>
+
+<p>如果只是默认对所有ip开放访问的话：</p>
+
+<pre><code class="bash">$ nmap -p27017 hostname
+</code></pre>
+
+<pre><code>Starting Nmap 5.21 ( http://nmap.org ) at 2013-09-07 16:17 CST
+Nmap scan report for hostname
+Host is up (0.026s latency).
+PORT      STATE SERVICE
+27017/tcp open  unknown
+</code></pre>
+
+<p>可以通过 <a href="http://docs.mongodb.org/manual/reference/program/mongo/">mongo</a> 远程访问：</p>
+
+<pre><code>mongo --host hostname
+</code></pre>
+
+<p>这是很可怕的。修改配置文件<code>mongodb.conf</code>，加入下行，只允许本地访问：</p>
+
+<pre><code>bind_ip = 127.0.0.1
+</code></pre>
+
+<p>需要重启 mongodb，通常可以通过：</p>
+
+<pre><code>sudo service mongodb restart
+</code></pre>
+
+<p>但是我的是不行的，我需要：</p>
+
+<pre><code>$ sudo /etc/init.d/mongodb restart
+
+# 或者，指定配置文件
+# $ sudo mongod -f /etc/mongodb.conf
+</code></pre>
+
+<p>此时，</p>
+
+<pre><code>$ nmap -p27017 hostname
+
+Starting Nmap 5.21 ( http://nmap.org ) at 2013-09-07 16:17 CST
+Nmap scan report for hostname
+Host is up (0.026s latency).
+PORT      STATE SERVICE
+27017/tcp closed  unknown
+</code></pre>
+
+<p>其实，可以进行其它安全设置：http://docs.mongodb.org/manual/core/security/</p>
+]]></content>
+  </entry>
+  
+</feed>

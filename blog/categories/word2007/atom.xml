@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: word2007 | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/word2007/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[word2007段前段后设置]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/word2007-duan-qian-duan-hou-she-zhi/"/>
+    <updated>2012-08-17T21:13:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/word2007-duan-qian-duan-hou-she-zhi</id>
+    <content type="html"><![CDATA[<p>微软官网上Paragraph中有：</p>
+
+<blockquote><p>Public property SpaceAfter Returns or sets the amount of spacing (in points) after the specified paragraph or text column.</p>
+
+<p>Public property SpaceAfterAuto Determines if Microsoft Word automatically sets the amount of spacing after the specified paragraphs.</p>
+
+<p>Public property SpaceBefore Returns or sets the spacing (in points) before the specified paragraphs.</p>
+
+<p>Public property SpaceBeforeAuto Determines if Microsoft Word automatically sets the amount of spacing before the specified paragraphs.</p></blockquote>
+
+<p>实际设置时，直接设置SpaceAfter能成功，但设置SpaceBefore却不成功。搜了一下，没有相关的问题。</p>
+
+<p>仔细看看了API，Paragraph有属性Format， 即ParagraphFormat接口。其中有属性：</p>
+
+<blockquote><p>Public property SpaceAfter Returns or sets the amount of spacing (in points) after the specified paragraph. (Inherited from _ParagraphFormat.)</p>
+
+<p>Public property SpaceAfterAuto True if Microsoft Word automatically sets the amount of spacing after the specified paragraphs. (Inherited from _ParagraphFormat.)</p>
+
+<p>Public property SpaceBefore Returns or sets the spacing (in points) before the specified paragraphs. (Inherited from _ParagraphFormat.)</p>
+
+<p>Public property SpaceBeforeAuto True if Microsoft Word automatically sets the amount of spacing before the specified paragraphs. (Inherited from _ParagraphFormat.)</p></blockquote>
+
+<p>描述基本是一样的。</p>
+
+<p>运行代码：</p>
+
+<pre><code>paraInstance.Format.SpaceBefore = 24;
+</code></pre>
+
+<p>但运行此代码就能设置成功。 汗死 ms!!</p>
+]]></content>
+  </entry>
+  
+</feed>

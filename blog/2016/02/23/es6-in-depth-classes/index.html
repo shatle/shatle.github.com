@@ -1,0 +1,481 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ES6 In Depth: Classes - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ES6 in Depth: Classes class, es6, 深入es6 ES6 In Depth: Classes 今天，我们可以从这一系列的之前复杂的文章中得到些喘息的机会。现在没有新的、没见过的 生成器、代理，这些会影响JS内部运算逻辑的hook， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2016/02/23/es6-in-depth-classes/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ES6 in Depth: Classes</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/class/'>class</a>, <a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/07/es6-in-depth-classes/">ES6 In Depth: Classes</a></p></blockquote>
+
+<p>今天，我们可以从这一系列的之前复杂的文章中得到些喘息的机会。现在没有新的、没见过的 生成器、代理，这些会影响JS内部运算逻辑的hook，没有新的数据结构可去除用户自己的需求解决方案。相反，我们来讨论些语法性的、惯用的、待解释清楚的旧问题：JS中的对象构建器。</p>
+
+<h4>问题</h4>
+
+<p>我们想要创建一个最为精典的面向对象原则的例子：圆形类。想象一下，我们为一个画布的库编写一个圆形类。在所有事情中，我们需要知道怎么做到以下项：</p>
+
+<ul>
+<li>在一画布中画一个圆形</li>
+<li>记录画布中圆形的所有数量</li>
+<li>记录每一圆形的半径，并确定如何读写这值</li>
+<li>计算圆形的面积</li>
+</ul>
+
+
+<p>这用JS的语言可以这么说：我们首先应该创建一个函数构建器，然后为这个函数增加必要的属性，接着使用一个对象来替换构建器中的<code>prototype</code>的属性。当我们开始创建一个实例对象时，这个<code>prototype</code>对象会包含所有属性。即使一个简单的例子，当你输入所有数据时，多数这样的模板也就完成了：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">Circle</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">Circle</span><span class="p">.</span><span class="nx">circlesMade</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Circle</span><span class="p">.</span><span class="nx">draw</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">circle</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Canvas drawing code */</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">Circle</span><span class="p">,</span> <span class="s2">&quot;circlesMade&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">area</span><span class="o">:</span> <span class="kd">function</span> <span class="nx">area</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">radius</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">radius</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Circle radius must be an integer&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码不仅仅很繁琐，它还离理想的有些远。它要求对函数的工作方式拥有很好的理解，这很重要，同时，了解各种将属性设置到创建的实例对象中。如果这方法看起来很复杂，不要担心。这整篇文章的目的就是展示一种很简单的方式来做到这些事情。</p>
+
+<h4>定义方法的语法</h4>
+
+<p>在第一次尝试新方法之前，ES6提供了一种新的语法来为一个对象增加特殊的属性。对于上面的例子，它可以很容易地为<code>Circle.prototype</code>添加<code>area</code>的方法，它会让 <code>radius</code>的setter/getter方法更为有效些。作为JS一个面向对象的新方法，人们很乐意去使用一个设计更为精简的对象访问方式。我们需要一个新的方式来为一个对象增加方法，比如添加时如<code>obj.prop = method</code>，而不需要<code>Object.defineProperty</code>这么笨重。人们希望可以让下列的事情更为简单：</p>
+
+<ol>
+<li>为一个对象增加普通的函数属性。</li>
+<li>为一个对象增加生成器函数属性。</li>
+<li>为一个对象增加普通的访问函数属性。</li>
+<li>为一个已经完成的对象，通过<code>[]</code>来进行以上三种的操作。我们将这称为 <em>计算属性名称</em>(<em>Computed property names</em>)。</li>
+</ol>
+
+
+<p>有些事情在之前不能操作的。例如，没有一种方式来为<code>obj.prop</code>定义setter和getter方法。因此，新的语法是必定要添加的。你现在可以类似编写如下代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// Methods are now added without a function keyword, using the name of the</span>
+</span><span class='line'>  <span class="c1">// property as the name of the function.</span>
+</span><span class='line'>  <span class="nx">method</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// To make a method that&#39;s a generator instead, just add a &#39;*&#39;, as normal.</span>
+</span><span class='line'>  <span class="o">*</span><span class="nx">genMethod</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Accessors can now go inline, with the help of |get| and |set|. You can</span>
+</span><span class='line'>  <span class="c1">// just define the functions inline. No generators, though.</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Note that a getter installed this way must have no arguments</span>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">propName</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Note that a setter installed this way must have exactly one argument</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">propName</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// To handle case (4) above, [] syntax is now allowed anywhere a name would</span>
+</span><span class='line'>  <span class="c1">// have gone! This can use symbols, call functions, concatenate strings, or</span>
+</span><span class='line'>  <span class="c1">// any other expression that evaluates to a property id. Though I&#39;ve shown</span>
+</span><span class='line'>  <span class="c1">// it here as a method, this syntax also works for accessors or generators.</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">functionThatReturnsPropertyName</span><span class="p">()]</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>利用新的语法，我们可以编写如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">Circle</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">Circle</span><span class="p">.</span><span class="nx">circlesMade</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Circle</span><span class="p">.</span><span class="nx">draw</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">circle</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* Canvas drawing code */</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">Circle</span><span class="p">,</span> <span class="s2">&quot;circlesMade&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">area</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">radius</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">radius</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">radius</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">radius</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Circle radius must be an integer.&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显然，这代码与之前的并不完全一样。这里的对象方法定义是可以配置和可列举的，但是在开始的代码中并不没有配置和列举。在实践中，这是很少会引起注意，我为了简洁会减少之前的其中列举和配置。</p>
+
+<p>接着，这代码是不是更好些了，对不对？不幸的是，即使有新的方法定义语法，我们还是没有很多方式来定义<code>Circle</code>，就如我们必须定义函数。没有方法当你在定义函数时，又可以访问其属性。</p>
+
+<h4>类定义语法</h4>
+
+<p>尽管上面代码比较开始的代码已有改进了，但是它依然未达到人们想要的结果，人们希望在JS中有一个简洁的面向对象的解决方案。其它编程语言中有一结构来处理面向对象设计，他们称这结构为类(<em>class</em>)。</p>
+
+<p>这很合理。接着，让我们开始添加类。</p>
+
+<p>我们希望有一个系统，它允许我们增加一个构造函数的方法，其类似于为<code>.prototype</code>增加方法一般，以至于方法能出现在这个类的所有实例中。后来，我们拥有了喜爱的定义新方法的语法，我们肯定会使用它。然后，我们只需要有一种方式来区分哪个是作用类中所有实例的，哪个是作用特定的实例。在C++或Java，其关键字是<code>static</code>，这看起来也很好，我们使用它。</p>
+
+<p>现在，需要在众多的方法中选择一个来作为构造函数，这很有用。在C++或Java中，它是和类史一样的，并且不会返回类型。因此，JS的构造函数也不会返回类型，同时我们需要一个<code>.constructor</code>的属性，为了向后兼容，让我们把这方法叫做<code>constructor</code>。</p>
+
+<p>把所有的东西结合一起，我们可能重新编写我们的Circle类，结果会是如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">Circle</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">Circle</span><span class="p">.</span><span class="nx">circlesMade</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">draw</span><span class="p">(</span><span class="nx">circle</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Canvas drawing code</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">get</span> <span class="nx">circlesMade</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kr">static</span> <span class="nx">set</span> <span class="nx">circlesMade</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">thsi</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">area</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">radius</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">get</span> <span class="nx">radius</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="nx">set</span> <span class="nx">radius</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">radius</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Circle radius must be an integer.&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>哇！我们不仅可以将与<code>Circle</code>有关的所有方法整合一起，而且所有事情都看起来很好很简洁。这肯定要优于我们开始做的代码。</p>
+
+<p>尽管如此，你可能还存在部分的边界上问题。我在这里预测并定位一些问题：</p>
+
+<ul>
+<li><p><strong>分号怎么样？</strong> &#8211; 有个趋向是“使JS类更像传统中的类”，所以我们决定用更传统的分隔符(分号)。不喜欢它？它是可选的，分号不是必须的。</p></li>
+<li><p><strong>如果我不想操作构造函数，但又想为已经创建好的对象增加方法，怎么办？</strong> &#8211; 这也可以。这<code>constructor</code>方法也是可选的。如果你没有定义构造函数，系统会默认如你编写<code>constructor() {}</code>。</p></li>
+<li><p><strong>构造函数可以是生成器吗？</strong> &#8211; 不！如果添加的构造函数不是普通函数时会出现<code>TypeError</code>的错误，这里生成器和访问器是一样的。</p></li>
+<li><p><strong>我能不能定义<code>constructor</code>为一个计算属性名称?</strong> &#8211; 很不幸，不行。那样真的很难被解释到，所以我们不能这样子。如果你为一个计算属性定义一方法，并命名为<code>constructor</code>，你也将会得到一个名为<code>constructor</code>的方法，那么你也不会得到一个类的构造函数了(想要操作方法，又想成为构造函数，那是不可能的)。</p></li>
+<li><p><strong>当我修改<code>Circle</code>的值时，会不会错误地生成一个新的Circle?</strong> &#8211; 不！就像函数的表达式一样，类会为给定的名称进行内部的绑定，这绑定不能为外部操作所改变，所以无论你怎么设置Circle的内部作用域中的值，<code>Circle.circlesMade++</code>的值都会是期望中的一样。</p></li>
+<li><p><strong>好吧，我可以将一个对象直接作为函数的参数，但新类语法并不能这样子</strong> &#8211; 很幸运，ES6有这类的表达式。它可以命名也可以不命名，表现的效果与上面描述的是一样的，除了ES6不会在声明的作用域创建变量。</p></li>
+<li><p><strong>那它有上面提到可列举等恶作功能吗？</strong> &#8211; 人们都想做到这点，所以你可以给对象安装方法，但列举对象的属性时，你只可以获取给这对象增加的属性，这样也更为合理些。因此，类中的安装方法是配置型的，但并不可列举。</p></li>
+<li><p><strong>等，哪有实例变量？那static常量？</strong> &#8211; 你打到我了，你提到的这些并没在刚才的ES6的类定义中。但是，有好消息。它些已经和其它一些特性提到规格进程中了。我是十分支持使用<code>static</code>和<code>const</code>在类语法中定义值的。实际上，它已经提到会议上了。我认为，我们可以在将来看到更多有关于此的讨论。</p></li>
+<li><p><strong>好的，很好！我能使用它吗？</strong> &#8211; 并不能真正使用，但有些可用的工具(特别是 Babel )，所以今天你可以通过他们来使用类语法。很不幸运，在是所有主流的浏览器中运行还需要些时间。我已经把今天讨论到的都在<a href="https://nightly.mozilla.org/">Nightly version of Firefox</a>中实现了，同时它也在Edge和Chrome实例了，但默认是不打开的。很不幸，现在看来在Safari中并没有实现。</p></li>
+<li><p><strong>Java 和 C++ 有子类和super关键字，但这里并没有提到，那JS呢</strong> &#8211; 它可以。但是，这值得另外一文章来进行讨论。注意查看我们之后的关于子类的更新文章，同时我们还将讨论更多的JS类的功能。</p></li>
+</ul>
+
+
+<p>如果没有 Jason Orendorff 和 Jeff Walden 负责的代码检查和指导，我将不会可能实现类。</p>
+
+<p>下周，Jason Orendorff 会在一周的休息后回来，将讨论<code>let</code>和<code>const</code>主题。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2016/02/23/es6-in-depth-classes/';
+        var disqus_url = 'http://shatle.github.io/blog/2016/02/23/es6-in-depth-classes/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

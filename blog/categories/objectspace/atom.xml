@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: objectspace | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/objectspace/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ruby ObjectSpace]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/ruby-objectspace/"/>
+    <updated>2012-08-17T21:15:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/ruby-objectspace</id>
+    <content type="html"><![CDATA[<blockquote><p>Programming Ruby</p></blockquote>
+
+<p>RUBY支持获取即时对象，此功能可以通过<code>ObjectSpace</code>来实现。</p>
+
+<p>例如，循环列出类型是Float的所有对象。</p>
+
+<pre><code>b = 65.3
+ObjectSpace.each_object(Float){|x| p x}
+</code></pre>
+
+<p>结果</p>
+
+<pre><code>2.718281828459045
+3.141592653589793
+NaN
+Infinity
+2.220446049250313e-16
+1.7976931348623157e+308
+2.2250738585072014e-308
+65.3
+=&gt; 8
+</code></pre>
+
+<p>前面7个是由于Float类引入了其他模块，而模块定义了一些常量，就是这些了。第8个是本人赋值的变量。</p>
+
+<p>NaN是不合法值，如：</p>
+
+<pre><code>a = 0.0/0.0
+=&gt; NaN
+</code></pre>
+
+<p>但是，ObjectSpace获取即时对象，对Fixnum, Symbol, true, false, nil来说是不可行的。如：</p>
+
+<pre><code>c=23
+ObjectSpace.each_object(Fixnum){|x| p x}
+</code></pre>
+
+<p>结果为</p>
+
+<pre><code>=&gt; 0
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

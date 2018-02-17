@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: unpack | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/unpack/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Gemfile's gem reference with Rails app local]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/20/gemfiles-gem-reference-with-rails-app-local/"/>
+    <updated>2012-08-20T15:51:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/20/gemfiles-gem-reference-with-rails-app-local</id>
+    <content type="html"><![CDATA[<h2>Gemfile引用Rails项目中的gem</h2>
+
+<hr />
+
+<h3>需求</h3>
+
+<p>之前写了个gem，但是不好意思让其他人在他们的机器上安装吧，因为是github上的私密的项目啊。需要下载下来，安装，虽然也不难。唉，废话。</p>
+
+<h3>解决</h3>
+
+<p>将我本地的已经安装好的gem，放到整个rails环境中吧。</p>
+
+<p>解压本地gem到rails项目目录。</p>
+
+<pre><code>gem unpack my-gem --target vendor/gems
+</code></pre>
+
+<p>往Gemfile里添加</p>
+
+<pre><code>gem 'my-gem', '0.0.1', :path =&gt; "vendor/gems/my-gem-0.0.1"
+</code></pre>
+
+<p>然后, <code>bundle install</code>确认是否成功。</p>
+
+<p>如果，在Gemfile上的版本号不写，或者写<code>&gt;=0.0.1</code>会出现错误。小白我不懂。
+解压到本地的gem没有specification文件，不能准确识别版本？可能吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

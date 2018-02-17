@@ -1,0 +1,650 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ES6 In Depth: Proxies - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ES6 in Depth: Proxies es6, proxy, 深入es6 ES6 In Depth: Proxies 这是我们今天要做的事情： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+var obj = new Proxy({}, { get: function (target, key &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2016/02/18/es6-in-depth-proxies/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ES6 in Depth: Proxies</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/proxy/'>proxy</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/07/es6-in-depth-proxies-and-reflect/">ES6 In Depth: Proxies</a></p></blockquote>
+
+<p>这是我们今天要做的事情：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Proxy</span><span class="p">({},</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">`</span><span class="nx">getting</span> <span class="nx">$</span><span class="p">{</span><span class="nx">key</span><span class="p">}</span><span class="o">!</span><span class="err">`</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">`</span><span class="nx">setting</span> <span class="nx">$</span><span class="p">{</span><span class="nx">key</span><span class="p">}</span><span class="o">!</span><span class="err">`</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于这第一个例子可能有些复杂，我将会下面进行各部分的说明。现在，先来检查一下我们创建的对象：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">setting</span> <span class="nx">count</span><span class="o">!</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="o">++</span><span class="nx">obj</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">getting</span> <span class="nx">count</span><span class="o">!</span>
+</span><span class='line'>    <span class="nx">setting</span> <span class="nx">count</span><span class="o">!</span>
+</span><span class='line'>    <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里发生了什么？我们拦截了这个对象的属性访问，重载了&#8221;.&#8221;操作符。</p>
+
+<h4>它是怎么工作的？</h4>
+
+<p>计算机领域中最好技巧为<em>虚拟化</em>，这是用非常普通的技术来做不可思议的事情。这里说明是怎么做的。</p>
+
+<ol>
+<li>使用任意图片</li>
+</ol>
+
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/power-plant.jpg" alt="img1" /></p>
+
+<ol>
+<li>在图片中的某部分周围画个轮廓</li>
+</ol>
+
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/power-plant-with-outline.png" alt="img2" /></p>
+
+<ol>
+<li>现在，使用意外的东西，来替换所有轮廓里面或者外面的部分。这里只有一个规则，那就是向后兼容的规则。你的替换操作需要做到的是，之前在其它地方使用的人不会感觉到它的改变。</li>
+</ol>
+
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/wind-farm.png" alt="img3" /></p>
+
+<p>通过计算机科学的电影如楚门的世界(The Truman Show)和黑客帝国(Teh Matrix)，你可能非常熟悉这类型的hack。电影中，一个人在轮廓的内部，但是剩余的其它世界都已经被近乎合理的替代了。</p>
+
+<p>为了满足向后兼容的规则，你的替代方式需要巧妙的设计，但真正的关键点在于画好轮廓。</p>
+
+<p>对象轮廓，我理解为一个API的边界，一个接口。接口定义了两部分代码是怎么交互的，每部分期望其它提供什么信息。所以，如果在系统中存在一个接口，也就是说这个轮廓已经画好给你了。你知道，你可以替换这一部分，而其它部分就不用关心了。</p>
+
+<p>当没有存在已有接口时，那么你就不得不创建了。一些酷酷的软件hack所有时间都在没有API的系统中画API的边界，同时将接口编写入现有系统中是个巨大的工程。</p>
+
+<p>虚拟内存(https://en.wikipedia.org/wiki/Virtual_memory )、硬件虚拟化(https://en.wikipedia.org/wiki/Hardware_virtualization )、Docker(https://en.wikipedia.org/wiki/Docker_%28software%29 )、Valgrind(http://valgrind.org/ )、rr(http://rr-project.org/ ) &#8212;- 这些所有的项目在不同层次上将新的和甚至非期望的接口编写对现有系统中。在某些时候，它会消耗多年，然后一个新的操作系统特性、甚至一个新的硬件会出现，从而使得新边界工作得更好。</p>
+
+<p>最好的虚拟化hack需要理解清楚虚拟化什么东西。在为某个事物编写API时，你不得不理解它。只要你理解了，你才能做出令人惊奇的事情。</p>
+
+<p>ES6 为JS推出了虚拟化的最为基础的概念：对象。</p>
+
+<h4>什么是对象</h4>
+
+<p>不，真的，需要等等。想一下，当你知道对象是什么之后再往下看。</p>
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/thinker.jpg" alt="img4" /></p>
+
+<p>这问题对我来说太难了，我从来没有听到过一个真正满意的定义。</p>
+
+<p>这是不是很奇怪？定义一个基础的概念总是很难的 &#8212;- 有时可以查看一下 <a href="http://aleph0.clarku.edu/~djoyce/java/elements/bookI/bookI.html">Euclid 的元素</a>。ECMAScript 指导说明书或许是个好伴侣，但是，它定义一个对象为“类型对象的成员”，完全没有帮助的定义！</p>
+
+<p>后来，说明书添加到“对象是属性的集合”，这也不怎么坏。如果你想要一个定义，现在可以做，但我们将在以后回来讨论它。</p>
+
+<p>我之前有说过，要为某个事物编写API，需要了解它。所以，按照这道理，我认为如果我们做到所有的这些事情，我们需要深入了解对象，这样我们才能可能做些惊奇的事情。</p>
+
+<p>所以，让我们跟随着ECMAScript委员会的步骤，来看看它是怎么使用对象来定义一个API、一个接口的。我们需要哪些方法？对象可能做些什么？</p>
+
+<p>这些依赖于具体的对象。DOM元素对象可以做些确定的事情，AudioNode对象则可以做其它事情。但是，所有的对象都有那么一些基础的能力：</p>
+
+<ul>
+<li>对象拥有属性。你可以获取和设置属性，删除它们，等等。</li>
+<li>对象拥有原型。这是JS继承的原因。</li>
+<li>某些对象是函数或者构建器，你可以调用它们。</li>
+</ul>
+
+
+<p>几乎所有的JS代码，使用属性、原型和函数就可以了。甚至，某些特殊的Element或AudioNode对象行为可以通过调用方法来作用，但这只不过是继承其函数属性。</p>
+
+<p>所以，ECMAScript标准委员会定义了一堆、也就是14个内置的方法，所有的对象都会拥有的接口。这些并不令人感到奇怪，他们最终还是关注于这三个基本点上。</p>
+
+<p>完整的接口方法可以在<a href="http://www.ecma-international.org/ecma-262/6.0/index.html#table-5">版本5和6的标准库</a> 找到。这里，我将会对部分进行说明。怪异的双中括号，<code>[[]]</code>，用于强调其是内部的方法，对普通的JS代码是隐藏的。不同于普通方法，你不能调用、删除或者重写这些方法。</p>
+
+<ul>
+<li><strong>obj.<a href="key,%20receiver">[Get]</a></strong>  &#8211; &#8211;  获取属性的值</li>
+</ul>
+
+
+<p>当JS代码使用<code>obj.prop</code>或者<code>obj[key]</code>时，其会被调用。</p>
+
+<p>obj 是当前查找的对象，receiver 是第一个查找对象属性的对象。有时，我们不得不查找多个对象，obj可能会是receiver对象原型链上的对象。</p>
+
+<ul>
+<li><strong>obj.<a href="key,%20value,%20receiver">[Set]</a></strong> &#8211; &#8211; 为一个对象的属性指派值</li>
+</ul>
+
+
+<p>当JS代码使用<code>obj.prop - value</code>或者<code>obj[key] = value</code>时，其会被调用。</p>
+
+<p>在如<code>obj.prop += 2</code>的指派值中，<code>[[GET]]</code>方法会先调用，接着才调用<code>[[Set]]</code>方法。同理于<code>++</code>和<code>--</code>。</p>
+
+<ul>
+<li><strong>obj.<a href="key">[HasProperty]</a></strong> &#8211; &#8211; 检查一个属性是否存在</li>
+</ul>
+
+
+<p>当JS代码使用<code>key in obj</code>时，会调用。</p>
+
+<ul>
+<li><strong>obj.<a href="">[Enumerate]</a></strong> &#8211; &#8211; 列出obj对象的可列举的属性。</li>
+</ul>
+
+
+<p>当JS代码使用<code>for (key in obj) ...</code>时，会调用。</p>
+
+<p>这方法会返回一个迭代器对象，这就是<code>for-in</code>循环获得一个对象属性名称的原因。</p>
+
+<ul>
+<li><strong>obj.<a href="">[GetPrototypeOf]</a></strong> &#8211; &#8211; 返回对象obj的原型。</li>
+</ul>
+
+
+<p>当JS代码使用<code>obj.__proto__</code>或者<code>Object.getPrototypeOf(obj)</code>时，会调用。</p>
+
+<ul>
+<li><strong>functionObj.<a href="thisValue,%20arguments">[Call]</a></strong> &#8211; &#8211; 调用一个函数。</li>
+</ul>
+
+
+<p>当JS代码使用<code>functionObj()</code>或者 <code>x.method()</code>，会调用。这是可选的，并不是每个对象都是函数。</p>
+
+<p>*<strong>constructerObj.<a href="arguments,%20newTarget">[Construst]</a></strong> &#8211; &#8211; 调用一个构造器。</p>
+
+<p>例如，当JS代码使用<code>new Date(2890, 6, 2)</code>时，会调用。这是可选的，并不是每个对象都是个构造器。</p>
+
+<p>其中，newTarget 会在子类中参数扮演着一个角色，我们将会再之后的文章中进行说明。</p>
+
+<p>也许，你可以猜测一下其它的七个方法。</p>
+
+<p>贯穿着ES6的标准库，无论如何，针对对象的任意小语法或者内置函数，都是根据这内置的十四个方法来具体化的。ES6 为一个对象的核心划定了一个边界，而通过任意的JS代码作为代理，来替代各种核心方法。</p>
+
+<p>当我们开始讨论重写这些内置的方法时，记住，我们正在讨论是 重写核心代码的方法，如<code>obj.prop</code>，内置的函数，如<code>Object.keys()</code>，还有更多。</p>
+
+<h4>代理</h4>
+
+<p>ES6 定义了一个新的全局构造器，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a>。它有两个参数：一个target对象，一个handler对象。所以，一个简单的例子看起来如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">proxy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Proxy</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>让我们先把handler对象放一会儿，关注proxy和target对象是怎么关联的。</p>
+
+<p>我可以用一句话来说明proxy是怎么工作的：所有的proxy的内部方法都会面向target。例如，如果某时调用<code>proxy.[[Enumerate]]()</code>，它将会返回<code>target.[[Enumerate]]()</code>。</p>
+
+<p>让我们试一下，我们做些事，它将会触发<code>proxy.[[Set]]()</code>。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">proxy</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;pink&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>好了，刚才发生了什么？<code>proxy.[[Set]]()</code>应该会调用<code>target.[[Set]]()</code>，所以，target应该有一个新的属性，是不是呢？</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="nx">target</span><span class="p">.</span><span class="nx">color</span>
+</span><span class='line'>    <span class="s2">&quot;pink&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>是的，它是这样子的。还有，其它的内部方法也是一样的。在大多时候，proxy代理对象的行为也和target一样。</p>
+
+<p>这样高保真的操作是受到限制的，是错觉。你可以发现<code>proxy !== target</code>。同时，当target通过类型检查时，其proxy代理对象有时并不能通过。甚至，例如，如果target是一个DOM元素，代理对象proxy并不是真正的一个元素，所以，有时如<code>document.body.appendChild(proxy)</code>会出现<code>TypeError</code>的错误。</p>
+
+<h4>代理处理器(Proxy handlers)</h4>
+
+<p>现在，让我们返回讨论handler对象，它是让代理proxy可用的原因。</p>
+
+<p>这个handler对象的方法可以重载做任意proxy中的内部方法。</p>
+
+<p>例如，如果你想拦截所有设置对象属性的操作，你可以定义<code>handler.set()</code>来做到。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Please don&#39;t set properties on this object.&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">proxy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Proxy</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">proxy</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;angelina&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nb">Error</span><span class="o">:</span> <span class="nx">Please</span> <span class="nx">don</span><span class="err">&#39;</span><span class="nx">t</span> <span class="nx">set</span> <span class="nx">properties</span> <span class="nx">on</span> <span class="k">this</span> <span class="nx">object</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所有的handle方法可以在 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#Methods_of_the_handler_object">MDN的Proxy文档</a> 看到。这里有十四个方法，这十四个方法也被提到ES6定义为内置方法中。</p>
+
+<p>所有的handler方法都是可选的，如果一个内置方法没有被拦截，那么它将会传递给target，就如之前我们看到的一样。</p>
+
+<h4>例子：“不可能” 自动流对象</h4>
+
+<p>现在，我们对proxy代理已经有足够的了解了，在试用时有时显得很怪异，但有些又不可能离开proxy。</p>
+
+<p>这里，有我们第一个训练的例子。让函数<code>Tree()</code>可以做到：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">tree</span> <span class="o">=</span> <span class="nx">Tree</span><span class="p">();</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">tree</span>
+</span><span class='line'>    <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">tree</span><span class="p">.</span><span class="nx">branch1</span><span class="p">.</span><span class="nx">branch2</span><span class="p">.</span><span class="nx">twig</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">tree</span>
+</span><span class='line'>    <span class="p">{</span> <span class="nx">branch1</span><span class="o">:</span> <span class="p">{</span> <span class="nx">branch2</span><span class="o">:</span> <span class="p">{</span> <span class="nx">twig</span><span class="o">:</span> <span class="s2">&quot;green&quot;</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">tree</span><span class="p">.</span><span class="nx">branch1</span><span class="p">.</span><span class="nx">branch3</span><span class="p">.</span><span class="nx">twig</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">{</span> <span class="nx">branch1</span><span class="o">:</span> <span class="p">{</span> <span class="nx">branch2</span><span class="o">:</span> <span class="p">{</span> <span class="nx">twig</span><span class="o">:</span> <span class="s2">&quot;green&quot;</span> <span class="p">},</span>
+</span><span class='line'>                        <span class="nx">branch3</span><span class="o">:</span> <span class="p">{</span> <span class="nx">twig</span><span class="o">:</span> <span class="s2">&quot;yellow&quot;</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，这些所有的内部对象 branch1/branch2/branch3 当需要时会神奇地自动创建。很方便，是不是？它可能是怎么工作的？</p>
+
+<p>直到现在，并没有方法可以做到。但是，通过proxy代理，只需要几行代码。我们只需要控制<code>tree.[[Get]]()</code>方法。如果你喜欢挑战，你也许可以试图在阅读下面内容之前自己实现它。</p>
+
+<p>这里是我的解决方案：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">Tree</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">Proxy</span><span class="p">({},</span> <span class="nx">handler</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">target</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Tree</span><span class="p">();</span> <span class="c1">// auto-create a sub-Tree</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，最后有<code>Reflect.get()</code>的调用，这证明其非常普通的需求。在这里的 handler 方法中，它代表的意思是“现在只要授权给target进行默认操作”。所以，ES6定义了一个新的 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect">Reflect 对象</a> 并包含有14个方法，你可以真正地使用起来。</p>
+
+<h4>例子：一个只读视图</h4>
+
+<p>我想，我可能会给人一种错误的印象，proxy代理是容易使用的。让我们做更多的一个例子，看看这看板是否正确吧。</p>
+
+<p>这次，我们的分配更加复杂些：我们需要实现这个函数<code>readOnlyView(object)</code>，它可接收任意对象并返回一个proxy代理，代理行为看起来像接收对象一样，除了代理对象是不可变的。所以，例如，它应该看起来这样：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">newMath</span> <span class="o">=</span> <span class="nx">readOnlyView</span><span class="p">(</span><span class="nb">Math</span><span class="p">);</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">newMath</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">54</span><span class="p">,</span> <span class="mi">40</span><span class="p">);</span>
+</span><span class='line'>    <span class="mi">40</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">newMath</span><span class="p">.</span><span class="nx">max</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">;</span>
+</span><span class='line'>    <span class="nb">Error</span><span class="o">:</span> <span class="nx">can</span><span class="s1">&#39;t modify read-only view</span>
+</span><span class='line'><span class="s1">&gt; delete newMath.sin;</span>
+</span><span class='line'><span class="s1">    Error: can&#39;</span><span class="nx">t</span> <span class="nx">modify</span> <span class="nx">read</span><span class="o">-</span><span class="nx">only</span> <span class="nx">view</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们应该怎么实现它呢？</p>
+
+<p>第一步，我们需要修改穿过方法的目标对象，截获它所有的内部方法。这里需要修改五个内部方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">NOPE</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;can&#39;t modify read-only view&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// Override all five mutating methods</span>
+</span><span class='line'>  <span class="nx">set</span><span class="o">:</span> <span class="nx">NOPE</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">defineProperty</span><span class="o">:</span> <span class="nx">NOPE</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">deleteProperty</span><span class="o">:</span> <span class="nx">NOPE</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">preventExtensions</span><span class="o">:</span> <span class="nx">NOPE</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">sePrototypeOf</span><span class="o">:</span> <span class="nx">NOPE</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">readOnlyView</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">Proxy</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是可行的，通过这只读视图，它会阻止设值、属性定义等。</p>
+
+<p>这结构有什么漏洞吗？</p>
+
+<p>这里最大的问题是<code>[[Get]]</code>方法，还有其它，可能会返回可变的对象。所以，当某个对象 x 是个只读的视图，x.prop 是可变的。这是个大大的漏洞。</p>
+
+<p>为了修补它，我们需要添加一个<code>handler.get()</code>方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">handler</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Wrap other results i read-only veiws.</span>
+</span><span class='line'>  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Start by just doing the default behavior.</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">Reflect</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">receiver</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Make sure not to return a mutable object!</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">Object</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">===</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// result is an object.</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">readOnlyView</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">// result is a primitive, so already immutable.</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样依然没有达到效果，类似的代码需要在其它方法中实现，包含<code>getPrototypeOf</code>和<code>getOwnPropertyDescriptor</code>。</p>
+
+<p>然后，会有些更多的问题。当一个 getter 或者 方法在这类的代理中被调用时，这个<code>this</code>值会传递给proxy代理对象本身。但是，就像之前我们看到的，proxy代理对象在很多的接收器(accessors)和方法的类型检查中是不会通过的，这里最好是对目标对象来替代代理对象。你能指出怎么做吗？</p>
+
+<p>这文章看到创建一个代理对象是十分方便的，但是想创建一个拥有直觉行为的代理对象是十分困难的。</p>
+
+<h4>零碎的东西</h4>
+
+<ul>
+<li><strong>proxy代理善于做什么</strong></li>
+</ul>
+
+
+<p>当你想监视或者记录一个对象的访问时，它确实是有用的。这样，它可以用来调试。测试框架可以用它来创建<a href="https://en.wikipedia.org/wiki/Mock_object">模拟对象(Mock object)</a></p>
+
+<p>当你希望的行为只是一个普通可以做的，proxy代理是有用的，如：懒惰的流行属性设置。</p>
+
+<p>尽管我很不喜欢这方式，但是，当使用代理时，想要知道其代码是怎么运行的，最好的办法之一是将代理中的handler对象使用另外一个代理进行包裹起来，从而用来记录每次handler方法的访问。</p>
+
+<p>代理可以限制一个对象的访问，就像我们刚才做的<code>readOnlyView</code>。这类型的使用场景在应用代码中比较少见，但是Firefox使用代理对不同域名中的<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko/Script_security">安全边界</a> 进行了内部实现。代理是我们(Firefox)安全模型的一个关键点。</p>
+
+<ul>
+<li><strong>代理 结合 WeakMaps</strong> 。在我们的<code>readOnlyView</code>例子中，每次的对象访问中我们会创建一个新的代理。使用 WeakMap 来创建每个代理对象，其可以缓存并减少内存的消耗，所以，虽然<code>readOnlyView</code>会传递很多的对象，但是真正只有一个代理对象被创建。</li>
+</ul>
+
+
+<p>这是一个刺激使用<code>WeakMap</code>的使用场景。</p>
+
+<ul>
+<li><p><strong>可废除的代理</strong>。ES6 还定义另外的函数<code>Proxy.revocable(target, handler)</code>，它会创建一个代理，就像<code>new Proxy(target, handler)</code>，但这个代理对象在之后是可以废除的。(<code>Proxy.revocable</code>返回一个包含有<code>.proxy</code>属性和<code>.revoke</code>方法的对象。)只要一个代理对象被废除，它就不能再工作了；所有的内部方法都会抛出(错误提示？)。</p></li>
+<li><p><strong>对象不变量</strong>。在某些场景中，ES6会要求proxy的处理方法得出的结果包含有target对象的状态，这是为了想得到强制性的对所有对象的不可变的规则，甚至包括代理对象。例如，一个代理不能声明为不可扩展的，除非它的target对象是真正不能扩展的。</p></li>
+</ul>
+
+
+<p>准确的规则在这里来说是比较复杂的，但是，如果你看到一个错误的信息如<code>"proxy can't report a non-existent property as non-configurable"</code>时，这就是原因。这有点像补救而改变代理对象怎么输出它自己；另外的可能是改变target对象用来进行反射，而不理会代理对象怎么输出。</p>
+
+<h4>现在对象是什么？</h4>
+
+<p>我想，我们已经偏离了“对象是属性的集合”。</p>
+
+<p>我并不乐意这个定义，即使当然地包括原型(prototypes)和callability。我认为 “集合”这一词太笼统了，它并不能表明代理对象是什么，代理对象的处理方法可以做任意事情，它可以返回任意的结果。</p>
+
+<p>为了说明一个对象能做什么，对对象方法进行标准化、虚拟化第一类的特性以至于每一个人都能使用，ECMAScript标准委员会正扩展其可能性。</p>
+
+<p>现在，对象可能是任何事物。</p>
+
+<p>也许，更为诚实的问题是“什么是一个对象？”，现在是，其有十二个内部方法，一个对象在JS程序中有<code>[[Get]]</code>操作，有<code>[[Set]]</code>操作，等等。</p>
+
+<p>现在，我们是否理解了对象真正是什么了吗？我并不确定！我们做了不可思异的事情？是的，我们做了之前JS不可能做的事情。</p>
+
+<h4>今天我可以使用代理吗？</h4>
+
+<p>不。无论如何，它并不能在Web开发中使用。只有Firefox和微软的Edge浏览器支持代理，也没有额外的转换工具。</p>
+
+<p>自从V8现实了代理的旧版本后，要在 Node.js 和 io.js 使用代理，需要使用默认关闭的选项(<code>-- harmony_proxies</code>) 和 <a href="https://github.com/tvcutsem/harmony-reflect">harmony-reflect</a> 工具。</p>
+
+<p>所以，可以尝试使用代理。创建一个大的镜子，里面包括有成千的对象复制品，所有都是类似的，都是很难调试的。现在是时候使用代理了，但对于生产环境你的代理代码可能还是会有些危险的。</p>
+
+<p>代理的第一次实现是在2010年，由Andreas Gal实现，Blake Kaplan进行代码审查。接着，标准委员会又完全重新设计了这一特性。Eddy Bruel 在2012年根据新的说明重新实现了。</p>
+
+<p>我实现了<code>Reflect</code>，代理审查由 Jeff Walden 进行，它将会在这周末的Firefox的Nightly版本中出现 &#8211; &#8211; 除了<code>Reflect.enumerate()</code>没有实现。</p>
+
+<p>下一步，我们将讨论ES6中最富有争议的特性，一个在Firefox内部的提出人更优于实现人的特性。所以，在于下周加入我们，Mozilla工程师 Eric Faust 展示 <em>深入ES6 的类</em>。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2016/02/18/es6-in-depth-proxies/';
+        var disqus_url = 'http://shatle.github.io/blog/2016/02/18/es6-in-depth-proxies/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nickel.rs | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/nickel-dot-rs/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Rust Notes in rust-postgres and nickel.rs]]></title>
+    <link href="http://shatle.github.io/blog/2015/07/09/rust-notes-in-rust-postgres-and-nickel-dot-rs/"/>
+    <updated>2015-07-09T00:45:59+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/07/09/rust-notes-in-rust-postgres-and-nickel-dot-rs</id>
+    <content type="html"><![CDATA[<h2>声明</h2>
+
+<p><a href="https://github.com/sfackler/rust-postgres">rust-postgres</a>
+<a href="https://github.com/nickel-org/nickel.rs">nickel.rs</a></p>
+
+<h2>示例代码段</h2>
+
+<pre><code class="rust">//
+let conn = Connection::connect("postgres://postgres:123456@localhost:5432", &amp;SslMode::None).unwrap();
+let stmt = conn.prepare("SELECT id, name, data FROM person").unwrap();
+println!("{:?}", stmt.query(&amp;[]).unwrap());
+let rows = stmt.query(&amp;[]).unwrap();
+println!("{:?}", rows.get(0));
+let row = rows.get(0);
+println!("{:?}", row.len());
+println!("id: {:?}", row.columns());
+
+let row_id: i32 = row.get(0);
+let row_name: String = row.get("name");
+println!("{:?},,,{:?}", row_id, row_name);
+
+//
+let mut server = Nickel::new();
+server.get("**", middleware!(row_name.clone()));
+server.listen("127.0.0.1:6767");
+</code></pre>
+
+<p>conn::prepare 返回的是 <a href="http://sfackler.github.io/rust-postgres/doc/v0.9.3/postgres/struct.Statement.html">Statement</a>, statement需要真正执行，如 query(&amp;[]) 才能真正查询数据库，<code>&amp;[]</code> 返回的内置值；</p>
+
+<p>本来返回的是 Result<Rows>, 但是 代码中 直接 unwrap() ， 所以直接得到 rows. 其中，有 Rows 和 Row 这两种不同的结构。rows.len() 得到记录数量， row.len() 得到是列数量。</p>
+
+<p>注意： 在row.get() 时，需要指明返回的类型。其中，row.get()可以通过Index 或者 名称访问到数据。</p>
+
+<p>直接 middleware(row_name) 会出现 <code>cannot move out of captured outer variable in an</code>Fn<code>closure.</code> 的错误，作用域的问题。这时可能通过 clone() 的方式处理。</p>
+
+<blockquote><p>http://rustbyexample.com/trait/clone.html
+<code>
+When dealing with resources, the default behavior is to transfer them during assignments or function calls.
+</code></p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

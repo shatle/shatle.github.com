@@ -1,0 +1,173 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Disk Identifier - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Disk Identifier disk identifier, work http://www.linuxquestions.org/questions/linux-general-1/what-is-disk-identifier-740408/ This is a somewhat &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2012/08/17/disk-identifier/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Disk Identifier</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/disk-identifier/'>disk identifier</a>, <a class='category' href='/blog/categories/work/'>work</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p>http://www.linuxquestions.org/questions/linux-general-1/what-is-disk-identifier-740408/</p></blockquote>
+
+<p>This is a somewhat confusing area of computers because people don&#8217;t use consistent terminology. So first I&#8217;m going to explain some terms.</p>
+
+<p>A Disk Identifier (or Disk Signature) applies to an entire hard disk drive (not a single partition). A Disk Identifier/Disk Signature is a 4-byte (longword) number that is randomly generated when the Master Boot Record/Partition Table is first created and stored. The Disk Identifier is stored at byte offset 1B8 (hex) through 1BB (hex) in the MBR disk sector. Windows Vista uses the Disk Signature to locate boot devices so changing it can prevent Vista from booting. So far as I know Grub and Linux don&#8217;t use the Disk Identifier.</p>
+
+<p>A UUID (Universally Unique Identifier) or GUID (Globally Unique Identifier) is a 128-bit number. UUIDs are used to identify many different things including some filesystem partitions. Where the UUID is stored for a filesystem depends on the filesystem. Linux ext2/ext3 and Windows NTFS identify filesystems by UUID. UUIDs are generated randomly using either the current time or a random number generator. The UUID is generated and stored when the filesystem is formatted and then does not usually change.</p>
+
+<p>When you copy a partition or disk as raw binary data (for example, with &#8220;dd&#8221;) the Disk Identifier or UUID is also copied. That can result in two disks or two partitions with the same identifier. There are utilities to change the UUID to a new (random) number. There are also utilities to change the Disk Identifier in the Master Boot Record.</p>
+
+<p>The advantage to a UUID is that no matter where you move a filesystem, an operating system can find that particular filesystem. For filesystems that have no UUID the Disk Identifier can at least be used to locate the disk drive.</p>
+
+<p>Windows identifies all filesystems using UUIDs so UUIDs are kept in the registry if a filesystem does not have a UUID in the partition. Windows uses the Disk Signature and other information to match the registry entry for a partition and find the UUID.</p>
+
+<p>Linux can use device names for partitions when UUIDs are not available.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2012/08/17/disk-identifier/';
+        var disqus_url = 'http://shatle.github.io/blog/2012/08/17/disk-identifier/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

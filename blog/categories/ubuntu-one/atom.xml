@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ubuntu one | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/ubuntu-one/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ubuntu one记事]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/ubuntu-one-ji-shi/"/>
+    <updated>2012-08-17T21:48:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/ubuntu-one-ji-shi</id>
+    <content type="html"><![CDATA[<p>前段时间，我不小心从ubuntu one官网上删除了我自己机器上的，于是其只剩下公司电脑了。</p>
+
+<p>回到宿舍想重新添加时，一直不知道怎么办。</p>
+
+<p>有人说，可以从ubuntu one的客户端点击，出网页，会出现添加此设备的按钮，实际上我的没有。</p>
+
+<p>终于方法到了：</p>
+
+<ul>
+<li>删除本地的ubuntu one 帐号。</li>
+</ul>
+
+
+<p>打开&#8221;密码与密钥&#8221;程序，在&#8221;密码&#8221;中找到 ubuntu one 的行，右键删除。</p>
+
+<ul>
+<li><p>打开终端运行命令。</p>
+
+<pre><code>  u1sdtool -q
+
+  u1sdtool -c
+</code></pre></li>
+</ul>
+
+
+<p>重启同步进程。</p>
+
+<ul>
+<li>打开ubuntu one的客户端，输入帐号，就没问题。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

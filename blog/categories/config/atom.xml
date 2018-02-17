@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: config | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/config/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[reset my octopress]]></title>
+    <link href="http://shatle.github.io/blog/2014/10/20/reset-my-octopress/"/>
+    <updated>2014-10-20T23:07:06+08:00</updated>
+    <id>http://shatle.github.io/blog/2014/10/20/reset-my-octopress</id>
+    <content type="html"><![CDATA[<p>好久不写东西了，上来看了自己的github，空了好长的时间。</p>
+
+<p>之前电脑重装，之前的项目已经不在了。重新的时候只是将md文件备份，其它的样式都没有备份。所以不得不重新抽时间折腾了。</p>
+
+<p>很简单，直接走octopress的流程就可以了。二货的我（突然想到今天电影《银河战队》的foreigner说二货有点搞，中国市场真心大啊）将github地址搞错了，以为将<code>.git/config</code>的remote改了就可以了，不然，其实要修改的是<code>_deploy/.git/config</code>。下次记住了。</p>
+
+<p>之前正确使用这工具，没有那么傻的事情，突然傻一回，反而搞懂了其大致的原理。</p>
+
+<p>我还对样式进行了修改，最近迷上了紫色，主题颜色打紫了。</p>
+
+<p>充数了，睡觉。</p>
+]]></content>
+  </entry>
+  
+</feed>

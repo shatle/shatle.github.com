@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: theme | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/theme/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Modified Greyshade theme to my Pages]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/19/modified-greyshade-theme-to-my-pages/"/>
+    <updated>2013-12-19T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/19/modified-greyshade-theme-to-my-pages</id>
+    <content type="html"><![CDATA[<p>好久没有写文章了，在这里，更甚。</p>
+
+<p>不知道为不什么，今天突然想起是折腾一下自己的博客。好吧，自从 writing.io 声明关闭之后，站主谈到的<code>我们都是在重复造轮子</code>，确实是。</p>
+
+<p>年初折腾的博客网站，基本只有我一个人。没有任何的访问量，真心没有什么念头。生活的种种，又没有空去打理些什么，可能以后得慢慢回归 pages.github.com 了。</p>
+
+<p><a href="https://github.com/shashankmehta/greyshade">Greyshade</a> 也是修改别人的，在它的基础上，再做了些修改。反正，在我这里，有许多样式都觉得有问题。</p>
+
+<p>修改的部分包括：</p>
+
+<ul>
+<li>.left-col</li>
+<li>article header h1</li>
+<li>.archives article time, tags</li>
+<li>&#8230;</li>
+</ul>
+
+
+<p>发现问题，以后再继续吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

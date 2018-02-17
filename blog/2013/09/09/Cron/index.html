@@ -1,0 +1,263 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Cron - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Cron cron, linux 利用系统自带的 cron，做定时任务，主要是备份数据 查看当前任务 1
+ps axgu | grep cron 编辑（添加／删除）任务 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+sudo crontab -e # 例子:
+#
+# &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/09/09/Cron/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Cron</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/cron/'>cron</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>利用系统自带的 cron，做定时任务，主要是备份数据</p>
+
+<h3>查看当前任务</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ps axgu | grep cron</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>编辑（添加／删除）任务</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo crontab -e
+</span><span class='line'>
+</span><span class='line'># 例子:
+</span><span class='line'>#
+</span><span class='line'># 每天每分钟执行job1一次
+</span><span class='line'>* * * * * /cron_jobs/job1 # Absolutely Path
+</span><span class='line'>
+</span><span class='line'># 每个星期一，早上 3:00 执行一次
+</span><span class='line'>0 3 * * 1 /cron_jobs/job2
+</span><span class='line'>
+</span><span class='line'># Format:
+</span><span class='line'>#
+</span><span class='line'>#   分    小时     天           月               星期几          命令 
+</span><span class='line'># (0-59) (0-23) (1-31)  (1-12 or Jan-Dec) (0-6 or Sun-Sat)
+</span><span class='line'>#   0      2      12           *                 0,6</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>保存数据库数据</h3>
+
+<p><strong>方法一</strong>:</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> #!/bin/bash
+</span><span class='line'>DATE=`date +%y_%m_%d_%H_%M_%S`
+</span><span class='line'>mongodump --out ./dump$DATE
+</span><span class='line'>tar -cf ./dump$DATE.tar ./dump$DATE
+</span><span class='line'>rm -rf dump$DATE</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>方法二</strong>: 进入项目数据库数据目录，</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,内容为</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> #!/bin/bash
+</span><span class='line'>cd /data_path
+</span><span class='line'>DATE=`date +%y_%m_%d_%H_%M_%S`
+</span><span class='line'>git init ./ 
+</span><span class='line'>git add ./ -A 
+</span><span class='line'>git commit -am "commit with cron in $DATE"</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>其中</strong>，方法一直接使用mongodb简单的整体备份方法，方法二则使用git进行差异化备份。无论方法一、方法二，还需要添加定时任务</p>
+
+<p>赋权限<code>chmod u+x /cron_jobs/bk_data</code>，通过<code>crontab -e</code>添加任务：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>0 3 * * 1 /cron_jobs/bk_data</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外有: https://github.com/javan/whenever</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/09/09/Cron/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/09/09/Cron/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

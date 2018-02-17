@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: function | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/function/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 in Depth: Arrow funtions]]></title>
+    <link href="http://shatle.github.io/blog/2015/12/02/es6-in-depth-arrow-funtions/"/>
+    <updated>2015-12-02T23:48:51+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/12/02/es6-in-depth-arrow-funtions</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/">ES6 in Depth: Arrow funtions</a></p></blockquote>
+
+<p>箭头是JS每个开始的一部分，JS的第一个指导说可以在 HTML 注释中内置脚本代码，这会导致浏览器错误地认为JS代码是文本，从而不能运行JS。你可能会编写代码如下：</p>
+
+<pre><code class="javascript">\&lt;script language="javascript"&gt; // \ for md safe
+  &lt;!--
+     document.bgColor = "brown"; // red
+  // --&gt;
+&lt;/script&gt;
+</code></pre>
+
+<p>旧的浏览器只会看到两个不支持的标签和一个注释，只有新的浏览器会看到 JS 代码。</p>
+
+<p>为了支持这奇怪的代码，你浏览器中的 JS 引擎会将 <code>&lt;!--</code> 认为是单行注释的开始。没有开玩笑，这至始至终是JS语言的一部分，而且至今仍然是可用的。这不仅仅可以在内置的 <code>&lt;script&gt;</code>的顶部，还可以在 JS 的任何地方，它甚至在 Node 也是能工作的。</p>
+
+<p>由此，<a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-html-like-comments">ES6 的注释风格第一次的标准化</a>，但这并不是我们这里所谈到的箭头。</p>
+
+<p>序列箭头<code>--&gt;</code>也表示一个单行的注释，奇怪的是，HTML认为在<code>--&gt;</code>之前的部分是注释，而JS认为<code>--&gt;</code>之后剩余部分是注释。</p>
+
+<p>这确实很怪异。这箭头只有当其出现在行的开头时才会认为是注释。这是因为在其它的内容中，<code>--&gt;</code>是一个JS的操作符，“去到”操作符。</p>
+
+<pre><code class="javascript">function countdown(n) {
+  while (n --&gt; 0) // "n goes to zero"
+     alert(n);
+  blastoff();
+}
+</code></pre>
+
+<p>这代码确实可以运行<a href="http://codepen.io/anon/pen/oXZaBY?editors=001">链接</a>， 这个循环运行会从 n 到 0 。这也不是ES6的一个新特性，它其实是类似箭头的操作组合，这确实会有些误导。你能猜出指出是什么吗？和平常一样，这答案的迷云可以在 <a href="http://stackoverflow.com/questions/1642028/what-is-the-name-of-the-operator">Stack Overflow</a> 中得到。</p>
+
+<p>好了，<code>&lt;=</code>表示小于等于操作符，你可以找出JS代码中更多的这些箭头。细想一下有哪些箭头，但是现在先暂停一下，观察一下一个不认识的箭头：</p>
+
+<p>&#8220;`</p>
+
+<!--    single-line comment
+-->
+
+
+<p> “goes to” operator
+&lt;=  less than or equal to
+=>  ???
+&#8220;`</p>
+
+<p><code>=&gt;</code>会发现什么呢？今天，让我们研究一下。</p>
+
+<p>首先，让我们稍微讨论一下 函数。</p>
+
+<h4>无处不在的函数表达式</h4>
+
+<p>JS中一个有趣的特性是可以在任何时候添加你所需要的函数，你只需要在运行代码的中部编写合适的函数。</p>
+
+<p>例如，你可以试图告诉浏览器当用户点击具体的按钮时做什么，你会开始编写：</p>
+
+<pre><code class="javascript">$("#confetti-btn").click(
+</code></pre>
+
+<p>jQuery 的 <code>.click()</code>方法需要一个参数：一个函数。没问题，你仅需要编写合适的函数，如下：</p>
+
+<pre><code class="javascript">$("#confetti-btn").click(function (event) {
+  playTrumpet();
+  fireConfettiCannon();
+});
+</code></pre>
+
+<p>现在的我们已经很自然地编写出这类似的代码了，细想一下，这写法在JS流行之前是显得奇怪的，很多的编程语言并不会有这一特性。在1958年，Lisp 有其函数表达式，它叫 lambda 函数。但是，C++、Python、C# 和 Java 没有函数也生存了很多年。</p>
+
+<p>这情况不会再有了，这四种语言现在也有 lambda 函数。更新的语言普遍都会内置有 lambda 函数。我们 JS 也很感谢 &#8212;- 早期 JS 编程人员大胆地构建大量的 lambda 库，从而使得这特性广泛地被使用。</p>
+
+<p>稍微有些伤心的是，在我提到过的所有编程语言中，JS的lambda语法证明是最为冗长的。</p>
+
+<pre><code>// A very simple function in six languages.
+function (a){ return a &gt; 0; } //JS
+[](int a) { return a &gt; 0; } // C++
+(lambda (a) (&gt; a 0))  ;; Lisp
+lambda a: a &gt; 0  # Python
+a =&gt; a &gt; 0 // C#
+a -&gt; a &gt; 0 // Java
+</code></pre>
+
+<h4>你箭袋中的新箭头</h4>
+
+<p>ES6 介绍编写函数的新的语法：</p>
+
+<pre><code class="javascript">// ES5
+var selected = allJobs.filter(function (job) {
+  return job.isSelected();
+});
+
+// ES6
+var selected = allJobs.filter(job =&gt; job.isSelected());
+</code></pre>
+
+<p>当你仅是需要个简单的一个参数的函数，这新的箭头函数语法只需要简单地 <code>Identifier =&gt; Expression</code>。你可以不用编写 <code>function</code>和<code>return</code>这些关键字，同时包括 括号、大括号、分号。</p>
+
+<p>（我个人是非常喜欢这个特性的，没有限定键入<code>function</code>对我来说十分的重要，因为我时不时会键入<code>functoin</code>，从而不得不回头去更正它。）</p>
+
+<p>为了编写多参数的函数（或者没有参数、剩余和默认参数、或解构参数），你将需要添加括号和参数列表。</p>
+
+<pre><code class="js">// ES5
+var total = values.reduce(function (a, b) {
+  return a + b;
+}, 0);
+
+// ES6
+var total = values.reduce((a, b) =&gt; a + b, 0);
+</code></pre>
+
+<p>我认为它看起来是十分好的。</p>
+
+<p>箭头函数可以像某些库中的功能性工具(functional tool)一样漂亮地工作，如 Underscore.js 和 Immutable。实际上，<a href="https://facebook.github.io/immutable-js/docs/#/">Immutable的文档</a> 中的例子都是用ES6来编写的，所以其中的一些已经使用上了 箭头函数。</p>
+
+<p>那么，对于非功能性的设置该怎么办呢？箭头函数 可以包含着一个代码块，而不仅是一个表达式。回顾一下我们之前的例子：</p>
+
+<pre><code class="javascript">// ES5
+$("#confetti-btn").click(function (event) {
+  playTrumpet();
+  fireConfettiCannon();
+});
+</code></pre>
+
+<p>在ES6中如下：</p>
+
+<pre><code class="javascript">// ES6
+$("#confetti-btn").click(event =&gt; {
+  playTrumpet();
+  fireConfettiCannon();
+});
+</code></pre>
+
+<p>一个小提升，在使用 Promises 时，这作用会更加有魔法，它可以将类如 <code>}).then( function (result) {</code>的行堆起来。</p>
+
+<p>注意，代码块的箭头函数并不会自动返回一个值，所以需要 <code>return</code> 进行返回值操作。</p>
+
+<p>当使用箭头函数来创建普通对象时，需要用括号将对象括起来：</p>
+
+<pre><code class="javascript">// create a new empty object for each puppy to play with
+var chewToys = puppies.map(puppy =&gt; {});  // BUG!
+var chewToys = puppies.map(puppy =&gt; ({})); // ok
+</code></pre>
+
+<p>不幸的是，一个空对象和一个空的代码块实际上是一样的。在 ES6 中，箭头后面的 <code>{</code> 会总是被认为是 代码块的开始标识，而不是对象的开始。因此，代码 <code>puppy =&gt; {}</code>会被编译为一个箭头函数，并不会做什么，返回值为 <code>undefined</code>。</p>
+
+<p>更多的困扰，一个对象从字面中如 <code>{key: value}</code> 至少看起来像一包含了 标签语句的代码块，但这要看你的JS引擎怎么识别它。幸运的是，<code>{</code> 是唯一的歧义的字符，所以使用括号来包含对象 是 唯一 你需要谨记的怪点。</p>
+
+<h4><code>this</code> 是什么</h4>
+
+<p>普通的 <code>function</code>函数和箭头函数有些微小的差别。<strong>箭头函数没有它们自有的 <code>this</code> 的值</strong>。箭头函数中的 <code>this</code> 总是来源于包含此箭头函数的作用域。</p>
+
+<p>在我们试图在实践中指出上面意味着什么之前，让我们稍微后退一下。</p>
+
+<p>JS 中的 <code>this</code> 是怎么工作的？它的值来源于哪里？这并没有简短的答案。如果你头脑认为它很简单，是因为你已经处理它很长时间了。</p>
+
+<p>引起 <code>this</code> 这提问的原因是 <code>function</code> 函数会自动接收一个 <code>this</code>的值，无论他们是否想要它。你是否编写过这黑代码：</p>
+
+<pre><code class="javascript">{
+  ...
+  addAll: function addAll(pieces) {
+    var self = this;
+    _.each(pieces, function (piece) {
+      self.add(piece);
+    });
+  },
+  ...
+}
+</code></pre>
+
+<p>这里，你可能会喜欢在内部的函数中编写 <code>this.add(piece)</code>。但是不幸，内部函数并不会继承外部函数的<code>this</code>值。在内部函数中，<code>this</code>将可能会是<code>window</code>或者<code>undefined</code>。临时变量<code>self</code>作用是将外部函数中的<code>this</code>传递到内部函数中。（另外的方法是在内部使用 <code>.bind(this)</code>，但是两种方法都不是很漂亮。）</p>
+
+<p>在 ES6 中，如果你按照以下规则使用，这种<code>this</code>的黑代码将会消失：</p>
+
+<ul>
+<li>当调用非箭头函数的方法时，使用 <code>object.method()</code>语法进行调用，如此这函数会从调用者中接收到一个有意义的<code>this</code>的值。</li>
+<li>在任何地方都使用箭头函数</li>
+</ul>
+
+
+<pre><code class="javascript">// ES6 with method syntax
+{
+  ...
+  addAll(pieces) {
+    _.each(pieces, piece =&gt; this.add(piece));
+  },
+  ...
+}
+</code></pre>
+
+<p>通过 方法箭头，我不再会编写 <code>functoin</code>了，这真是个很好的想法。</p>
+
+<p>箭头和非箭头函数还有一个细小的差别：箭头函数并不会获取他们自己的 <code>arguments</code>对象。同时，在ES6中，你最好在任何的地方都使用剩余和默认参数。</p>
+
+<h4>使用箭头可穿透黑科技的核心</h4>
+
+<p>我们已经谈到很多箭头函数的实践应用，我还想提到一个可能会用到的点：把 ES6 中的箭头函数作为一个学习的工具，去挖掘计算领域深层次的东西。无论其是否实用，这都取决于你自己。</p>
+
+<p>在1936年，Alonzo Church 和 Alan Turing 各自独立开发了强大的的数学计算模型。Turing 称之为 <code>a-machines</code>，但是大家从开始都称为 图灵机器(Turing machines)。Church 编写的是想取代函数，他的模型称为 <a href="https://en.wikipedia.org/wiki/Lambda_calculus">λ-calculus</a>。 (λ 是希腊语中的lambda的小写。) 这就是Lisp使用关键字 <code>LAMBDA</code>来声明函数的原因，这也是为什么我们今天称函数为 &#8220;lambda&#8221;的原因。</p>
+
+<p>但是，什么是 <em>λ-calculus</em> ? 计算模型(model of computation) 表示什么呢？</p>
+
+<p>简短的文字是很难解释的，但是这里是我的理解：λ-calculus 是第一种编程语言之一。虽然它并不是被设计为一个编程语言，随后的一到二十年存储程序的计算机也随之出现。但是，它作为一个非常简单、纯粹的数学语言，可以展示出你想要的各种计算。Church 希望这个模型能广泛地用来证明计算。</p>
+
+<p>然后，他发现仅需要在他的系统中有：函数(functions)。</p>
+
+<p>想象一下这种声明是怎么特别的：没有对象、数组，没有数值，没有<code>if</code>语句、<code>while</code>循环，没有分号、分配符号、逻辑操作符，或者任意的循环，白手起家，只使用函数能够做到 JS 做到的任何类型的计算操作。</p>
+
+<p>下面是个数学算法的程序，使用了 Church λ 的符号：</p>
+
+<pre><code>fix = λf.(λx.f(λv.x(x)(v)))(λx.f(λv.x(x)(v)))
+</code></pre>
+
+<p>它等价于JS中的</p>
+
+<pre><code>var fix = f =&gt;  (x =&gt; f(v =&gt; x(x)(v)))
+                       (x =&gt; f(v =&gt; x(x)(v)));
+</code></pre>
+
+<p>如此，JS就包含了  λ-calculus （lambda积分）的实现，并且是能够运行。<em>The λ-calculus is in JavaScript</em></p>
+
+<p>关于 Alonzo Church 和之后的研究人员对 λ-calculus 做什么的故事，还有其是怎么潜移默化地影响着每个主流编程语言，这已经超出了这篇文章讨论的范围了。但是，如果你对基础计算科感兴趣，或者你仅仅是想看到一编程语言没有其它、只有函数是怎么做到循环和递归的，你可能要努力并花费些下雨的下午去查看 <a href="https://en.wikipedia.org/wiki/Church_encoding">Church numerals</a> 和 <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator#Strict_fixed_point_combinator">fixed-point combinators</a>,  然后将代码运行于 Firefox 的控制台或者 <a href="https://developer.mozilla.org/en-US/docs/Tools/Scratchpad">Scratchpad</a> 。由于 ES6 的箭头 拥有其它力量，JS可以光明地声称它是探索 λ-calculus 的最好编程语言。</p>
+
+<h4>什么时候使用箭头(箭头函数)</h4>
+
+<p>ES6 中的箭头函数在Firefox是由我还实现的，于2013年。Jan de Mooij 的工作是其更为快速，同时感谢 Tooru Fujisawa 和 ziyunfei 的补丁。</p>
+
+<p>箭头函数也在微软的Edge浏览器的预览版本中支持了，它们也可以在 Babel , Traceur 和 TypeScript 中使用了，如此你现在可以使用它们(从而使用箭头函数)。</p>
+
+<p>我们的下个主题是ES6中比较特殊的一个特性。我们可以看到<code>typeof x</code>会返回一个完成新的值。那么我们会问：什么时候返回的不是string？我们将会努力寻找其相等的含义，确实有些怪异。那么，请于下周加入我们，继续深入 ES6 吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

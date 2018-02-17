@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: inkscape | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/inkscape/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用了 Inkscape 画了两张图]]></title>
+    <link href="http://shatle.github.io/blog/2013/11/26/two-pictures-with-Inkscape/"/>
+    <updated>2013-11-26T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/11/26/two-pictures-with-Inkscape</id>
+    <content type="html"><![CDATA[<h2>使用了 Inkscape 画了两张图</h2>
+
+<p>作为编程的人员来说，视觉设计很可能会很勉强，我也不例外。更多时候，我的视觉设计基本是利用前端框架，呵呵。
+我试图改变，于是，贴上两张图&#8230;</p>
+
+<p>不得不承认，虽然自己常常以文艺青年自居，但是，更多时候，只能算是普通青年与2B青年之间。</p>
+
+<p>角落的吉他，已经忘却了声音，却尘法饱满；柜上的四五本图书，痕迹永远的是前面几页；甚至，还有《秘密》《秘密2》&#8230;</p>
+
+<p>想拾起些什么，却又不能回答丢了些什么&#8230;</p>
+
+<p>打住！</p>
+
+<p>说说，页面设计。AI，相信是大多数设计师使用的工具吧，然而，在 Ubuntu 中，我使用了 Inkscape。</p>
+
+<p>自己凭空，想象、猜想、臆测&#8230;</p>
+
+<p>结果，得出的视觉效果，连自己都不能容忍。不得不从 <a href="http://dribbble.com">Dribbble</a> 上找图，自己在 Inkscape 上画。</p>
+
+<p>所以，我说，我画了「两张图」，而不是设计！</p>
+
+<h3>Blog Design</h3>
+
+<p>参照别人的成果，画出来的。</p>
+
+<p><img src="/images/photo/blog-1.png" alt="blog-1.png" /></p>
+
+<h3>CMS</h3>
+
+<p>参照别人的成果，画出来的。</p>
+
+<p><img src="/images/photo/cms-1.png" alt="cms-1.png" /></p>
+
+<p>工具，永远要记住的是其性质，它就是用来用的。由于很长时间，没有用画图相关的工具了，手不由得变得生疏。圈圈点点的东西，很多。</p>
+
+<p>记得之前选修课时，学过很多的工具，当时学得还蛮好的。但是，岁月怎么看都是刀，一片片刮下的，永远都只会沉下深海。</p>
+
+<p>画这两张图时，我更多的体会是：要先有内容。没有内容，感觉就是一张大白纸，很难凭空去设计些什么，就如刚开始的样子。或者说，自己至少在心里，确定设计的目的是什么，有什么作用。不能简单的以为，自己可以设计好框架，任何人可以往里面加内容，如何如何的&#8230;</p>
+
+<p>希望自己更文艺些，不想太被快节奏的物质生活所左右，或者&#8230;</p>
+]]></content>
+  </entry>
+  
+</feed>

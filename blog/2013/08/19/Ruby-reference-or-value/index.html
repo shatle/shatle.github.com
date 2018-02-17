@@ -1,0 +1,330 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Ruby:　reference or value - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Ruby:　reference or Value reference, ruby 可能有不少人纠结于 ruby 到底是传值呢，还是传引用呢。我也很纠结啊！！ Thanks: https://www.ruby-forum.com/topic/41160 相信，ruby 确实为我们提供了很多便利， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/08/19/Ruby-reference-or-value/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Ruby:　reference or Value</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/reference/'>reference</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>可能有不少人纠结于 ruby 到底是传值呢，还是传引用呢。我也很纠结啊！！</p>
+
+<p>Thanks: https://www.ruby-forum.com/topic/41160</p>
+
+<p>相信，ruby 确实为我们提供了很多便利，但是对于部分想深入操作代码的人来说，可能不点不友好。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a str&quot;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span>
+</span><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">p</span> <span class="n">copy</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">str</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># =&gt; &quot;a str&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这或许是你想看到的结果，copy 不会因 str 的变化而变化，仍然保持当初由 str 得来的值。从对象的方法上说，这也是合情理的。copy 和 str 本不是同一 String 对象，当其一做出修改，根据对象的独立特性，另一个应该也不会变化，否则你也不会起不同的名称了。</p>
+
+<p>但是有些人，会把c++中的指针套用到ruby上，因为他们想修改一个，相应修改另一个，他们才不管什么对象应该互相不影响的说法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">cp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="n">str</span><span class="o">=</span><span class="s">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">cp</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在ruby中，如果有此想法的你，你不得不：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a str&quot;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span>
+</span><span class='line'><span class="n">str</span><span class="o">.</span><span class="n">replace</span> <span class="s2">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">p</span> <span class="n">copy</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">str</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，为什么用 replace 替代 = 这一操作符之后，就起作用了呢？难道原本它们就是指向同一地址？很可能是！</p>
+
+<p>网友有说可能是 replace 在 ruby 中的 kenel/Object 进行了特殊操作</p>
+
+<blockquote><p>this should be inherited from kernel/Object and then overriden
+so a clear interface can be followed, my personal belief.</p></blockquote>
+
+<p>不过，我反而觉得是 ruby 对 = 操作符进行重写。</p>
+
+<p>在上一代码中，ruby 为字符数组&#8221;a str&#8221;分配了内存，然后定义一个str相关的指针，指向这一字符数组的地址；然后在定义一个指针copy，其等同于str，指向也是字符数组的地址。</p>
+
+<p>在最开始的例子中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于 str 和 copy 在前两行的定义声明中是指向同一字符数组的。此行代码，则会对新的字符数组进行比较，由于不相同，ruby 重新分配内存来存储&#8221;a diff str&#8221;，之后str重新指向这一字符数组。</p>
+
+<p>于是，从上说法来看，<code>=</code>例子的相应c++代码可能会是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">one_string</span> <span class="o">=</span> <span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">str</span><span class="o">=&amp;</span><span class="n">one_string</span><span class="p">,</span> <span class="o">*</span><span class="n">copy</span><span class="p">;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="n">other_string</span> <span class="o">=</span> <span class="s">&quot;a diff str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">other_string</span> <span class="o">!=</span> <span class="n">one_string</span><span class="p">){</span>
+</span><span class='line'>  <span class="n">str</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">other_string</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">copy</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>replace</code>例子的相应c++代码可能会是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">one_string</span> <span class="o">=</span> <span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">str</span><span class="o">=&amp;</span><span class="n">one_string</span><span class="p">,</span> <span class="o">*</span><span class="n">copy</span><span class="p">;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="o">*</span><span class="n">str</span><span class="o">=</span><span class="s">&quot;a diff str&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">cp</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>因为大多数的人肯定使用 <code>=</code> 操作符，而程序语言在设计时肯定会考虑内存的消耗。同样的工作与速率，内存消耗越少，当然也就越好。所以，重写<code>=</code>的可能性也就会更大些。Ruby 走的是简便的路线，你想操作指针，但它并不允许。在它的领域里，它希望你只看到对象。当你操作对象时，你已经在操作指针了。</p>
+
+<p>当然，以上也只是我的猜测，我没有心思认真阅读 ruby 的源码。</p>
+
+<hr />
+
+<p>今天看到个解释比较好的，用图的：</p>
+
+<blockquote><p>http://stackoverflow.com/questions/1872110/is-ruby-pass-by-reference-or-by-value#answer-10974116</p></blockquote>
+
+<p><img src="/images/photo/2013-08-22_09_19_31%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:19:31的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_19_50%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:19:50的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_12%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:12的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_28%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:28的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_46%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:46的屏幕截图.png" /></p>
+
+<p>明显，此网友的理解和我的是一样的。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/08/19/Ruby-reference-or-value/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/08/19/Ruby-reference-or-value/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

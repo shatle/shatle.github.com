@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rails pjax | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/rails-pjax/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rails pjax in diff partial]]></title>
+    <link href="http://shatle.github.io/blog/2013/05/04/rails-pjax-in-diff-partial/"/>
+    <updated>2013-05-04T09:13:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/05/04/rails-pjax-in-diff-partial</id>
+    <content type="html"><![CDATA[<p>How to use pjax refresh pages on rails?</p>
+
+<h2>Useage</h2>
+
+<blockquote><p>https://github.com/defunkt/jquery-pjax</p></blockquote>
+
+<p>It&#8217;s a tool to refresh page through ajax on rails.
+You can see README from <a href="https://github.com/defunkt/jquery-pjax">jquery-pjax</a>.</p>
+
+<p><strong>gem</strong>
+v =0.3.4</p>
+
+<p>In <code>Gemfile</code></p>
+
+<pre><code>gem 'pjax_rails'
+</code></pre>
+
+<p>In <code>application.js</code></p>
+
+<pre><code>//= require pjax
+</code></pre>
+
+<p><strong>Example one</strong></p>
+
+<p>Add to <code>application.js</code></p>
+
+<pre><code>$(document).pjax('a', '#pjax-container')
+</code></pre>
+
+<p>Then, when you click a <code>a</code> link, your page partion which id is <code>pjax-container</code> will be replaced through AJAX.</p>
+
+<p>Mostly, it&#8217;s used in pagination.</p>
+
+<p>On rails, we can increase data compution from changing action code. <code>index</code> action, use kaminari to page:</p>
+
+<pre><code>def index
+    @posts=Post.all.page(page)
+    respond_to do |format|
+    format.html {(render :layout =&gt; false if request.headers['X-PJAX'])}
+  format.json { render :json =&gt; @buildings }
+end
+end
+</code></pre>
+
+<p>In <code>index.haml</code></p>
+
+<pre><code>#pjax-container
+    @posts.each ...
+
+    = pagination @posts
+</code></pre>
+
+<p>When click <code>a</code> tag, it will show a params[:_pjax] which equals <code>#pjax-container</code> in console of backend.
+Frontend, <code>#pjax-container</code> partion is replaced, and other partions do not.</p>
+
+<p>In this, <em>warning</em>:</p>
+
+<p>when i use syntax: <a href="https://github.com/rails/pjax_rails">rails/pjax_rails</a></p>
+
+<pre><code>$('a:not([data-remote]):not([data-behavior]):not([data-skip-pjax])').pjax('[data-pjax-container]');
+</code></pre>
+
+<p>it happens lots of problems, especially use tag id and class attribute. So, dont use this.</p>
+
+<h2>Example Two</h2>
+
+<p>Sometimes, we want to diff link replace diff container.
+Likely,</p>
+
+<ul>
+<li>nav bar usually update <code>#main</code> partion</li>
+<li>login form update login status</li>
+<li>&#8230;</li>
+</ul>
+
+
+<p>This, in application.js</p>
+
+<pre><code>$(document).pjax('.pjax-1 a', '#pjax-container-1')
+$(document).pjax('.pjax-2 a', '#pjax-cantainer-2')
+</code></pre>
+
+<p>Then change relative views and actions. Ok.</p>
+
+<h2>Example Three:</h2>
+
+<p>On rails apps, we use <code>render</code> paritial function in mostly.
+In <code>show.haml</code>,</p>
+
+<pre><code>#pjax-container-1
+    #post-info
+        ...
+    #comments
+        = render 'comments', :@comments=&gt;@post.comments
+</code></pre>
+
+<p>in <code>_comments</code>,</p>
+
+<pre><code>@comments.each ...
+= pagination @comments
+</code></pre>
+
+<p>This case, we can see comments pagination in post <code>show</code> page. When we click pager and just want to refresh <code>#comments</code> partion.</p>
+
+<p>Maybe, we do:</p>
+
+<ul>
+<li>$(document).pjax(&#8216;.pagination a&#8217;, &#8216;#pjax-container-1&#8217;)</li>
+<li>$(document).pjax(&#8216;.pagination a&#8217;, &#8216;#comments&#8217;)</li>
+</ul>
+
+
+<p>First one, it will refresh comments info and post info.
+Second, it will refresh only comments info. Maybe, it&#8217;s better!</p>
+
+<p>However, what is the replaced from server? the <code>show</code> action in controller:</p>
+
+<pre><code>def index
+    @post=Post.find(params[:id])
+    respond_to do |format|
+        format.html {(render :layout =&gt; false if request.headers['X-PJAX'])}
+        format.json { render :json =&gt; @building }
+    end
+end
+</code></pre>
+
+<p>Then, the post info and comments info will be return from server to frontend.
+In this time, first one should be right!</p>
+
+<p>Can we use second one? And, we must control the return info from server. Then,
+change the view <code>show.haml</code> code</p>
+
+<pre><code>/#pjax-container-1
+unless request.headers['X-PJAX']
+    #post-info
+        ...
+#comments
+    = render 'comments', :@comments=&gt;@post.comments
+</code></pre>
+
+<p>if use pjax, only return comments info! Done!</p>
+
+<h2>End</h2>
+
+<p>Mostly, we also have some function when refresh page, like js functions.
+I will write something for that if i need!</p>
+]]></content>
+  </entry>
+  
+</feed>

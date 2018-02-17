@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: angularjs | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/angularjs/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[show and hide element in angularjs]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/30/show-and-hide-element-in-angularjs/"/>
+    <updated>2013-12-30T11:35:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/30/show-and-hide-element-in-angularjs</id>
+    <content type="html"><![CDATA[<p>由于是开始接触angularjs，所以很多效果都是用jquery/js的思维去做的，但是angularjs是不提倡直接操作dom元素的。这一直很让我纠结，慢慢去修正吧。</p>
+
+<p>相信，显示与隐藏是十分常见的功能／效果。刚开始，我是用jquery去实现，</p>
+
+<pre><code class="javascript">$('.ele')
+  .mouseenter(function(){
+    $(this).find('.text').show();
+  })
+  .mouseleave(function(){
+    $(this).find('.text').hide();
+  });
+</code></pre>
+
+<p>但是这就直接操作dom了，怎么避免这些不好的操作呢，就要使用angular提供的或者自己编写的directives。</p>
+
+<p>从<a href="http://docs.angularjs.org/api/ng.directive">官网</a>页面中可以找到相关的directives：<code>ngHide</code>、<code>ngShow</code>、<code>ngMouseenter</code>、<code>ngMouseleave</code>。</p>
+
+<pre><code class="haml">%a( ng-repeat="item in items" 
+    ng-mouseenter="hover(item)"
+    ng-mouseleave="hover(item)"
+  )
+  %img(ng-src="...")
+  .text(ng-show="item.show")
+    %span item.name
+</code></pre>
+
+<pre><code class="javascript">app.controller('indexCtrl', ['$scope', function($scope){
+  $scope.items = [
+    {
+      name: '..'
+    }
+    ,{
+      name: '....'
+    }
+  ];
+
+  $scope.hover = function(item){
+    item.show = !item.show;
+  };
+
+}]);
+</code></pre>
+
+<p>效果是，默认的文字名称是隐藏的，因为开始时<code>item.show</code>是没有设置的，为false。
+当鼠标移进移出时，会触发<code>hover</code>方法 ，修改相应<code>item.show</code>的值。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ngRepeat with ngModel in RadioBtn]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn/"/>
+    <updated>2013-12-21T23:05:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn</id>
+    <content type="html"><![CDATA[<p>相信大家开始接触<code>ng-repeat</code>时，很容易就明白了以下代码的作用：</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %span 
+</code></pre>
+
+<p>那么，当<code>ng-repeat</code>和<code>ng-model</code>结合起来呢：</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %input(type="radio" ng-model="select_item" value="")
+
+%input(type="text" value="select_item")
+</code></pre>
+
+<p>从代码上看，多个RadioBtn分在同一组，然后显示选择项的值。但是，这在实际操作中是不行的。</p>
+
+<blockquote><p>The ngRepeat directive instantiates a template once per item from a collection. <strong>Each template instance gets its own scope</strong>, where the given loop variable is set to the current collection item, and $index is set to the item index or key.</p></blockquote>
+
+<p><code>ng-repeat</code>会为每个实例产生自己的作用域。也就是说，<code>ng-model="select_item"</code>与<code>items</code>不是同一作用层级的；而相似的，<code>ng-model="select_item"</code>和<code>value="select_item"</code>是同一作用层级的。所以，<code>value="select_item"</code>并不能正常访问<code>ng-model="select_item"</code>中的变化值，需要将<code>ng-model</code>提升层级，</p>
+
+<pre><code class="haml">%li(ng-repeat="item in items")
+  %input(type="radio" ng-model="$parent.select_item" name="item" value="")
+
+%input(type="text" value="select_item")
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

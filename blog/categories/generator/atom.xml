@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: generator | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/generator/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 In Depth: Generators, continued]]></title>
+    <link href="http://shatle.github.io/blog/2016/01/27/es6-in-depth-generators/"/>
+    <updated>2016-01-27T22:35:21+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/01/27/es6-in-depth-generators</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/07/es6-in-depth-generators-continued/">ES6 In Depth: Generators, continued</a></p></blockquote>
+
+<p>欢迎回到 深入ES6。我希望你们能在我们的暑假期间也很快乐，但是编程大大的生活不能总是烟花和柠檬水，现在是时候拾起我的丢下的 &#8212;- 重新开始我已经讨论完美的主题(深入ES6)。</p>
+
+<p>在5月份，我写到生成器，这是ES6中的新功能。我在ES6中称它为最为魔法的特性，谈到它是怎么影响将来的异步编程的。然后，我写到：</p>
+
+<blockquote><p>对于生成器还有更多的东西要说的。&#8230; 但是，我认为这文章已经够长的了，现在足够引起疑惑了。就如生成器一般，我们应该暂停一下，在以后的时间再继续 。</p></blockquote>
+
+<p>现在，是时候了。</p>
+
+<p>你可以在<a href="http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators/">这里看第一部分的内容</a>。在阅读现在这篇文章时，最好先读一下链接中文章。继续，这里很有意思，它有有点长、有点令人困惑。但，它是个会说话的猫(?)。</p>
+
+<h4>快速场景</h4>
+
+<p>上次，我们关注生成器的基本用法，它也许可能有点奇怪，但是并不难理解。一个生成器函数看起来像个普通的函数，主要的不同点在于生成器函数的内容并不仅仅运行一次。每次运行时，会暂停而去执行<code>yield</code>的表达式。</p>
+
+<p>这具体的细节已经在之前的文章已经说明，但是，我们并没有做个彻底的把所有部分都整合在一起的例子。让我们现在开始做吧。</p>
+
+<pre><code class="javascript">function* someWords(){
+  yield "hello";
+  yield "world";
+}
+
+for (var word of someWords()) {
+  alert(word);
+}
+</code></pre>
+
+<p>这脚本够直接的了，但是，如果你注意到代码之间发生的事情，它就像是所有不同代码组成的一台戏，这时就是个不同的脚本了，它可能看起来会是这样：</p>
+
+<p><em>(略)</em></p>
+
+<p>这并不是什么<em>哈姆雷特</em>，但你可以想象一下这场景。</p>
+
+<p>就如你在这戏中看到的，当一个生成器对象第一次出现时，它会暂停。每次当方法<code>.next()</code>被调用时，它就会醒来。</p>
+
+<p>这动作是同步的、单线程的。注意，这里只有一个角色是可以在任意时间做任何事情，这角色不会互相打断对方，也不会与他人进行交互。他们轮流说话，而且，只要他们想，他们就可以想说多久就多久。(就像是莎士比亚!)</p>
+
+<p>在这戏剧的一些版本中，生成器每次相当于被喂食给<code>for-of</code>循环。在这过程中，会有<code>.next()</code>方法在按序地执行，但并不会出现在你的任何代码中。这里，我把它放到舞台中，但对你们和你们的程序来说，所有的这些是在后台发生的，因为生成器和<code>for-of</code>循环在设计时是一起工作的，他们通过<a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-iterator-interface">这个迭代接口</a> 实现的。</p>
+
+<p>所以，总结这里的点：</p>
+
+<ul>
+<li>生成器对象是个听话的机器人，它可以产出值；</li>
+<li>每次这机器人的程序包括一个简单的代码块，生成器的主体函数会生成这代码块。</li>
+</ul>
+
+
+<h4>怎么关闭一个生成器</h4>
+
+<p>生成器有一些非常巧妙的特性，我并没有在第一部分进行说明：</p>
+
+<ul>
+<li><code>generator.return()</code></li>
+<li><code>generator.next()</code>可选参数</li>
+<li><code>generator.throw(error)</code></li>
+<li><code>yield*</code></li>
+</ul>
+
+
+<p>我跳过这些主要是因为没有理解为什么这些特性会存在。我们很难注意到这些特性，在你们的脑子里并没有直接的印象。但是，当我们细想我们的程序是怎么使用生成器时，我们就能看到原因。</p>
+
+<p>这里有些你可能会碰到过：</p>
+
+<pre><code class="javascript">function doThings() {
+  setup();
+  try {
+    // ..do some things ...
+  } finally {
+    cleanup();
+  }
+}
+
+doThings();
+</code></pre>
+
+<p>这个cleanup方法可能会关闭连接或者是文件，释放系统资源，或者只是更新DOM去关闭“处理中&#8221;的加载图标。我们希望无论我们的工作是否成功完成都能执行它，所以它会出现在<code>finally</code>代码块中。</p>
+
+<p>那么在生成器中会是怎么样的呢？</p>
+
+<pre><code class="javascript">function* produceValues() {
+  setup();
+  try {
+    // ... yield some values ...
+  } finally {
+    cleanup();
+  }
+}
+
+for ( var value of produceValues()) {
+  work(value);
+}
+</code></pre>
+
+<p>这看起来很好，但是这里有点小问题：<code>work(value)</code>的调用并不在try的代码块中，如果有异常抛出，我们 cleanup 的时候会发生什么呢？</p>
+
+<p>或者，当 <code>for-of</code> 循环中包含有 break 或者 return 语句时，cleanup的时候又会发生什么呢？</p>
+
+<p>无论它怎么执行，你都可以控制它。</p>
+
+<p>当我们谈到<a href="http://shatle.github.io/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop/">迭代器和for-of循环</a> 时，我们说到迭代器的接口里有一个可选的 <code>.return()</code>的方法，当每次迭代完成之前它都会被自动调用。生成器也支持些方法。调用<code>myGenerator.return()</code>方法，会最终运行任意的<code>finally</code>的代码块，然后退出，就像是当前<code>yield</code>当作为return的返回语句一样。</p>
+
+<p>注意，<code>.return()</code>并不会被JS的所有内容所调用，只有当JS使用到了迭代器的协议时才会。所以，一个生成器在没有运行 finally 代码块时有可能会被垃圾回收掉。</p>
+
+<p>为什么这特性没有在剧本中体现呢？当一个任务正在依赖其它步骤完成的时候，生成器会被冻结，就像建造一幢大楼一样。突然，某人抛出了一个错误！<code>for</code>循环会抓取到它，并把它放到一边，并告诉生成器调用 <code>.return()</code>方法。生成器会安静地拆除整个建筑架子并关闭它。然后，<code>for</code>循环会获取到错误，一个普通的异常会继续处理中。</p>
+
+<h4>生成器管理</h4>
+
+<p>目前，我们看到了生成器与其用户之间的会话的其中一方面，先打断一下之前的剧场类比：</p>
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/generator-messages-small.png" alt="img" /></p>
+
+<p>用户是主管，生成器会按照要求工作。但是，这并不是生成器的唯一编程方式。</p>
+
+<p>在第一部分的文章中，我说过，生成器可以用于异步编程，也就是你可以用生成器来替代 异步的返回函数或者 promise 链。你可能会对它如何支持工作感到迷惑，为什么yield的能力那么有效(毕竟这是生成器特殊的能力)？毕竟，异步代码不仅是yield而已，它会触发更多的事情。然后，它返回到循环的事件中，等待处理那些异步进程，并完成它们。生成器是怎么做到这些的？没有返回函数，当数据 从文件、数据库和服务器中 返回时，生成器是怎么接收的呢？</p>
+
+<p>为了接近答案并开始工作，如果我们通过仅能调用的<code>.next()</code>方法传递参数来给生成器，通过这交易，我们可以看到整个新类型的会话：</p>
+
+<p><img src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2015/07/generator-messages-2-small.png" alt="img" /></p>
+
+<p>生成器的<code>.next()</code>方法实际上可以接收一个可选的参数，同时，它会聪明地将这参数作为value值返回到生成器中的yield的表达式中。是的，yield 并不类似于 return，这包含于个value值，生成器会获取一次。</p>
+
+<pre><code class="js">var results = yield getDataAndLatte(request.areaCode);
+</code></pre>
+
+<p>上面一行简单的代码做了很多的事情：</p>
+
+<ul>
+<li>它会调用 <code>getDataAndLatter()</code>，此函数会返回一个我们在屏幕中看到的字符串“get me the database records for area code &#8230; &#8220;。</li>
+<li>它会暂停生成器，yield 这字符串值</li>
+<li>这时，许多时间会过去</li>
+<li>最终，某人调用<code>.next({data: ..., coffee: ...})</code>。我们存储相应的对象到本地的变量<code>results</code>中，并继续下一行代码。</li>
+</ul>
+
+
+<p>为了展示其内容，下面的代码显示了的整个会话：</p>
+
+<pre><code class="js">function* handle(request){ 
+  var results = yield getDataAndLatter(request.areaCode);
+  results.coffee.drink();
+  var target = mostUrgentRecord(results.data);
+  yield updateStatus(target.id, "ready");
+}
+</code></pre>
+
+<p>注意，yield 仍然是之前的意思：暂停生成器并传递个value值给调用者。但是，事情发生了变化。生成器希望从其调用者中得到具体的支持性的行为，这意味着其希望调用者扮演着一个管理助手。</p>
+
+<p>普通的函数并不会这样。它们倾向于服务它们调用者的需求。但是，你可以为生成器指定会话的代码，从而加大生成器与其调用者之间的联系。</p>
+
+<p>管理助手式的生成器运行会是什么样？它并不是个复杂的事情，它可能看起来如：</p>
+
+<pre><code class="js">function runGeneratorOnce(g, result) {
+  var status = g.next(result);
+  if (status.done) {
+    return; // phew!
+  }
+
+  // The generator has asked us to fetch something and
+  // call it back when we're done.
+  doAsynchronousWorkIncludingEspressMachineOperations(
+    status.value,
+    (error, nextResult) =&gt; runGeneratorOnece(g, nextResult));
+}
+</code></pre>
+
+<p>为了保证运行，我们不得不创建一个生成器并运行一次，类似：</p>
+
+<pre><code class="js">runGeneratorOnce(handle(request), undefined);
+</code></pre>
+
+<p>在五月份，我提到<code>Q.async()</code>就是个例子，这库中的生成器会被看作为异步进程，并在需要时自动运行。<code>runGeneratorOnce</code>就是做这种事。实际上，生成器不会并不会处理其yield的值，这应该由其调用者来做。生成器只会yield Promise对象。</p>
+
+<p>如果你已经懂得promise，现在又理解了生成器，你可以会想试着修改<code>runGeneratorOnce</code>来支持promise。这会是个困难的实践，但只要你做成了，你将可以直接使用promise来编写复杂的异步逻辑的算法，而不是<code>.then()</code>或者一个返回函数了。</p>
+
+<h4>怎么扩展生成器</h4>
+
+<p>你是否看到<code>runGeneratorOnce</code>是怎么处理错误的？它忽略了他们。</p>
+
+<p>好的，这并不是好主意。我们总得需要生成器报告错误出来，生成器其实是支持的：你可以调用<code>generator.throw(error)</code>而不用<code>generator.next(result)</code>。这会导致<code>yield</code>的表达式会被抛出，就如<code>.return()</code>，生成器会被杀死。但是，如果当前yield的地方在一个try代码块中，然后then和finally代码块会被尊重，生成器会继续恢复运行。</p>
+
+<p>修改<code>runGeneratorOnce()</code>并适应地使用<code>.throw()</code>是另外一个好的实践，这样可以保证异常在生成器内部抛出，并传播给调用者。所以，<code>generator.throw(error)</code>会正常抛出 error 错误，除非你在生成器中获取了它。</p>
+
+<p>当一生成器遇到<code>yield</code>表达式并停止时，可能会有的操作：</p>
+
+<ul>
+<li>某些人会调用<code>generator.next(value)</code>，这时，生成器会从上次结束执行的地方再次恢复执行。</li>
+<li>某些人会调用<code>generator.return()</code>，传递的值是可选的。这情况，无论生成器在做什么，将不会恢复执行，而只会执行 <code>finally</code>代码块。</li>
+<li>某些人会调用<code>generator.throw(error)</code>，这生成器就会表现如<code>yield</code>表达式调用一个函数并返回错误一样。</li>
+<li>或者，没有人做任何事情。生成器会永远处理冻结状态。(是的，这可能会导致一个生成器进入<code>try</code>代码块之后，而不会去执行<code>finally</code>代码块。当生成器处于此状态时，它甚至可以从垃圾回收器那里重新恢复使用。)</li>
+</ul>
+
+
+<h4>一起工作的生成器</h4>
+
+<p>让我多展示一个特性，我们可以编写一个简单的生成器函数，作用是连接两个迭代对象集：</p>
+
+<pre><code class="javascript">function* concat(iter1, iter2) {
+  for (var value of iter1) {
+    yield value;
+  }
+  for (var value of iter2) {
+    yield value;
+  }
+}
+</code></pre>
+
+<p>ES6还支持缩写的方法：</p>
+
+<pre><code class="javascript">function* concat(iter1, iter2) {
+  yield* iter1;
+  yield* iter2;
+}
+</code></pre>
+
+<p>一个普通的<code>yield</code>表达式会 yield 一个简单值，一个<code>yield*</code>表达式会消费整个迭代器并yield所有的值。</p>
+
+<p>这个语法还解决另外一个有趣的问题：在一个生成器内部应该怎么调用生成器的问题。在普通的函数中，我们可以从一个函数中抽取一部分的代码，并重构成为一个单独的函数，而不会修改其行为。很明显，我们也将会重构生成器，但是我们需要找出一个方法来调用分解出去的子程序，同时需要确认在每次原有yield值之前，处理好子程序的yield操作，尽管那子程序也会生产出值。<code>yield*</code>就是处理这情况的方式。</p>
+
+<pre><code class="javascript">function* factoredOutChunkOfCode() { ... }
+
+function* refactoredFunction() {
+  ...
+  yield* factoredOutChunkOfCode();
+  ...
+}
+</code></pre>
+
+<p>可以类比想象一下，一个管道程序将部分子任务授予给其它进行操作。当编写大型的基于生成器的项目时，需要保持代码的清晰和易管理，你可以看到这方法是十分重要的，就类似函数在同步代码中的重要一般。</p>
+
+<h4>退场</h4>
+
+<p>好了，这就是生成器。我希望你也能够和我一样喜欢它，很高兴回过头再次提到它。</p>
+
+<p>下周，我们将讨论另外让人脑洞大开的特性，也是ES6中新的特性。这是新类型，它是微小又狡猾的，在你还没有在这里了解它时可能你已经使用到它了。请在下周加入我们，一起开始<strong>深入ES6代理</strong>。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[es6 in depth: generators]]></title>
+    <link href="http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators/"/>
+    <updated>2015-09-26T23:19:46+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">ES6 In Depth: Generators</a></p></blockquote>
+
+<p>我对今天的文章感到非常的兴奋，今天，我们将讨论ES6中最为魔法的特性。</p>
+
+<p>从“魔法”这词我想表达什么？对于初学者来说，这个特性是不同于现有JS中的，它一开始就是神秘的。从某种意义上说，它还是语言内部的正常行为(In a sense, it turns the normal behavior of the language inside out)。如果这还不够魔法，我都不知道怎么说了。</p>
+
+<p>另外，这个特性重点还在于，其以简明的代码来消除邪恶代码中的callback。(JS常见的多层callback, 写nodejs会很是恶心。)</p>
+
+<p>是我有点夸大了？让我们开始进入，然后由你自己来作出判断吧。</p>
+
+<h4>ES6 生成器介绍</h4>
+
+<p>什么是生成器？</p>
+
+<p>让我们开始用一个例子来看一下：</p>
+
+<pre><code class="javascript">function* quips(name) {
+  yield"hello " + name + "!";
+  yield"i hope you are enjoying the blog posts";
+  if (name.startsWith("X")) {
+    yield"it's cool how your name starts with X, " + name;
+  }
+  yield"see you later!";
+}
+</code></pre>
+
+<p>这代码来自<a href="http://people.mozilla.org/~jorendorff/demos/meow.html">a talking cat</a>，它可能是现今网络最为重要的一种应用。(继续，<a href="http://people.mozilla.org/~jorendorff/demos/meow.html">点击，一起玩耍吧</a>。当你感觉到完全懵时，回到这里看解释。)</p>
+
+<p>这代码看起来有几分类似函数，是不是？这个称为<code>generator-function</code>(生成器函数)，它拥有许多和函数相同的地方。但是，你现在必须清楚以下两个不同点：</p>
+
+<ul>
+<li>一般的函数以<code>function</code>开头，生成器函数是<code>function*</code></li>
+<li>在生成器函数中，<code>yield</code>是关键字，其语法更像是<code>return</code>。区别在于函数(甚至是生成器函数)只能<code>return</code>一次，而生成器函数可能<code>yield</code>多次。生成器中的<code>yield</code>会延缓执行，所以它可以在以后重新唤起。</li>
+</ul>
+
+
+<p>这就是一般函数和生成器函数的一个很大的不同点。一般函数不能内部暂停，但生成器函数可以。</p>
+
+<h4>生成器做什么</h4>
+
+<p>当你调用<code>quips()</code>生成器函数时，会发生什么呢？</p>
+
+<pre><code class="javascript">&gt; var iter = quips("jorendorff");
+  [object Generator]
+&gt; iter.next()
+  { value: "hello jorendorff!", done: false }
+&gt; iter.next()
+  { value: "i hope you are enjoying the blog posts", done: false }
+&gt; iter.next()
+  { value: "see you later!", done: false }
+&gt; iter.next()
+  { value: undefined, done: true }
+</code></pre>
+
+<p>你可能会习惯地按照普通的函数去推断其是怎么运行的。当你调用时，它会马上运行，它一直运行直到碰到<code>return</code>或者<code>throw</code>，这是所有JS程序大大的老习惯。</p>
+
+<p>调用一个生成器的方法类似于<code>quips("jorendorff")</code>，但是，当你调用一个生成器时，它并不立即运行，而返回的是一个暂停的生成器对象(在例子中是<code>iter</code>)。你可以认为这个生成器函数是一个函数调用，它这时是冻结的。具体来说，仅在运行第一行代码之前，它在生成器函数开始时是冻结的。</p>
+
+<p>每次你调用生成器对象的<code>.next()</code>方法时，函数自已会开始解冻，并且直到下一个<code>yield</code>时才会停止。</p>
+
+<p>这就是上面为什么我们每次调用<code>iter.next()</code>，却得到不同的字符串值的原因。这些值来源于<code>quips()</code>函数中的<code>yield</code>表达式。</p>
+
+<p>在最后一次调用<code>iter.next()</code>，我们来到了生成器函数的末尾，所以<code>.done</code>域的结果是<code>true</code>。到达函数的末尾时返回值是<code>undefined</code>，这就是<code>.value</code>域的结果是<code>undefined</code>。</p>
+
+<p>现在可能合适回到 <a href="http://people.mozilla.org/~jorendorff/demos/meow.html">the talking cat demo page</a> 把这代码玩起来了，试试将一个<code>yield</code>放到循环里面，会发生什么呢？</p>
+
+<p>从技术的角度来说，每次生成器<code>yield</code>时，生成器的栈架构中，<code>yield</code>的本地变量、参数、临时变量、执行的位置都会从此栈架构中移除。但是，这个生成器依然会对此栈架构保持着引用(或者是复制体)，所以之后的<code>.next()</code>调用时会再次激活生成器并继续执行。</p>
+
+<p>这里需要指出的是生成器并不是多线程的在多线程的语言中，多个代码块可以在同一时间一起运行。这会引起不同条件的资源竞争、不确定性、非常好的性能。生成器一点都不像这样，当生成器运行时，它只能运行于调用者的那个线程中，这个执行过程是有序并确定的。并不像系统线程，当生成器碰到<code>yield</code>时，它只会在其内部的相应位置暂停起来。</p>
+
+<p>好了，我们现在知道生成器是什么了。我们知道生成器运行、暂停、重新执行。现在有个大问题？怎么使得这强大的能力变得可用呢？</p>
+
+<h4>生成器是迭代器</h4>
+
+<p>上周，我们看到的ES6迭代器不仅仅是个内置的类，它们还是这新语言允许扩展的地方。你通过实现 <code>[Symbol.iterator]()</code>和<code>.next()</code>方法来创建自己的迭代器。</p>
+
+<p>但是，实现这个接口多少都会需要些工作，让我们来看一下在实践中是怎么实现一个迭代器的。例如，让我们来实现一个简单的值域来作简单地递增一个数值，就像旧时的<code>for(:;)</code>循环：</p>
+
+<pre><code class="javascript">// This should "ding" three times
+for (var value of range(0, 3)) {
+  alert("Ding! at floor #" + value);
+}
+</code></pre>
+
+<p>这里有个解决方案，就是使用ES6的类。(如果对类的概念语法不清楚时，不用担心，我们会在以后的文章中进行说明的。)</p>
+
+<pre><code class="javascript">class RangeIterator {
+  constructor(start, stop) {
+     this.value = start;
+     this.stop = stop;
+  }
+  [Symbol.iterator]() { return this; }
+  next() {
+     var value = this.value;
+     if (value &lt; this.stop) {
+       this.value++;
+       return {done: false, value: value};
+     } else {
+       return {done: true, value: undefined};
+     }
+  }
+}
+
+
+// Return a new iterator that counts up from 'start' to 'stop'.
+function range(start, stop) {
+  return new RangeIterator(start, stop);
+}
+</code></pre>
+
+<p><a href="http://codepen.io/anon/pen/NqGgOQ">点击这里看效果</a></p>
+
+<p>这就是如 Java 或者 Swift 的实现方式。它不是很坏，但是它又不是那么微不足道，而不用注意。这代码没有bug？这并不好说。我们试图模拟原来的<code>for(:;)</code>循环，但是看起来不并像，相反，迭代器的协议强制我们去拆散这循环。</p>
+
+<p>看到这里，你或许对迭代器有些许的冷淡了。迭代器好用，但不好实现。</p>
+
+<p>为了让迭代器更为容易地构建，我们不可能向你介绍一种少见、奇怪的新的JS语言流结构。但是，自从我们已有了生成器，我们能不能用它们来实现？让我们试一下吧：</p>
+
+<pre><code class="javascript">function* range(start, stop) {
+  for (var i = start; i &lt; stop; i++)
+     yield i;
+}
+</code></pre>
+
+<p><a href="http://codepen.io/anon/pen/mJewga">点击这里看效果</a></p>
+
+<p>以上的四行代码的生成器，相比于之前的包含有<code>RangeIterator</code>类的23行<code>Range()</code>实现，复杂度得到了降低。这可能就是生成器是迭代器的原因。所有的生成器都有内置的<code>.next()</code>和<code>[Symbol.iterator]()</code>的实现。你只需要写循环的行为就行了。</p>
+
+<p>离开生成器来实现迭代器就像是被强制用被动语态来写一整封长长的邮件。如果你不能通过简单的语言来说明你想表达的意思，那么相反你最终说的会变得很费解。由于没有使用循环语法，必须要用函数式的代码来完成循环，使<code>RangeIterator</code>变得又长又显怪异。因此，生成器就是你应该要的答案。</p>
+
+<p>生成器作为迭代器，我们可以用来做什么呢？</p>
+
+<ul>
+<li><strong>使得任何对象都可迭代</strong>。只需要写一个生成器函数来串连<code>this</code>(对象集)，yielding (反复地产出)它的每次值。然后，使用这个生成器函数来应用对象的<code>[Symbol.iterator]()</code>方法。</li>
+<li><strong>简化构建数组的函数</strong>。它支持你构建函数，来返回每次循环都可处理的数组，就像这样：</li>
+</ul>
+
+
+<pre><code class="javascript">// Divide the one-dimensional array 'icons'
+// into arrays of length 'rowLength'.
+function splitIntoRows(icons, rowLength) {
+  var rows = [];
+  for (var i = 0; i &lt; icons.length; i += rowLength) {
+     rows.push(icons.slice(i, i + rowLength));
+  }
+  return rows;
+}
+</code></pre>
+
+<p>生成器可使这代码变为更短些：</p>
+
+<pre><code class="javascript">function* splitIntoRows(icons, rowLength) {
+  for (var i = 0; i &lt; icons.length; i += rowLength) {
+     yield icons.slice(i, i + rowLength);
+  }
+}
+</code></pre>
+
+<p>这两者在行为上的唯一不同的地方是，第一种一次性返回处理后的结果，而第二种是返回数组，是一个迭代器，结果可以按要求逐一进行处理。</p>
+
+<ul>
+<li><p><strong>得到不常见的大小</strong>。你不能创建一个无限的数组，但是，你可以返回一个产生无终止序列的生成器。无论调用者想得到多少值，都可以从这生成器中得到。</p></li>
+<li><p><strong>重构复杂的循环</strong>。你是否写过庞大而丑陋的函数？你会不会想要把它打散到两个更为简单的部分中？生成器是你重构工具中的新的一把刀子。当你面对复杂的循环时，你可以将生成数据的那部分代码抽离出来，放到一个分离出来的生成器函数中。然后，循环就可以变为<code>for (var data of myNewGenerator(args))</code>。</p></li>
+<li><p><strong>配合迭代器使用</strong>。ES6 并没有为过滤、重组或者直接处理可迭代的数组集 提供额外的库。但是，生成器是搞定这些的好工具，你只需要几行代码就行。</p></li>
+</ul>
+
+
+<p>例如，为了让DOM的<code>NodeList</code>支持<code>Array.prototype.filter</code>的等同功能，而不只是数组。部分代码有：</p>
+
+<pre><code class="javascript">function* filter(test, iterable) {
+  for (var item of iterable) {
+     if (test(item))
+      yield item;
+  }
+}
+</code></pre>
+
+<p>所以，生成器很有用，是不是？这是确定的。它们是以一种难以想象的简单方法来实现自定义的迭代器，这个迭代器是ES6中新的数据循环标准。</p>
+
+<p>但是，这些并不是所有生成器可做的作用，这还没有包括它们能做的最为重要的事情。</p>
+
+<h4>生成器和异步代码</h4>
+
+<p>这里有些我之前写的JS结束代码：</p>
+
+<pre><code class="javascript">          };
+        })
+      });
+    });
+  });
+});
+</code></pre>
+
+<p>也许，你要你的代码中也看到类似的事情。<a href="http://www.html5rocks.com/en/tutorials/async/deferred/">异步API</a>  通常需要一个返回函数(callback)，这意味着你每次都需要写额外的匿名函数。所以，如果你使用超过三行的代码来做这三件事时，你则正在处理三层的内嵌代码结构。</p>
+
+<p>下面是我写的些JS代码：</p>
+
+<pre><code class="javascript">}).on('close', function(){
+  done(undefined, undefined);
+}).on('error', function(error) {
+  done(error);
+});
+</code></pre>
+
+<p>异步API 有单独的错误处理会话，而不是通过 Exception 来处理，不同的API拥有不同的会话。在多数用户的API中，错误通常会被安静地默认过滤掉。在某些，甚至连成功的完成操作也会被默认过滤掉。</p>
+
+<p>到现在，这些问题可以通过异步编程来简单地解决。但是，我们不得不接受，异步代码并不像同步代码看起来简单、好理解。</p>
+
+<p>生成器提供了新的希望而不一定要这方式（异步代码）。</p>
+
+<p><code>Q.async()</code>是个实验性的方法，利用它有助于生成器通过<code>promise</code>来完成异步代码，其类似于返回型的异步代码。例如：</p>
+
+<pre><code class="javascript">// Synchronous code to make some noise.
+function makeNoise() {
+  shake();
+  rattle();
+  roll();
+}
+
+// Asynchronous code to make some noise.
+// Returns a Promise object that becomes resolved
+// when we're done making noise.
+function makeNoise_async() {
+  return Q.async(function* () {
+     yield shake_async();
+     yield rattle_async();
+     yield roll_async();
+  });
+}
+</code></pre>
+
+<p>异步版本的代码主要的区别是必须在每个要调用的异步函数之前添加<code>yield</code>关键字。</p>
+
+<p>如果在<code>Q.async</code>代码中，添加<code>if</code>表达式或者<code>try/catch</code>代码块时，就如普通的异步代码一般。相比于其它异步代码的方式，至少这看起来不会像是学习一种新语言。</p>
+
+<p>如果你理解到现在所介绍的，你可能会喜欢 James Long 的 更为详细的文章<a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators">A-Study-on-Solving-Callbacks-with-JavaScript-Generators</a>。</p>
+
+<p>所以，生成器有助于进行异步编程，其更适合人类的大脑(思维方式)，这工作还要继续进行中。在这些工作中，有帮助的可能是更好的语法。<a href="https://github.com/lukehoban/ecmascript-asyncawait">A proposal for async functions</a> 同时利用<code>promise</code>和 生成器 来编程，这灵感来源于 C#，此已经在 ES7 的开发日程中。</p>
+
+<h4>什么时候我可以用上这些疯狂的特性</h4>
+
+<p>在服务端，你在 io.js 中现在就可以用上生成器了，或者 加上<code>--harmony</code>的Node命令行模式中。</p>
+
+<p>对于浏览器来说，目前只有火狐27+和Chrome39+才支持ES6的生成器。现在为了使用生成器，你需要使用 <a href="http://babeljs.io/">Babel</a> 或 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a> ，将ES6的代码转为浏览器更为友好的ES5。</p>
+
+<p>值得说明的是：JS中的生成器首先是由 Brendan Eich 实现的，他的设计接近于由 Icon 灵感而发的 Python 生成器。生成器在2006年被火狐2.0有提到，这标准化的路程是比较波折的，在这期间其语法和行为有了不少的变化。在火狐和Chrome中的ES6生成器是由极客 Andy Wingo 实现的，这是由 Bloomberg 支持的。</p>
+
+<h4>yield</h4>
+
+<p>对于生成器还有更多的东西要说的。我们还没有提到<code>.throw()</code>和<code>.return()</code>方法，<code>.next()</code>的可选参数，和 <code>yield*</code>语法。但是，我认为这文章已经够长的了，现在足够引起疑惑了。就如生成器一般，我们应该暂停一下，在以后的时间再继续 。</p>
+
+<p>但是下一周，我们要变一下方向。我们这里已经连续说到了两上高级的主题了，难道还没有说ES6会改变你的生活吗？某些是不是有简单又很有用？某些是不是也会让你微笑？ES6 还有些这样的特性。</p>
+
+<p>即将到来的特性会作用于你每天的代码编程，请下周加入我们，一起深入ES6的模板吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

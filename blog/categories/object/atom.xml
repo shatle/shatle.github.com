@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: object | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/object/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[clone an object in jQuery]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/31/clone-an-object-in-jquery/"/>
+    <updated>2013-12-31T11:15:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/31/clone-an-object-in-jquery</id>
+    <content type="html"><![CDATA[<p>大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中，有时我们真正想要的真正的复制对象（深度复制）。</p>
+
+<pre><code class="javascript">var obj = {name: 'lisi', age: 22};
+var newObj = obj;
+
+newObj.name = 'zhangsan';
+console.log(obj.name);  # zhangsan
+</code></pre>
+
+<p>利用jQuery复制整个对象，<a href="http://stackoverflow.com/questions/122102/most-efficient-way-to-clone-an-object">stackoverflow</a></p>
+
+<pre><code>var obj = {name: 'lisi', age: 22};
+var newObj1 = $.extend(true, {}, obj);
+
+newObj1.name = 'zhangsan';
+console.log(obj.name);  # lisi
+</code></pre>
+
+<p>在这个例子中，其实用</p>
+
+<pre><code>var newObj2 = $.extend({}, obj);
+</code></pre>
+
+<p>也是可以的。但是，对于多层属性时，需要参数<code>true</code>。</p>
+
+<blockquote><p>However, by passing true for the first function argument, objects will be recursively merged.</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

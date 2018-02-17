@@ -1,0 +1,304 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>rails pjax in diff partial - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Rails Pjax in Diff Partial rails pjax How to use pjax refresh pages on rails? Useage https://github.com/defunkt/jquery-pjax It's a tool to refresh &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/05/04/rails-pjax-in-diff-partial/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Rails Pjax in Diff Partial</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/rails-pjax/'>rails pjax</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>How to use pjax refresh pages on rails?</p>
+
+<h2>Useage</h2>
+
+<blockquote><p>https://github.com/defunkt/jquery-pjax</p></blockquote>
+
+<p>It&#8217;s a tool to refresh page through ajax on rails.
+You can see README from <a href="https://github.com/defunkt/jquery-pjax">jquery-pjax</a>.</p>
+
+<p><strong>gem</strong>
+v =0.3.4</p>
+
+<p>In <code>Gemfile</code></p>
+
+<pre><code>gem 'pjax_rails'
+</code></pre>
+
+<p>In <code>application.js</code></p>
+
+<pre><code>//= require pjax
+</code></pre>
+
+<p><strong>Example one</strong></p>
+
+<p>Add to <code>application.js</code></p>
+
+<pre><code>$(document).pjax('a', '#pjax-container')
+</code></pre>
+
+<p>Then, when you click a <code>a</code> link, your page partion which id is <code>pjax-container</code> will be replaced through AJAX.</p>
+
+<p>Mostly, it&#8217;s used in pagination.</p>
+
+<p>On rails, we can increase data compution from changing action code. <code>index</code> action, use kaminari to page:</p>
+
+<pre><code>def index
+    @posts=Post.all.page(page)
+    respond_to do |format|
+    format.html {(render :layout =&gt; false if request.headers['X-PJAX'])}
+  format.json { render :json =&gt; @buildings }
+end
+end
+</code></pre>
+
+<p>In <code>index.haml</code></p>
+
+<pre><code>#pjax-container
+    @posts.each ...
+
+    = pagination @posts
+</code></pre>
+
+<p>When click <code>a</code> tag, it will show a params[:_pjax] which equals <code>#pjax-container</code> in console of backend.
+Frontend, <code>#pjax-container</code> partion is replaced, and other partions do not.</p>
+
+<p>In this, <em>warning</em>:</p>
+
+<p>when i use syntax: <a href="https://github.com/rails/pjax_rails">rails/pjax_rails</a></p>
+
+<pre><code>$('a:not([data-remote]):not([data-behavior]):not([data-skip-pjax])').pjax('[data-pjax-container]');
+</code></pre>
+
+<p>it happens lots of problems, especially use tag id and class attribute. So, dont use this.</p>
+
+<h2>Example Two</h2>
+
+<p>Sometimes, we want to diff link replace diff container.
+Likely,</p>
+
+<ul>
+<li>nav bar usually update <code>#main</code> partion</li>
+<li>login form update login status</li>
+<li>&#8230;</li>
+</ul>
+
+
+<p>This, in application.js</p>
+
+<pre><code>$(document).pjax('.pjax-1 a', '#pjax-container-1')
+$(document).pjax('.pjax-2 a', '#pjax-cantainer-2')
+</code></pre>
+
+<p>Then change relative views and actions. Ok.</p>
+
+<h2>Example Three:</h2>
+
+<p>On rails apps, we use <code>render</code> paritial function in mostly.
+In <code>show.haml</code>,</p>
+
+<pre><code>#pjax-container-1
+    #post-info
+        ...
+    #comments
+        = render 'comments', :@comments=&gt;@post.comments
+</code></pre>
+
+<p>in <code>_comments</code>,</p>
+
+<pre><code>@comments.each ...
+= pagination @comments
+</code></pre>
+
+<p>This case, we can see comments pagination in post <code>show</code> page. When we click pager and just want to refresh <code>#comments</code> partion.</p>
+
+<p>Maybe, we do:</p>
+
+<ul>
+<li>$(document).pjax(&#8216;.pagination a&#8217;, &#8216;#pjax-container-1&#8217;)</li>
+<li>$(document).pjax(&#8216;.pagination a&#8217;, &#8216;#comments&#8217;)</li>
+</ul>
+
+
+<p>First one, it will refresh comments info and post info.
+Second, it will refresh only comments info. Maybe, it&#8217;s better!</p>
+
+<p>However, what is the replaced from server? the <code>show</code> action in controller:</p>
+
+<pre><code>def index
+    @post=Post.find(params[:id])
+    respond_to do |format|
+        format.html {(render :layout =&gt; false if request.headers['X-PJAX'])}
+        format.json { render :json =&gt; @building }
+    end
+end
+</code></pre>
+
+<p>Then, the post info and comments info will be return from server to frontend.
+In this time, first one should be right!</p>
+
+<p>Can we use second one? And, we must control the return info from server. Then,
+change the view <code>show.haml</code> code</p>
+
+<pre><code>/#pjax-container-1
+unless request.headers['X-PJAX']
+    #post-info
+        ...
+#comments
+    = render 'comments', :@comments=&gt;@post.comments
+</code></pre>
+
+<p>if use pjax, only return comments info! Done!</p>
+
+<h2>End</h2>
+
+<p>Mostly, we also have some function when refresh page, like js functions.
+I will write something for that if i need!</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/05/04/rails-pjax-in-diff-partial/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/05/04/rails-pjax-in-diff-partial/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>es6 in depth: an introduction - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Es6 in Depth: An Introduction es6, js, 深入es6 ES6 In Depth: An Introduction 欢迎来到【深入ES6】(ES6 in Depth)。 从这周开始，我们将要进入ES6(ECMAScript 6)系列, &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2015/09/01/es6-in-depth-an-introduction/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Es6 in Depth: An Introduction</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/">ES6 In Depth: An Introduction</a></p></blockquote>
+
+<p>欢迎来到<a href="https://hacks.mozilla.org/category/es6-in-depth">【深入ES6】(ES6 in Depth)</a>。 从这周开始，我们将要进入ES6(ECMAScript 6)系列, ES6是一个即将要来临的Javascript语言的新版本。ES6 包含了许多新的特性，它让JS(Javascirpt)更加强大、更有表现力，我们也将在以后一周周地对其进行详细探讨。但是，在详细探讨之前，我们应该花点时间来说明 ES6 是什么，你能从中期待些什么。</p>
+
+<h4>ECMAScript 是做什么的</h4>
+
+<p>现在有 JS 语言的标准化是由 ECMA 组织维护的ECMAScript项目，这组织类似 W3C。ECMAScript 对 JS 进行了以下工作：</p>
+
+<ul>
+<li>语法 &#8211; 解释规则、关键字、表达式、声明、操作符 等等</li>
+<li>类型 &#8211; 布尔、数值、字符串、对象 等等</li>
+<li>原型和继承</li>
+<li>对象(object)和函数(function)中的标准库: JSON, Math, Array 方法，Object自省方法( Object introspection methods), 等等</li>
+</ul>
+
+
+<p>他们不会对其它语言进行定义，如HTML 、CSS, 或者 Web APIs，如 DOM(Document Object Model)，这些是语言等的标准化是不同的。ECMAScript 负责的不仅仅是现今在浏览器中运行的 JS，还有 非浏览器运行环境中的JS，如 node.js。</p>
+
+<h4>新标准</h4>
+
+<p>上周，ECMAScript 第6版本的最终草稿的说明书已经提交到 Ecma General Assembly ，这意味着什么呢？</p>
+
+<p>这意味着，这个夏天，我们将有一个对JS语言核心的新标准了。</p>
+
+<p>这是一个大新闻。JS语言的标准化从未停止过，之前的于2009年第5版本，ES 标准委员会就开始着手 ES6 了。</p>
+
+<p>ES6 对于 JS 语言来说，是一个比较大的升级。同时，你之前的JS也可以继续运行。ES6 在设计时已经考虑到最大程度地兼容现有的JS代码。实际上，很多浏览器已经支持 ES6 的特性，并且不断地完善中，这意味着你的代码可能已经使用上了ES6的特性。如果你现在没有发现兼容性的问题，你很可能在以后也不会遇到。</p>
+
+<h4>版本回顾</h4>
+
+<p>ECMAScript 在之前发布有 1，2，3，5 版本。</p>
+
+<p>版本4 在哪里 ？其实，版本4是有计划的，并且已经做了大量的工作在上面，但是最后因其设计过于庞大（野心太大）而不得不放弃了。例如，其还包括有静态类型语言中的泛型和类型推断（generics and type inference）。（强类型？）</p>
+
+<p>ES4 一直都有争论，当标准化委员会最后停止这项工作之后 ，成员们同意发布一个相对合适的版本ES5，并继续开发些新特性。准确来说，这次可以说是“妥协的”，这就是为什么在ES5的说明中有这两句话：</p>
+
+<blockquote><p>ECMAScript 是个有活力的(JS)语言，其改进并不完整。此版本说明中的一些重要技术会在以后的发布版本在出现。</p></blockquote>
+
+<p>这话也可以理解为对某些事情的承诺。</p>
+
+<h4>兑现承诺</h4>
+
+<p>2009年发布的ES5，介绍了 <code>Object.create()</code> <code>Object.defineProperty()</code>、<em>getters</em> 、<em>setters</em>、<em>strict mode</em> ，和 JSON 对象。我已经使用了这些所有的特性，我喜欢ES5为JS语言增加的特性。我使用这些特性写出很多有魔法效果的JS代码，以致不能一一点出这些好的特性。对我来说，最重要的改进可能就是Array方法: <code>.map()</code> <code>.filter()</code>，等等。</p>
+
+<p>不同的是， ES6是这些年和谐工作的产物。新的语言、库、原有JS语言大量的升级，使得ES6是个未曾挖掘的宝藏。新的特性主要从易用性出发，如箭头函数(arrow function)和简单的字符吕报插值方法，还有些脑洞大开的概念，如 <code>proxies</code> 和 <code>generators</code>。</p>
+
+<p>ES6 将会改变你写JS代码的方式。</p>
+
+<p>这系列文章将通过代码检查的方式，给JS程度大大展示ES6中的新特性。</p>
+
+<p>我们将从经典的“易忽略特性”开始，这是我一直渴望去深入的部分。所以，下周我们将对 <code>for-of</code> 循环进行探究。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2015/09/01/es6-in-depth-an-introduction/';
+        var disqus_url = 'http://shatle.github.io/blog/2015/09/01/es6-in-depth-an-introduction/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

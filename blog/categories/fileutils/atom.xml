@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: fileutils | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/fileutils/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gem install fileutils in ubuntu 12.04]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/gem-install-fileutils-in-ubuntu-12-dot-04/"/>
+    <updated>2012-08-17T21:08:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/gem-install-fileutils-in-ubuntu-12-dot-04</id>
+    <content type="html"><![CDATA[<p>gem在ubuntu 10.04中安装FileUtils时，只要简单地</p>
+
+<pre><code>gem install fileutils
+</code></pre>
+
+<p>但是，换到12.04环境中，安装的过程会有错误：Can&#8217;t install RMagick 2.13.1.
+gg了一下，需要安装相应的库。</p>
+
+<p>简单的只安装libmagick-dev 包是不行的，会出现错误：Can&#8217;t install RMagick 2.13.1. Can&#8217;t find MagickWand.h.
+于是，在ubuntu12.04中，需要</p>
+
+<pre><code>sudo apt-get install libmagick++-dev
+</code></pre>
+
+<p>然后，重新运行</p>
+
+<pre><code>gem install fileutils
+</code></pre>
+
+<p>即可。</p>
+]]></content>
+  </entry>
+  
+</feed>

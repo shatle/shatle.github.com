@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: lib | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/lib/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rails lib 文件]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/rails-lib-wen-jian/"/>
+    <updated>2012-08-17T21:42:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/rails-lib-wen-jian</id>
+    <content type="html"><![CDATA[<p>今天在rails项目中的<code>rails_dir/lib</code>文件夹新建了个文件，当类库使用。</p>
+
+<p>如：my_jobs.rb，内容如下:</p>
+
+<pre><code>module Jobs
+  def self.hello
+    "hello"
+  end
+end
+</code></pre>
+
+<p>但是，当我用</p>
+
+<pre><code>rails c
+</code></pre>
+
+<p>并不能正常加载，不是说rails项目的lib中的文件会自动加载吗？问了旁边的齐洋，哦，要模块名与文件名要同名(符合rails规则)，才能自动加载。</p>
+
+<p>唉，之前都是习惯同名，现在不同名却能发现这一问题。多coding，才能发现问题啊。</p>
+]]></content>
+  </entry>
+  
+</feed>

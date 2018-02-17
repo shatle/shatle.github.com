@@ -1,0 +1,1491 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="树说-1 avl, 二叉树, 搜索树, 树, 红黑树 2013-09-11 Comments 食之无味，弃之可惜。仍不知其所用，但无奈于八股。 树 树，就是一个非空的有限元素集合，其中一个元素为根(root)，余下的元素组合成其 子树。 每个元素称为节点，节点分 根节点 、叶子节点。 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/page5/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/11/tree-1/" itemprop="url">树说-1</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/avl/'>avl</a>, <a class='category' href='/blog/categories/er-cha-shu/'>二叉树</a>, <a class='category' href='/blog/categories/sou-suo-shu/'>搜索树</a>, <a class='category' href='/blog/categories/shu/'>树</a>, <a class='category' href='/blog/categories/hong-hei-shu/'>红黑树</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-11T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-11</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/11/tree-1/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>食之无味，弃之可惜。仍不知其所用，但无奈于八股。</p>
+
+<h3>树</h3>
+
+<p>树，就是一个非空的有限元素集合，其中一个元素为根(root)，余下的元素组合成其 <strong>子树</strong>。</p>
+
+<p>每个元素称为节点，节点分 <strong>根节点</strong> 、<strong>叶子节点</strong>。每个节点的子树数目称为节点的 <strong>度</strong>。</p>
+
+<p>树中，结点的最大高度为此树的 <strong>高度</strong> 或者 <strong>深度</strong>。</p>
+
+<pre>
+    A
+   / \
+  B   C
+ / \  ｜\
+D  E  F G
+</pre>
+
+
+<p>此树中A为根节点，DEFG为叶子节点，A的度为2，C的度为3，叶子节点的度为0。高度为3。</p>
+
+<h3>二叉树</h3>
+
+<p>每个节点的子树数目不多于2的树，称为二叉树。二叉树的子树分左右。其有以下性质：</p>
+
+<ol>
+<li><p>i层最多有2<sup>i-1</sup>个节点；</p></li>
+<li><p>深度为k的二叉树最多有2<sup>k</sup>-1个节点；有2<sup>k</sup>-1个节点的树称为满二叉树；由满二叉树从右到左、从下到上地缺少节点，形成的树，称为完全二叉树。</p></li>
+<li><p>对于任意二叉树，节点数为 n，叶子节点数为 n0，度为2的节点数为 n2，度为1的节点数 n3， 有：
+<code>n = n0 + n1 + n2</code>， <code>n = n1 + 2n2 + 1</code>， <code>n0 = n2 + 1</code></p></li>
+<li><p>N个节点的二叉树,最大深度为N，最小深度为 log(N+1)，即完全二叉树。log在此表示以2为底。</p></li>
+<li><p>n个节点的完全二叉树，从上到下、从左到右地进行编号 <code>i = 1...n</code>，有</p>
+
+<ul>
+<li>i=1表示根节点；i>1时，此元素的父节点编号为 i/2 的取整；</li>
+<li>2i>n时，此元素无左孩子；否则，其左孩子编号为 2i；</li>
+<li>2i+1>n时，此元素无右孩子；否则，其右孩子编号为 2i+1；</li>
+</ul>
+</li>
+</ol>
+
+
+<pre>
+    A
+   / \
+   B   C
+  / \
+  D E    二叉树
+ /
+F
+
+    A
+   / \
+   B  C
+  / \ ｜\
+  D E F G   满二叉树
+
+    A
+   / \
+   B  C
+  / \
+  D E     完全二叉树
+
+</pre>
+
+
+<h3>堆</h3>
+
+<p>最大堆／最小堆，两者都是完全二叉树。最大堆是指树中的任意节点大于或等于其孩子节点；最小堆反之。</p>
+
+<pre>
+    14
+   / \
+  10 12
+  / \
+  6 5 最大堆
+
+    5
+   / \
+   6 10
+  / \
+ 14 12 最小堆
+
+</pre>
+
+
+<h4>初始化</h4>
+
+<p>最大堆的初始化。</p>
+
+<p>堆首先是完全二叉树。对于任意的一组数据，按照顺序编号，可以看作是一个完全二叉树，但此树就不一定是堆。如果这组数据是存储于连续的空间，如线性表，那么其中父节点和相应的子节点，可以通过<code>父节点编号＝子节点编号/2(取整)</code>得到节点之间的关系；如果是链表，还要额外地存储左右子节点和父节点的指针，当然将每个链节点的地址另存储为线性表，从而利用<code>父节点编号＝子节点编号/2(取整)</code>公式。</p>
+
+<p>所以，可以利用公式<code>父节点编号＝子节点编号/2(取整)</code>减少程序的访问次数。最大堆需要每个子树的根都大于其左右子节点，那么可以从最后一个子树开始初始化。即，当完全二叉树的节点数为n，那么最后子树的根节点编号应该是 n/2。如此，从 n/2 到 1，不断地构造子树成为最大堆，从而整棵树就成为最大堆。 <strong>注意</strong> ，这里的子树不仅仅指三个节点，而是某节点下方的子层，子子层等的所有节点。对于由于节点较小，需要下沉时，需要重新构造以下沉节点为根的子树。总的复杂度为O(nlogn),但实际效果要优于此。</p>
+
+<p>如，</p>
+
+<pre>
+      10
+     / \
+     6  5
+    /\  |\
+  14 12 1 2   初始状态
+  ／
+ 8
+
+      14
+     / \
+    12  5
+    /\  |\
+   8 10 1 2   结束
+  ／
+  6
+</pre>
+
+
+<p>n=8，从8/2=4编号开始。编号4的节点值是14，以此节点为根的子树已经是最大堆了；然后到编号3，节点值是5，这也是最大堆了；编号2，节点值为6，此时需要与左右子节点最大的14进行交换，6下沉，下沉的6改变了以编号4为根的子树结构，所以需要重新构造子树成为堆，6继续下沉；编号1，值为10，小于编号2的14，10下沉，10小于12，下沉右节点。</p>
+
+<h4>插入</h4>
+
+<p>最大堆的插入操作。插入时，先将新的元素 <em>模拟</em> 放入n+1的位置，再与父节点比较，如果新的元素大于父节点的元素，将父节点元素下移，新元素插入的位置上移。按 n+1 的位置到根节点 这一路径，进行比较，当新的元素大于父节点的元素时，或者到根节点时，比较结束。最后新元素真正插入到相应的位置。由于高度最多是log(n+1)，其操作的时间复杂度为O(logn)</p>
+
+<pre>
+1)
+    14
+   / \
+  10 12
+  / \
+  6 5
+
+2) x 为新元素的模拟初始位置
+    14
+    / \
+   10 12
+   / \ |
+   6 5 x
+
+3) 当新元素大于 12 时，
+父节点元素12下移，新元素要插入的位置x上移
+    14
+    / \
+   10 x
+   / \ |
+   6 5 12
+
+4) 当新元素不大于父节点元素14时，
+新元素才真正地插入到x的位置上。
+</pre>
+
+
+<h4>删除</h4>
+
+<p>堆的删除通常指删除根节点中的元素。最大堆中，n的二叉树删除根节点元素后，节点数目会变为n-1。删除根元素后，根节点为空，模拟将原来的最后一个元素放到此根节点的位置上。然后，与此位置的左右孩子节点比较，取最大元素并将其上移，原来最后的元素模拟下移。如此循环，直到原来最后元素大于此位置上的左右孩子节点元素，真正把原来最后元素放入此位置上。由于高度最多是log(n+1)，其操作的时间复杂度为O(logn)</p>
+
+<pre>
+1)
+    14
+   / \
+   10 12
+  / \
+  6 5
+
+2) x 为最后一个元素5的模拟初始位置
+    x
+   / \
+  10 12
+  /
+ 6
+
+3) 把 5 与位置x的左右孩子节点中的元素比较，取最大的元素上移，x 位置下移
+    12
+   / \
+   10 x
+  / \
+  6 5
+
+4) 当原来最后的元素不小于其位置上的任意元素时，将最后的元素真正放入到x位置。
+</pre>
+
+
+<h4>堆的应用</h4>
+
+<p>利用堆进行排序，时间复杂度为O(nlogn)。首先，将一组数据初始化为堆，需要的时间为O(nlogn)，然后直接利用堆删除的操作，将根节点提取出来，时间复杂度为O(logn),总的时间为O(nlogn)。这比普通的两个循环的时间复杂度O(n<sup>2</sup>)要好。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/09/Cron/" itemprop="url">Cron</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/cron/'>cron</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-09T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-09</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/09/Cron/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>利用系统自带的 cron，做定时任务，主要是备份数据</p>
+
+<h3>查看当前任务</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ps axgu | grep cron</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>编辑（添加／删除）任务</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo crontab -e
+</span><span class='line'>
+</span><span class='line'># 例子:
+</span><span class='line'>#
+</span><span class='line'># 每天每分钟执行job1一次
+</span><span class='line'>* * * * * /cron_jobs/job1 # Absolutely Path
+</span><span class='line'>
+</span><span class='line'># 每个星期一，早上 3:00 执行一次
+</span><span class='line'>0 3 * * 1 /cron_jobs/job2
+</span><span class='line'>
+</span><span class='line'># Format:
+</span><span class='line'>#
+</span><span class='line'>#   分    小时     天           月               星期几          命令 
+</span><span class='line'># (0-59) (0-23) (1-31)  (1-12 or Jan-Dec) (0-6 or Sun-Sat)
+</span><span class='line'>#   0      2      12           *                 0,6</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>保存数据库数据</h3>
+
+<p><strong>方法一</strong>:</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> #!/bin/bash
+</span><span class='line'>DATE=`date +%y_%m_%d_%H_%M_%S`
+</span><span class='line'>mongodump --out ./dump$DATE
+</span><span class='line'>tar -cf ./dump$DATE.tar ./dump$DATE
+</span><span class='line'>rm -rf dump$DATE</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>方法二</strong>: 进入项目数据库数据目录，</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,内容为</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> #!/bin/bash
+</span><span class='line'>cd /data_path
+</span><span class='line'>DATE=`date +%y_%m_%d_%H_%M_%S`
+</span><span class='line'>git init ./ 
+</span><span class='line'>git add ./ -A 
+</span><span class='line'>git commit -am "commit with cron in $DATE"</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>其中</strong>，方法一直接使用mongodb简单的整体备份方法，方法二则使用git进行差异化备份。无论方法一、方法二，还需要添加定时任务</p>
+
+<p>赋权限<code>chmod u+x /cron_jobs/bk_data</code>，通过<code>crontab -e</code>添加任务：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>0 3 * * 1 /cron_jobs/bk_data</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外有: https://github.com/javan/whenever</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/07/modify-mongodb-setting/" itemprop="url">修改mongodb配置</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/mongodb/'>mongodb</a>, <a class='category' href='/blog/categories/an-quan/'>安全</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-07T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-07</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/07/modify-mongodb-setting/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>之前没有注意数据库安全问题，简单进行部署，于是有了安全问题。</p>
+
+<p>从 #ruby-china@rei 的博文中看到了这一问题，由于内容是晚上在手机上看到的，地址忘记是哪了。</p>
+
+<p>通过 10gen 下载安装 mongodb 默认是对所有的ip进行开放:</p>
+
+<blockquote><p>http://docs.mongodb.org/manual/reference/program/mongod/</p>
+
+<p>&#8211;bind_ip <ip address></p>
+
+<p>The IP address that the mongod process will bind to and listen for connections. By default mongod listens for connections all interfaces. You may attach mongod to any interface; however, when attaching mongod to a publicly accessible interface ensure that you have implemented proper authentication and/or firewall restrictions to protect the integrity of your database.</p></blockquote>
+
+<p>如果只是默认对所有ip开放访问的话：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nmap -p27017 hostname
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2013-09-07 16:17 CST
+</span><span class='line'>Nmap scan report <span class="k">for</span> hostname
+</span><span class='line'>Host is up <span class="o">(</span>0.026s latency<span class="o">)</span>.
+</span><span class='line'>PORT      STATE SERVICE
+</span><span class='line'>27017/tcp open  unknown
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以通过 <a href="http://docs.mongodb.org/manual/reference/program/mongo/">mongo</a> 远程访问：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mongo --host hostname
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是很可怕的。修改配置文件<code>mongodb.conf</code>，加入下行，只允许本地访问：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">bind_ip</span> <span class="o">=</span> 127.0.0.1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要重启 mongodb，通常可以通过：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service mongodb restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是我的是不行的，我需要：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/mongodb restart
+</span><span class='line'>
+</span><span class='line'><span class="c"># 或者，指定配置文件</span>
+</span><span class='line'><span class="c"># $ sudo mongod -f /etc/mongodb.conf</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此时，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nmap -p27017 hostname
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2013-09-07 16:17 CST
+</span><span class='line'>Nmap scan report <span class="k">for</span> hostname
+</span><span class='line'>Host is up <span class="o">(</span>0.026s latency<span class="o">)</span>.
+</span><span class='line'>PORT      STATE SERVICE
+</span><span class='line'>27017/tcp closed  unknown
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实，可以进行其它安全设置：http://docs.mongodb.org/manual/core/security/</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/05/the-feeling-of-university/" itemprop="url">忆大学</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/da-xue/'>大学</a>, <a class='category' href='/blog/categories/gong-zuo/'>工作</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-05T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-05</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/05/the-feeling-of-university/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>明年就要毕业了，同学们开始忙着投简历，我也要开始了？！6年的地大学生生活啊！</p>
+
+<p>突然发现，等待邮件回音的感觉十分不爽，想到海笔的时候不爽，看着那些似乎忘却而又相识的知识不爽，&#8230;</p>
+
+<p>其实我并不是个喜欢多嘴的人，但我承认我这时有些抱怨、有些怀念了</p>
+
+<p>回顾我的<strong>大学本科</strong>四年，</p>
+
+<p><em>努力过</em> 大一那年，基本每天早起，和宿舍的同学一块到小绿园里读英文；除了上课，就是自习，就为了那个成绩；大二后期，自己在课程外开始学习rails／ruby，但对于大学才真正接触计算机的我，始终得不到要领，那时国内我只知道javaeye用了rails；</p>
+
+<p><em>欢乐过</em> 和宿舍的同学玩过&lt;天龙>，玩过dota，而我一直处于菜鸟的水平，至今仍是，我只是喜欢和大家一块疯一下；和班里的同学一起春游、秋游，植物园、凤凰岭、百里峡、秦皇岛；</p>
+
+<p><em>迷茫过</em> 大三后期，开始犹豫着继续读书，还是出去工作，出去又能做什么工作，留下又能得到些什么；</p>
+
+<p>大学本科四年，我是保守的。我沿着中学的生活轨迹，延长到了大学的生活。没有去刻意追求什么，也没有什么深深地影响到我。传说中的爱情并没有出现，有的只是垂柳划动过的水面。</p>
+
+<p>认清了人是分类别的，男人和女人；认清了人是分性格的，向上的、向下的、向前的、向后的；认清了人是要环境的，同学圈、朋友圈、老乡会；认清了人是要爱自己的，没有谁说要对你负责。</p>
+
+<p>感受到了他人赞许的眼神，鄙视的、无视的、厌恶的、期待的，&#8230; 也同时坚定了爱自己的想法；感受到了他人给予的恩情，&#8230;</p>
+
+<p>感谢所有接触过的人。我选择了保研，感谢父母的支持。</p>
+
+<p><strong>研究生</strong>的两年，</p>
+
+<p>研一所有课程结果时，我迈出了自以为是的一步，从本科老师的实验室中，出来实习rails。不容怀疑，老师肯定对我有些意见，从大三暑假就开始让我进他实验室，锻炼着我，占用了部分资源&#8230;  但是，我仍然是很感谢他们，感谢他们给予的信任和肯定，和某些有关弃子的东西。</p>
+
+<p>自身的否定，自身的不信邪。我并不想研究生还需要家里支持些什么，大学的相对简约的我不需要也不能够再接受父母些什么。我不希望我是一个一直在获取些什么的人，我可以为社会做出些东西，从而换取些什么。</p>
+
+<p>我试图去接触新东西，数字图像识别。感谢导师和中科院的老师，让我接触这些很有前景的知识，我也试图去理解学习这些东西，但是，我却退却了，我以为我不会后悔，而此时我有些了。</p>
+
+<p>我利用一个学期的时间来考驾照，或许这真的错了，时间的宝贵可能并不容许我们多加浪费；因为身边的朋友一直在外面实习，而我一直啃着之前实习的老本。</p>
+
+<p>庆幸的是，我在这段时间里，弄出了个人的网站，在此期间接触了大量的rails、js相关的知识，狠下心买了阿里云的最便宜的服务，从备案到部署，一个人完成了下来。我也不能确定，我能坚持多久，时不时地冒出些不自信来。</p>
+
+<p>但至始至终，我仍然相信我是幸运的，我是风顺的。我并没有经历过大的风浪，没有如身边的同学抛弃本科学位学科而去当导游的霸气，没有他主动上交三四万而去当海上服务员的魄力，我是否跟着心走，至今仍然是个迷。</p>
+
+<p>轮到的找工作的时间了，我需要努力和机缘，我讨厌不得不进行的等待，要不，请拒绝我！！https://gist.github.com/shatle/6445045</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/19/Ruby-reference-or-value/" itemprop="url">Ruby:　reference or Value</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/reference/'>reference</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-19T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-19</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/19/Ruby-reference-or-value/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>可能有不少人纠结于 ruby 到底是传值呢，还是传引用呢。我也很纠结啊！！</p>
+
+<p>Thanks: https://www.ruby-forum.com/topic/41160</p>
+
+<p>相信，ruby 确实为我们提供了很多便利，但是对于部分想深入操作代码的人来说，可能不点不友好。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a str&quot;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span>
+</span><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">p</span> <span class="n">copy</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">str</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># =&gt; &quot;a str&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这或许是你想看到的结果，copy 不会因 str 的变化而变化，仍然保持当初由 str 得来的值。从对象的方法上说，这也是合情理的。copy 和 str 本不是同一 String 对象，当其一做出修改，根据对象的独立特性，另一个应该也不会变化，否则你也不会起不同的名称了。</p>
+
+<p>但是有些人，会把c++中的指针套用到ruby上，因为他们想修改一个，相应修改另一个，他们才不管什么对象应该互相不影响的说法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">str</span><span class="o">=</span><span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">cp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="n">str</span><span class="o">=</span><span class="s">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">cp</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在ruby中，如果有此想法的你，你不得不：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a str&quot;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span>
+</span><span class='line'><span class="n">str</span><span class="o">.</span><span class="n">replace</span> <span class="s2">&quot;a diff str&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">p</span> <span class="n">copy</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">str</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，为什么用 replace 替代 = 这一操作符之后，就起作用了呢？难道原本它们就是指向同一地址？很可能是！</p>
+
+<p>网友有说可能是 replace 在 ruby 中的 kenel/Object 进行了特殊操作</p>
+
+<blockquote><p>this should be inherited from kernel/Object and then overriden
+so a clear interface can be followed, my personal belief.</p></blockquote>
+
+<p>不过，我反而觉得是 ruby 对 = 操作符进行重写。</p>
+
+<p>在上一代码中，ruby 为字符数组&#8221;a str&#8221;分配了内存，然后定义一个str相关的指针，指向这一字符数组的地址；然后在定义一个指针copy，其等同于str，指向也是字符数组的地址。</p>
+
+<p>在最开始的例子中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于 str 和 copy 在前两行的定义声明中是指向同一字符数组的。此行代码，则会对新的字符数组进行比较，由于不相同，ruby 重新分配内存来存储&#8221;a diff str&#8221;，之后str重新指向这一字符数组。</p>
+
+<p>于是，从上说法来看，<code>=</code>例子的相应c++代码可能会是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">one_string</span> <span class="o">=</span> <span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">str</span><span class="o">=&amp;</span><span class="n">one_string</span><span class="p">,</span> <span class="o">*</span><span class="n">copy</span><span class="p">;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="n">other_string</span> <span class="o">=</span> <span class="s">&quot;a diff str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">other_string</span> <span class="o">!=</span> <span class="n">one_string</span><span class="p">){</span>
+</span><span class='line'>  <span class="n">str</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">other_string</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">copy</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>replace</code>例子的相应c++代码可能会是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">string</span> <span class="n">one_string</span> <span class="o">=</span> <span class="s">&quot;a str&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">string</span> <span class="o">*</span><span class="n">str</span><span class="o">=&amp;</span><span class="n">one_string</span><span class="p">,</span> <span class="o">*</span><span class="n">copy</span><span class="p">;</span>
+</span><span class='line'><span class="n">copy</span> <span class="o">=</span> <span class="n">str</span><span class="p">;</span>
+</span><span class='line'><span class="o">*</span><span class="n">str</span><span class="o">=</span><span class="s">&quot;a diff str&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">cp</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span><span class='line'><span class="cp"># =&gt; &quot;a diff str&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>因为大多数的人肯定使用 <code>=</code> 操作符，而程序语言在设计时肯定会考虑内存的消耗。同样的工作与速率，内存消耗越少，当然也就越好。所以，重写<code>=</code>的可能性也就会更大些。Ruby 走的是简便的路线，你想操作指针，但它并不允许。在它的领域里，它希望你只看到对象。当你操作对象时，你已经在操作指针了。</p>
+
+<p>当然，以上也只是我的猜测，我没有心思认真阅读 ruby 的源码。</p>
+
+<hr />
+
+<p>今天看到个解释比较好的，用图的：</p>
+
+<blockquote><p>http://stackoverflow.com/questions/1872110/is-ruby-pass-by-reference-or-by-value#answer-10974116</p></blockquote>
+
+<p><img src="/images/photo/2013-08-22_09_19_31%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:19:31的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_19_50%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:19:50的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_12%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:12的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_28%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:28的屏幕截图.png" /></p>
+
+<p><img src="/images/photo/2013-08-22_09_20_46%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-22 09:20:46的屏幕截图.png" /></p>
+
+<p>明显，此网友的理解和我的是一样的。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/14/the-hell-of-browser-hack/" itemprop="url">可恶的浏览器兼容</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/jquery/'>jquery</a>, <a class='category' href='/blog/categories/trim/'>trim</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-14</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/14/the-hell-of-browser-hack/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>怎么说呢，浏览器我一直主要担心的是css的问题，真正细调起来，晕，js也可能有这一问题。不多说，再次推荐网站：http://browserhacks.com/</p>
+
+<p>其实，上网站的主要也是谈到的是css的问题，当然包括些js的控制。</p>
+
+<p>这里主要记录我遇到的问题。</p>
+
+<h3>.trim()</h3>
+
+<p>使用 jquery 的用户，相信已经习惯了这一方法。其作用是除去字符串前后的空字符：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">trim</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可惜 IE8 对此会报错，如果你在js提交数据时，使用了这一方法，这一操作在IE8中是不会成功的！</p>
+
+<p>在jquery中，你需要用到 <code>$.trim()</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>.indexOf()</h3>
+
+<p>此方法判断所指定字符的位置，可以用到 String 中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="s2">&quot;12345&quot;</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>    <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实主流浏览器中还可以对 Array 使用：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>      <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可惜 IE8 是不支持的，在jquery中，需要用<code>$.inArray()</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>   <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>.split(/\D/)</h3>
+
+<p>根据数字来分组。但是，在不同的浏览器中，对于部分的字符串，分组的情况是不一样的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">string</span> <span class="o">=</span> <span class="s2">&quot;[123, 1234]&quot;</span>
+</span><span class='line'><span class="nx">arr1</span><span class="o">=</span><span class="nx">string</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\D/</span><span class="p">)</span>     <span class="c1">//chrome# =&gt; [&quot;&quot;, 123, &quot;&quot;, 1234]</span>
+</span><span class='line'><span class="nx">arr2</span><span class="o">=</span><span class="nx">string</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\D/</span><span class="p">)</span>     <span class="c1">//IE8# =&gt; [123, 1234] </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>http://blog.stevenlevithan.com/archives/cross-browser-split ，IE &lt; 9 对<code>/../</code>这一正则语法支持并不好。</p>
+
+<p>可以去掉空串：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">grep</span><span class="p">(</span><span class="nx">arr1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span> <span class="k">return</span> <span class="nx">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">;})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实，对于此字符串，可以这样：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nb">eval</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>  <span class="c1">//# =&gt; [123, 123]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>:last-child</h3>
+
+<p>不多说，IE8是不支持这一伪类的。所以，我不得不添加一个<code>last-child</code>的类，如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nc">.tabs</span>
+</span><span class='line'>  <span class="nc">.tab</span> hello1
+</span><span class='line'>  <span class="nc">.tab</span> hello2
+</span><span class='line'>  <span class="nc">.tab.last-child</span> hello3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，奇怪的是css样式定义中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.tab.last-child</span><span class="o">,</span> <span class="nc">.tab</span><span class="nd">:last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样子在IE8中是不成功的，我很费解，非要将其分开：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.tab.last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.tab</span><span class="nd">:last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>具体也不知道什么原因！！！</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/11/good-css/" itemprop="url">好看样式CSS</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/html/'>html</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-11T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-11</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/11/good-css/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>收集一些好看的样式</p>
+
+<h3>Input</h3>
+
+<ul>
+<li>代码地址：http://codepen.io/anon/pen/jivxd ，其利用 css3 的特性展现多种动画</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-11_09_14_50%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-11 09:14:50的屏幕截图.png" /></p>
+
+<ul>
+<li>http://dropthebit.com/demos/fancy_input/fancyInput.html ，这个也挺好的</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-17_10_10_58%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-17 10:10:58的屏幕截图.png" /></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/07/Linux-Commands/" itemprop="url">Linux Commands</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/command/'>command</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-07T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-07</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/07/Linux-Commands/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>用来记录各种 linux 下的有用命令！</p>
+
+<h4>top</h4>
+
+<p>动态查看机器的CPU、内存及各数据的变化。</p>
+
+<h4>netlogs</h4>
+
+<p><em>安装</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install netlogs</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>使用命令</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo netlogs wlan0</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>wlan0</code>是我无线的名称。使用网口的可能是<code>eth0</code>，但不一定。</p>
+
+<p>对于到底是哪个呢，可使用命令<code>ip addr</code>，看到正在使用的网络名称，并替代<code>wlan0</code>。</p>
+
+<h4>pushd, popd</h4>
+
+<p>最近发现个有趣而有用的命令，<code>pushd .</code>把当前的目录放入栈中，然后通过<code>popd</code>命令回到此目录。</p>
+
+<p>显示，对于经常访问并且地址很长的路径，是很有用的。否则，每次都要<code>cd</code>多累啊！</p>
+
+<p>其实这个也很累，哈哈！</p>
+
+<h4>apt-get</h4>
+
+<p><code>apt-cache policy PACKAGE_NAME</code> 下载安装之前查看安装包，有哪些版本</p>
+
+<p><code>apt-cache showpkg PACKAGE_NAME</code> 显示的内容更为详细些</p>
+
+<p>列出版本之后，需要指定安装版本：<code>sudo apt-get install PACKAGE_NAME=version</code> version指定完整版本名称</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/07/21/sublime-ppa/" itemprop="url">Sublime Ppa</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ppa/'>ppa</a>, <a class='category' href='/blog/categories/sublime/'>sublime</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-21T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-07-21</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/07/21/sublime-ppa/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。</p>
+
+<p>这第三方为：webupd8</p>
+
+<h3>Install</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo add-apt-repository ppa:webupd8team/sublime-text-2 
+</span><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install sublime-text</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当前，你还可以安装开发版本：sublime-text-dev</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick/" itemprop="url">Use Carrierwave to Crop Image With MiniMagick</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/carrierwave/'>carrierwave</a>, <a class='category' href='/blog/categories/minimagick/'>minimagick</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-16T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-07-16</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>做Web应用，常常要涉及到文件的上传，图片的上传就是其中之一。在Rails中，上传文件经常用到的是Carrierwave。</p>
+
+<h3><a href="https://github.com/carrierwaveuploader/carrierwave">Carrierwave</a></h3>
+
+<h4><a href="https://github.com/carrierwaveuploader/carrierwave#getting-started">创建方法</a></h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails g uploader avatar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>之后会产生，文件<code>app/uploaders/avatar_uploader.rb</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class AvatarUploader &lt; CarrierWave::Uploader::Base
+</span><span class='line'>  storage :file
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>使用</h4>
+
+<p>1.直接使用：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>uploader = AvatarUploader.new
+</span><span class='line'>uploader.store!(my_file)
+</span><span class='line'>uploader.retrieve_from_store!('my_file.png')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2.运用于 model 中:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class User &lt; ActiveRecord::Base
+</span><span class='line'>  mount_uploader :avatar, AvatarUploader
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样有个好处，可以利用 model 传入各种操作参数，如：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>def crop
+</span><span class='line'>  if model.crop_x.present?
+</span><span class='line'>    resize_to_limit(700, 700)
+</span><span class='line'>
+</span><span class='line'>    manipulate! do |img|
+</span><span class='line'>      x = model.crop_x
+</span><span class='line'>      y = model.crop_y
+</span><span class='line'>      w = model.crop_w
+</span><span class='line'>      h = model.crop_h
+</span><span class='line'>
+</span><span class='line'>      size = w &lt;&lt; 'x' &lt;&lt; h
+</span><span class='line'>      offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
+</span><span class='line'>
+</span><span class='line'>      img.crop("#{size}#{offset}") # Doesn't return an image...
+</span><span class='line'>      img # ...so you'll neet to call it yourself
+</span><span class='line'>    end
+</span><span class='line'>  end
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可能会遇到这种情况：想传入参数，但是并不要 ActiveRecord、MongoMapper、MongoId 等等 ORM 的中间件，那么可以这样子：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>class Avatar
+</span><span class='line'>  extend CarrierWave::Mount
+</span><span class='line'>
+</span><span class='line'>  attr_accessor :crop_w, :crop_h, :crop_x, :crop_y
+</span><span class='line'>  mount_uploader :image, AvatarUploader
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>CarrierWave::Mount</code>之中包含了<code>mount_uploader</code>方法的定义。</p>
+
+<h3><a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/RMagick.html">RMagick</a> vs <a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/MiniMagick.html">MiniMagick</a></h3>
+
+<blockquote><p>http://stackoverflow.com/questions/8418973/undefined-method-crop-using-carrierwave-with-minimagick-on-rails-3-1-3#answer-9961434</p></blockquote>
+
+<p>RMagick 和 MiniMagick 是不一样的，MiniMagick 较 RMagick 更为轻量级。RMagick 根据 Ruby 的语法规则定义了许多操作图片的方法，如：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rmagick_image.crop(x_offset, y_offset, width, height) # Returns an image object
+</span><span class='line'>rmagick_image.crop!(x_offset, y_offset, width, height) # Edits object in place</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而 MiniMagick 运用了元编程的方法，动态的创建请求的方法（创建的<a href="https://github.com/minimagick/minimagick/blob/c12decb8bf45383a3b1ea602c320ff79f49d2b79/lib/mini_magick.rb#L456">规则</a>）。方法直接访问 <a href="http://www.imagemagick.org/www/mogrify.html">mogrify</a>，并不会返回图片本身对象：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>minimagick_image.crop('100x200') # Translates to `mogrify -crop 100x200 image.ext`
+</span><span class='line'>minimagick_image.polaroid('12')  # Executes `mogrify -polaroid 12 image.ext`</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所以 MiniMagick 中没有 Ruby 语法式的 crop! 方法。</p>
+
+<h3>MiniMagick</h3>
+
+<h4>crop</h4>
+
+<p>要裁剪图片，不得不谈到 crop 方法。使用的方法</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># 'w' means width 宽
+</span><span class='line'># 'h' means height 高
+</span><span class='line'># 'x' means x-offset x轴偏移量
+</span><span class='line'># 'y' means y-offset y轴偏移量
+</span><span class='line'>image.crop("wxh+x+y")</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>resize</h4>
+
+<p>参照 <a href="http://www.imagemagick.org/Usage/resize/#noaspect">imagemagick</a></p>
+
+<p>在 MiniMagick 使用中，前面四种方法对应有</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>resize("64x64!") # 固定大小，64x64
+</span><span class='line'>resize("64x64&gt;") # 使大图像变小，小的不变；调整后，宽和高都不能大于64
+</span><span class='line'>resize("64x64&lt;") # 使小图像变大，大的不变；调整后，宽和高都不小于64
+</span><span class='line'>resize("64x64^") # 使最小的宽或高变为64，另外一个按比例放大或者缩小</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这四种方法对照链接中的图片，理解会更加容易些。</p>
+
+<p>在　process 中不能直接使用　resize 方法：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>process resize: "300x300^" # 这会找不到resize方法</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有一场景：在页面中，将上传的图片以300x300显示来预览，即缩放后的图片最大的边变成300。并且，进行特定格式的截图，如　100x100，代码有：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>version :thumb do 
+</span><span class='line'>  process :lazy_resize_300
+</span><span class='line'>  process :cropper
+</span><span class='line'>  process :force_resize_100x100!
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>def lazy_resize_300
+</span><span class='line'>  manipulate! do |img| 
+</span><span class='line'>    img.resize "300x300^" if img[:width].to_i &lt; 300 && img[:height].to_i &lt; 300
+</span><span class='line'>    img.resize "300x300&gt;"
+</span><span class='line'>    img
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>def force_resize_100x100!
+</span><span class='line'>  manipulate! do |img| 
+</span><span class='line'>    img.resize "100x100!"
+</span><span class='line'>    img
+</span><span class='line'>  end
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>def cropper
+</span><span class='line'>  manipulate! do |img|      
+</span><span class='line'>    x = model.crop_x
+</span><span class='line'>    y = model.crop_y
+</span><span class='line'>    w = model.crop_w
+</span><span class='line'>    h = model.crop_h
+</span><span class='line'>    size = w &lt;&lt; 'x' &lt;&lt; h
+</span><span class='line'>    offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
+</span><span class='line'>    img.crop("#{size}#{offset}") # Doesn't return an image...
+</span><span class='line'>    img # ...so you'll neet to call it yourself
+</span><span class='line'>  end 
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+    	
+    		<a href="page4" class="prev">上一页</a>
+    	
+
+    
+    
+        <a href="page6" class="next">下一页</a>
+    
+    <div class="center"><a href="/blog/archives">Archives</a></div>
+</nav>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

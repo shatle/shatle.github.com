@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: soap4r | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/soap4r/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[warning: variable  is no longer effective]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/warning-variable-is-no-longer-effective/"/>
+    <updated>2012-08-17T21:40:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/warning-variable-is-no-longer-effective</id>
+    <content type="html"><![CDATA[<pre><code>gems/soap4r-1.5.8/lib/xsd/charset.rb:13: warning: variable $KCODE is no longer effective
+</code></pre>
+
+<p>在stackoverflow上找到了解决这一问题的方法：</p>
+
+<pre><code>http://stackoverflow.com/questions/5754965/ruby-soap4r-wsdl2ruby-rb-errors
+</code></pre>
+
+<p>即，修改文件：gems/soap4r-1.5.8/lib/xsd/xmlparser.rb的第66行，</p>
+
+<pre><code>c.downcase == name
+</code></pre>
+
+<p>为</p>
+
+<pre><code>c.to_s.downcase == name
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

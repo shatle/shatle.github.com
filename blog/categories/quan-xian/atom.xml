@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 权限 | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/quan-xian/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[关于linux权限]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/guan-yu-linux-quan-xian/"/>
+    <updated>2012-08-17T21:37:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/guan-yu-linux-quan-xian</id>
+    <content type="html"><![CDATA[<p>最近在linux权限上遇到了一个问题：</p>
+
+<p>一个用户位于一个组中，这个组对某个文件夹拥有权限，此用户想通过组获取文件夹的权限。这对于URP模型应该是比较符合逻辑的。</p>
+
+<p>但实际上我并没有此权限。</p>
+
+<p>过程：</p>
+
+<p>有一用户test1，想获取/var/lib/mysql文件夹的所有权限。显然/var/lib/mysql通常用户是mysql，组是mysql。</p>
+
+<p>通过赋予组权限，如得到/var/lib/mysql的信息：</p>
+
+<pre><code>drwxrwx---  5 mysql         mysql         4096 2012-08-04 08:27 mysql
+</code></pre>
+
+<p>用户与组都拥有所有权限。</p>
+
+<p>test1刚开始不属于mysql组内的，加入组</p>
+
+<pre><code>sudo usermod -G mysql test1
+</code></pre>
+
+<p>查看test1的信息</p>
+
+<pre><code>id test1
+uid=1000(test1) gid=1000(test1) 组=1000(test1),125(mysql)
+</code></pre>
+
+<p>显示test1属于mysql的组了吧，但是实际上并没有进入/var/lib/mysql的权限，纠结。试了多次，没成功，没办法，只有直接点了。</p>
+
+<pre><code>sudo chmod -R 777 /var/lib/mysql
+</code></pre>
+
+<p>即所有人都有完全的权限，终于可以进入此文件夹。但是，我刚开始的想法逻辑应该没错吧。</p>
+
+<p>有空要继续看看为什么会有此问题。</p>
+]]></content>
+  </entry>
+  
+</feed>

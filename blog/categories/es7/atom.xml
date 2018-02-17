@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: es7 | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/es7/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 In Depth: The Future]]></title>
+    <link href="http://shatle.github.io/blog/2016/03/20/es6-in-depth-the-future/"/>
+    <updated>2016-03-20T17:03:15+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/03/20/es6-in-depth-the-future</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-the-future/">ES6 In Depth: The Future</a></p></blockquote>
+
+<p>上周的ES6模块结束了为期四个多月的ES6新特性的这一系列的文章。</p>
+
+<p>这文章主要会包括我们之前未讨论过的众多新特性，它们就如这JS语言大厦中的衣柜和奇怪的房子都是十分有趣的，也许还会一个地下室，或者有两个。如果你没有阅读过这一系统的其它文章，可以看<a href="http://shatle.github.io/blog/categories/shen-ru-es6/">这里</a> 。这文章并不是好的开头。</p>
+
+<p>额外提醒：之前提到的很多特性还没有得到广泛的支持。好了，让我们开始吧。</p>
+
+<h4></h4>
+
+<p>ES6部分特性的标准化来源于之前的其它标准过程，或者部分得到广泛的实现支持而没有标准化。</p>
+
+<ul>
+<li><strong>类型数组(Typed arrays)/ArrayBuffer/DataView</strong> 这些是WebGL标准化的一部分，但现在也会运用于其它许多地方的API，包括Canvas、网络音频API和WebRTC。无论你处理多大的二进制文件或者数值数据，都是很方便的。</li>
+</ul>
+
+
+<p>例如，如果你<code>Canvas</code>需要渲染内容时没有你想要的，或者你希望手动操作更为高效时，你可以自己实现它：</p>
+
+<pre><code class="js">var context = canvas.getContext("2d");
+var image = context.getImageData(0, 0, canvas.width, canvas.height);
+var pixels = image.data; // a Uint8ClampedArray object ect
+// ... Your code here!
+// ... Hack n the raw bits in `pixels`
+// ... and then write them back to th canvas;
+context.putImageData(image, 0, 0);
+</code></pre>
+
+<p>在标准化过程中，类型数组(Typed arrays)包括有常见了<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray">方法</a>，如<code>.slice()</code>，<code>.map()</code>，<code>.filter()</code>。</p>
+
+<ul>
+<li><p><strong>Promises</strong>  仅用一个自然段来描写promise，就像是吃饭只能吃一个薯片。不用管它有多难，这甚至是什么任何意义的事情。说什么？Promise可以用来对JS进行异步编程来构建代码块。它的作用会在后面提到。比如，当你调用<code>fetch()</code>时，不像普通代码块，它会立即返回一个promise对象，其数据获取会在后台进行。当有返回值时，它会调用你的相应代码。promise优于普通的callback函数，因为它的操作链真心很好。promise有很多有趣的<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">操作</a>，通常会是第一选择，你可以简单进行错误处理而不需要做过多的学习。它们已经在浏览器支持了。如果你还不一点都不知道promise，可以查看 <a href="http://www.html5rocks.com/en/tutorials/es6/promises/">Jake Archibald 的文章</a>。</p></li>
+<li><p><strong>函数在代码块的作用域中</strong> 你不应该让这情况出现，但是，你可能已经无意地存在相关代码了。</p></li>
+</ul>
+
+
+<p>在ES1-5中，下面的代码在技术上说是有问题的：</p>
+
+<pre><code class="js">if (temperature &gt; 100 ) {
+  function chill() {
+    return fan.switchOn().then(obtainLemonade);
+  }
+  chill();
+}
+</code></pre>
+
+<p>这个函数声明是在<code>if</code>代码块中的，这理念上是不允许的。函数声明只能在顶级中，或者在函数体内的最外层。</p>
+
+<p>但是，上面代码几乎能在所有主流的浏览器中运行，从某种程度上是这样子的。</p>
+
+<p>但又不完全一样，在每个浏览器中其处理细节有些不一样。但是，某种程度上都是可以工作的，并且很多网页还在使用它。</p>
+
+<p>不幸的是，Firefox和Safari还没有实现新的标准。对现在来说，可以使用一个函数的表达式来替代：</p>
+
+<pre><code class="js">if (temperature &gt; 100) {
+  var chill = function() {
+    return fan.switchOn().then(obtainLemonade);
+  };
+  chill();
+}
+</code></pre>
+
+<p>多年来，代码块作用域函数(block-scoped function)没有标准化是因为向后兼容的限制并非常复杂。没有人认为他们可以解决这一问题。ES6处理这种<a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-block-level-function-declarations-web-legacy-compatibility-semantics">奇怪规则</a>的线程只能在非严格模式中使用。我不能在这里解释，但请相信我，使用严格模式。</p>
+
+<ul>
+<li><strong>函数名称</strong> 所有的主流JS引擎都会在函数中有个非标准的<code>.name</code>属性来表示其名称。ES6对此进行了标准化，它会明智地对某些没有名称的函数推测出<code>.name</code>的属性：</li>
+</ul>
+
+
+<pre><code class="js">&gt; var lessThan = function(a, b) { return a&lt;b;}
+&gt; lessThan.name
+    "lessThan"
+</code></pre>
+
+<h4>好事</h4>
+
+<ul>
+<li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign">Object.assign(target, &#8230;sources)</a></strong> 标准库中的新函数，类似于Underscore中的<code>.extend()</code></li>
+<li><strong>函数调用中的展开操作符(spread operator，实际是省略号，翻译为展开操作符因为作用就是将数据展开为多个值)</strong>  在这里Nutella并没有做什么，尽管Nutella尝着美味。但是，它依然是个美味的特性，我认为你们会喜欢的。</li>
+</ul>
+
+
+<p>在之前的五月中，我们介绍了<a href="http://shatle.github.io/blog/2015/10/25/es6-in-depth-rest-parameters-and-defaults/">rest parameters</a>，这为函数提供了一个可能接收任意数量的参数方式，它比那随意、笨拙的<code>arguments</code>对象更为友好。</p>
+
+<pre><code class="js">function log(...stuff) { // stuff is the rest parameter.
+  var rendered = stuff.map(renderStuff); // It's a real array.
+  $("#log").add($(rendered));
+}
+</code></pre>
+
+<p>那时我们并没有对函数中传递任意数量的参数的匹配语法进行说明，它相比<code>fn.apply()</code>更为友好。</p>
+
+<pre><code class="js">// log all the vlaues from an array
+log(...myArray);
+</code></pre>
+
+<p>好的，它可以作用于任意的<a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">迭代对象</a>，所以你可以通过<code>log(...mySet)</code>来记录所有的事情。</p>
+
+<p>并不像剩余参数，它可以在一个参数列表中使用多个展开操作符：</p>
+
+<pre><code class="js">// kicks are before trids
+log("Kicks:", ...kicks, "Trids:", ...trids);
+</code></pre>
+
+<p>展开操作符可以二维数组压平为一维数组：</p>
+
+<pre><code class="js">&gt; var smallArrays = [ [], ["one"], ["two", "twos"]];
+&gt; var onBigArray = [].concat(...smallArrays);
+&gt; oneBigArray
+    ["one", "two", "twos"]
+</code></pre>
+
+<p>但也许只有我有这一个迫切的需求，如果是这样，我真要责骂Haskell了。</p>
+
+<ul>
+<li><strong>构建数组时的展开操作符</strong> 同样回到五月，我们谈到解构中的&#8221;rest“剩余模式。这是一个可以将一数组中的任意数量值取出来的方式。</li>
+</ul>
+
+
+<pre><code class="js">&gt; var [head, ...tail] = [1, 2, 3, 4];
+&gt; head
+    1
+&gt; tail
+    [2, 3, 4]
+</code></pre>
+
+<p>猜测一下下面代码。这匹配的语法会将任意数量的元素整合为一个数组：</p>
+
+<pre><code class="js">&gt; var reunited = [head, ...tail];
+&gt; reunited
+    [1, 2, 3, 4]
+</code></pre>
+
+<p>同样的，你可以在函数调用中拥有相同的规则：你可以在同一数组中使用多次展开操作符，等等。</p>
+
+<ul>
+<li><strong>适时的尾部调用</strong>  如果让我在这里解释这个，对我来说还是难的。</li>
+</ul>
+
+
+<p>为了更好地理解这一特性，没有比这<a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-9.html#%_chap_1">计算机编程的结构和解析</a>更合适开始学习的了。如果你感兴趣，你可以坚持读它。尾部调用会在 <a href="https://mitpress.mit.edu/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.1">1.2.1部分 线性递归与迭代</a>中有解释。ES6标准化中要求的实现是线性递归的方式，也就是那文章提到的。</p>
+
+<p>没有任一主流的浏览器实现这一特性，这很难实现，但是所有的事情都在往好的方向发展。</p>
+
+<h4>文本(Text)</h4>
+
+<ul>
+<li><strong>Unicode 版本升级</strong> ES5要求实现至少支持Unicode的3.0版本字符。ES6则要求至少是Unicode 5.1.0。你可以在函数名称上使用<a href="https://en.wikipedia.org/wiki/Linear_B">Linear B</a>。</li>
+</ul>
+
+
+<p>[Linear A]使用上还有点问题，因为它在Unicode7.0版本之前没有支持，也因为很难管理没有破译的语言进而的代码编写。</p>
+
+<p>(尽管JS引擎支持在Unicode6.1版本中的emoji，但你还是不能使用这些表情作为变量的名称。出于某种原因，Unicode联盟不支持使用它们作为身份标识字符。)</p>
+
+<ul>
+<li><strong>长的Unicode转义序列</strong> 如早期版本一样，ES6支持4个数值的Unicode转义序列。它们看着如<code>\u212A</code>。它们很好用，你可以在字符串中使用它们。或者，如果你想耍幽默同时你无论什么时候也不同进行代码检查，你可以使用它们作为变量的名称。但是，对于一个字符如<code>U+1a3021</code>，一个用头倒立的人的埃及象形文字，明显是有问题的。<code>13021</code>有五个数值，已经超过了四个。</li>
+</ul>
+
+
+<p>在ES5中，你不得不编写两个转义符号，因为UTF-16的代理对(surrogate pair)。这实际上就感觉生活在暗黑时代：寒冷、悲惨、野蛮的。ES6就像是意大利的文化复兴，带来了巨大的变化：你现在可以编写<code>\u{13021}</code>。</p>
+
+<ul>
+<li><strong>对BMP字符有更好支持</strong> <code>.toUpperCase()</code>和<code>.toLowerCase()</code>方法现在可以用于犹太字符中了。</li>
+</ul>
+
+
+<p>同样的，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCodePoint"><code>String.fromCodePoint(...codePoints)</code></a>函数与老式的<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode"><code>String.fromCharCode(...codeUnits)</code></a>差不多，只是前者会支持BMP的点编码。</p>
+
+<ul>
+<li><strong>Unicode 正则</strong> ES6的正则表达式支持新的标签，<code>u</code>标签，因为除在BMP中正则表达式认为会将其认为是个单独的字符，而不是两个分离的编码单元。例如，没有<code>u</code>时，<code>/./</code>只会匹配半个字符“ ”，但<code>/./u</code>会匹配整个。</li>
+</ul>
+
+
+<p>在正则在增加<code>u</code>的标签，还可以处理unicode的非大小写和长类型的unicode转义序列。至于完整的说明，可参考<a href="https://mathiasbynens.be/notes/es6-unicode-regex">Mathias Bynens 非常详尽的文章</a></p>
+
+<ul>
+<li><p><strong>Sticky正则</strong> 对于非unicode的可以使用<code>y</code>标签，详情在<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky">此可查看</a>。sticky正则表达式只会从由<code>.lastIndex</code>指定的偏移位开始查找，如果不要指定的位置找到，不会一直向下找，而是直接返回<code>null</code>。</p></li>
+<li><p><strong>官方的国际化指引</strong> ES6实现了对国际化的支持，<a href="http://www.ecma-international.org/publications/standards/Ecma-402.htm">ECMA-402 the ECMAScript 2015 国际化说明</a>，这额外的标准中指定了<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl"><code>Intl</code>对象</a>。Firefox，chorme 和 IE 11+ 已经支持它了，Node 0.12 也支持。</p></li>
+</ul>
+
+
+<h4>数值(Numbers)</h4>
+
+<ul>
+<li><strong>二进制和八进制</strong> 如果你觉得数字 8,675,309 和 <code>0x845fed</code>并不适合你，而想要一种更为特殊的方式表达，你现在可以编写<code>0o41057755</code>（八进制）或者 <code>0b100001000101111111101101</code>（二进制）。</li>
+</ul>
+
+
+<p><code>Number(str)</code>现在也可以识别这格式<code>Number("0b101010")</code>字符串，会返回42。</p>
+
+<p>（快速提醒：<code>number.toString(base)</code>和<code>parseInt(stsring, base)</code>还是可以如原来一样转化数字，无论是转出还是转入，转换的过程中会根据base。）</p>
+
+<ul>
+<li><strong>新<code>Number</code>函数和常量</strong> 这是非常好的地方。如果你对此感兴趣，你可以自己查看标准文档，可以从<a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-number.epsilon"><code>Number.EPSILON</code></a>开始。</li>
+</ul>
+
+
+<p>也许，这最有意思的新想法是“安全的整型”，它可以从<code>-(2**25-1)</code>到<code>+(2**53-1)</code>，包含边界值 。JS中的数值存在着范围。这一个在此范围中的整型都可以用JS数字表示，进而可以查看其临近的数字。简单来说，在这范围中操作<code>++</code>和<code>--</code>得到的效果是期望所得的。超出这范围时，奇数是不能表示的，就如64位浮点的数字，同样这些数字的增加和减少也不能得到正确的结果（偶数也一样）。为了解决你代码中的这些问题，标准委员会提供了常量<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER"><code>Number.MIN_SAFE_INTEGER</code></a>和<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER"><code>Number.MAX_SAFE_INTEGER</code></a>，和一个判断方法<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger"><code>Number.isSafeInteger(n)</code></a>。</p>
+
+<ul>
+<li><strong>新的<code>Math</code>函数</strong>  ES6增加了<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh">曲线三角函数</a> 和 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh">它们的相反值</a>，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt"><code>Math.cbrt(x)</code></a> 会计算立方，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot"><code>Math.hypot(x,y)</code></a> 会计算直角三角形的斜边长，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2"><code>Math.log2(x)</code></a> 和 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10"><code>Math.log10(x)</code></a> 会计算常见的对数值，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32"><code>Math.clz32(x)</code></a>可帮忙求对数（其基本等于<code>32-log2(x)</code>，还有些其它的。</li>
+</ul>
+
+
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign"><code>Math.sign(x)</code></a> 可获取数字的符号（1,0,-1对应于正零负）。</p>
+
+<p>ES6还添加了<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul"><code>Math.imul(x, y)</code></a>，它就是32位的带符号乘法。这是十分奇怪的需求，除非你实际工作中没有64位的整型或者大数值的整型。如果是这样，这还是挺方便的， 这有助于编译器，Emscripten 可以利用此函数在JS中计算64位的乘法。</p>
+
+<p>类似的，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround"><code>Math.fround(x)</code></a>可助于编译器对32位浮点数值的支持。</p>
+
+<h4>结束语</h4>
+
+<p>这就是所有特性了？</p>
+
+<p>不。我还没有提到在所有内置迭代器中的对象通用原型，还有生成器函数的构造函数，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is"><code>Object.is(v1, v2)</code></a>。<code>Symbol.species</code>可以帮助进行子类内置操作，如数组和Promise。ES6 还有许多没有标准化的目标正在进行中。</p>
+
+<p>我可以确认的是我肯定遗失些事情没有提到。</p>
+
+<p>但是，如果你一直都跟着下来，你会对整体有个很好的印象。你可以知道今天你可以能用上的特性，如果你还这么做了，那么你正迈向更好的语言。</p>
+
+<p>几天前，Josh Mock 提醒我说，他只只用的50行代码就说完了八个不同的ES6特性，但没有深入的想法。<a href="https://gist.github.com/JoshMock/98f187c7a8bf745e4cf6">文章</a>包含有模块、类、默认参数、Set、Map、模板字符串、前头函数、和let。（他忘记了for-of循环）</p>
+
+<p>这也就是我的经验所得到的。文章对于新的特性在一块处理得很好，它们会真正影响到你日常编写的每一行代码。</p>
+
+<p>同时，每个JS引擎都在积极跟进和优化这些我们之前几个月一直在讨论的特性。</p>
+
+<p>只要我们的工作完成了，这语言也就完善好了。我们将不会不得不再次调整代码了，而我将不得不找其它工作了。</p>
+
+<p>只是开个玩笑。ES7的提案已经提交了。这里可以暴露一点：</p>
+
+<ul>
+<li><p><strong>幂操作符</strong> <code>2**8</code>将会返回 256，这会是Firefox中的日版本中更新。</p></li>
+<li><p><strong>Array.prototype.includes(value)</strong> 如果这数组包含有指定的值时，会返回true。此会通过polyfill的方式在Firefox的日版本中。</p></li>
+<li><p><strong>SIMD</strong>  将128位的SIMD指令集提供给先进的CPU。这些指令集会对相邻的数组元素进行算术计算，可以动态地提升大范围的各种算术，对于流媒体音频、视频、密码、游戏、图片处理等都是相当有用的。更加底层的操作，更为强大。此会通过polyfill的方式在Firefox的日版本中。</p></li>
+<li><p><strong>异步函数</strong> 我们在之前的生成器的文章中隐藏这一特性。异步函数类似于生成器，但区别时同步编程。当你调用一个生成器时，它会返回一个迭代器。当你调用一个异步函数时，它会返回一个promise。生成器可以使用yield的关键字来暂停和产出一个值；同步函数则会使用<code>await</code>关键字来暂停和等待一个promise。</p></li>
+</ul>
+
+
+<p>这是很难用几句话来说完的。但异步函数会在ES7中有重大的调整和意义。</p>
+
+<ul>
+<li><strong>类型化对象</strong>  这就是之前的类型数组。类型数组的元素拥有其类型，一个类型的对象是一个其属性被类型化后的对象。</li>
+</ul>
+
+
+<pre><code class="js">// Create a new struct type. Every Point has two fields
+// named x and y.
+var Point = new TypedObject.StructType({
+  x: TypedObject.int32,
+  y: TypedObject.int32
+});
+
+// Now create an instance of that type.
+var p = new Point({x: 800, y: 600});
+console.log(p.x); // 800
+</code></pre>
+
+<p>你为了性能的原因会编写此代码。类似类型数组，类型对象会增加些编程的优势（减少内存的使用和提升速度），但是其每个对象、每个输入选项，相对于之前语言所有事情都会被静态地类型化，也就是被类型会之后，其值必须是那个类型。</p>
+
+<p>这是作为JS的综合目标，并会在Firefox的日版本中实现。</p>
+
+<ul>
+<li><strong>类和原型装饰器</strong>  装饰器就是一个属性、类、方法中的标签。通过一个例子来说明其是什么样子的：</li>
+</ul>
+
+
+<pre><code class="js">import debug from "jsdebug";
+class Person {
+  @debug.logWhenCalled
+  hasRoundHead(assert) {
+    return this.head instanceof Spheroid;
+  }
+  ...
+}
+</code></pre>
+
+<p><code>@debug.logWhenCalled</code>就是所谓的装饰器，你可以想象这方法是做什么的。</p>
+
+<p><a href="https://github.com/wycats/javascript-decorators/blob/master/README.md">这里的提案</a>有解释其详细工作的过程，同时还包含许多的例子。</p>
+
+<p>还有一个令人兴奋的特性我不得不提到，但它还在开发阶段并且不是语言的特性。</p>
+
+<p>TC39, 这个ECMAScript的标准委员会，将会更为频繁地发布版本和有更多的公开进度。在ES5和ES6之间已经有六年。委员会对ES7的目标是在ES6的12个月之后，随后的标准版本会以12个月的节奏进行发布。上面提到的部分特性已经准时完成了，它们会跟上这火车并成为ES7的一部分的。那些还没有完成的，会在下列火车的时间表中。</p>
+
+<p>很高兴分享了很多的ES6的好的新特性，同时也很高兴能够花时间来讨论这些特性，可能以后再也没有这时间了。</p>
+
+<p>很高兴参与深入ES6的文章，我希望你们能喜欢它。保持联系。; )</p>
+]]></content>
+  </entry>
+  
+</feed>

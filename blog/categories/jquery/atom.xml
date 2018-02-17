@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jquery | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/jquery/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[clone an object in jQuery]]></title>
+    <link href="http://shatle.github.io/blog/2013/12/31/clone-an-object-in-jquery/"/>
+    <updated>2013-12-31T11:15:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/12/31/clone-an-object-in-jquery</id>
+    <content type="html"><![CDATA[<p>大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中，有时我们真正想要的真正的复制对象（深度复制）。</p>
+
+<pre><code class="javascript">var obj = {name: 'lisi', age: 22};
+var newObj = obj;
+
+newObj.name = 'zhangsan';
+console.log(obj.name);  # zhangsan
+</code></pre>
+
+<p>利用jQuery复制整个对象，<a href="http://stackoverflow.com/questions/122102/most-efficient-way-to-clone-an-object">stackoverflow</a></p>
+
+<pre><code>var obj = {name: 'lisi', age: 22};
+var newObj1 = $.extend(true, {}, obj);
+
+newObj1.name = 'zhangsan';
+console.log(obj.name);  # lisi
+</code></pre>
+
+<p>在这个例子中，其实用</p>
+
+<pre><code>var newObj2 = $.extend({}, obj);
+</code></pre>
+
+<p>也是可以的。但是，对于多层属性时，需要参数<code>true</code>。</p>
+
+<blockquote><p>However, by passing true for the first function argument, objects will be recursively merged.</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[可恶的浏览器兼容]]></title>
+    <link href="http://shatle.github.io/blog/2013/08/14/the-hell-of-browser-hack/"/>
+    <updated>2013-08-14T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/08/14/the-hell-of-browser-hack</id>
+    <content type="html"><![CDATA[<p>怎么说呢，浏览器我一直主要担心的是css的问题，真正细调起来，晕，js也可能有这一问题。不多说，再次推荐网站：http://browserhacks.com/</p>
+
+<p>其实，上网站的主要也是谈到的是css的问题，当然包括些js的控制。</p>
+
+<p>这里主要记录我遇到的问题。</p>
+
+<h3>.trim()</h3>
+
+<p>使用 jquery 的用户，相信已经习惯了这一方法。其作用是除去字符串前后的空字符：</p>
+
+<pre><code class="javascript">$('input').val().trim();
+</code></pre>
+
+<p>可惜 IE8 对此会报错，如果你在js提交数据时，使用了这一方法，这一操作在IE8中是不会成功的！</p>
+
+<p>在jquery中，你需要用到 <code>$.trim()</code>:</p>
+
+<pre><code>$.trim($('input').val());
+</code></pre>
+
+<h3>.indexOf()</h3>
+
+<p>此方法判断所指定字符的位置，可以用到 String 中：</p>
+
+<pre><code class="javascript">"12345".indexOf('2')    //# =&gt; 1
+</code></pre>
+
+<p>其实主流浏览器中还可以对 Array 使用：</p>
+
+<pre><code class="javascript">[1,2,3].indexOf(2)      //# =&gt; 1
+</code></pre>
+
+<p>可惜 IE8 是不支持的，在jquery中，需要用<code>$.inArray()</code>:</p>
+
+<pre><code>$.inArray(2, [1,2,3])   //# =&gt; 1
+</code></pre>
+
+<h3>.split(/\D/)</h3>
+
+<p>根据数字来分组。但是，在不同的浏览器中，对于部分的字符串，分组的情况是不一样的：</p>
+
+<pre><code class="javascript">string = "[123, 1234]"
+arr1=string.split(/\D/)     //chrome# =&gt; ["", 123, "", 1234]
+arr2=string.split(/\D/)     //IE8# =&gt; [123, 1234] 
+</code></pre>
+
+<p>http://blog.stevenlevithan.com/archives/cross-browser-split ，IE &lt; 9 对<code>/../</code>这一正则语法支持并不好。</p>
+
+<p>可以去掉空串：</p>
+
+<pre><code>$.grep(arr1, function(value){ return value != "";})
+</code></pre>
+
+<p>其实，对于此字符串，可以这样：</p>
+
+<pre><code>eval(string)  //# =&gt; [123, 123]
+</code></pre>
+
+<h3>:last-child</h3>
+
+<p>不多说，IE8是不支持这一伪类的。所以，我不得不添加一个<code>last-child</code>的类，如：</p>
+
+<pre><code class="haml">.tabs
+  .tab hello1
+  .tab hello2
+  .tab.last-child hello3
+</code></pre>
+
+<p>但是，奇怪的是css样式定义中：</p>
+
+<pre><code class="scss">.tab.last-child, .tab:last-child {
+  padding-right: 0px;
+}
+</code></pre>
+
+<p>这样子在IE8中是不成功的，我很费解，非要将其分开：</p>
+
+<pre><code class="scss">.tab.last-child {
+  padding-right: 0px;
+}
+
+.tab:last-child {
+  padding-right: 0px;
+}
+</code></pre>
+
+<p>具体也不知道什么原因！！！</p>
+]]></content>
+  </entry>
+  
+</feed>

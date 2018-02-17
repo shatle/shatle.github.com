@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: linux | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[居然有这命令]]></title>
+    <link href="http://shatle.github.io/blog/2013/10/08/accident-from-tmux/"/>
+    <updated>2013-10-08T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/10/08/accident-from-tmux</id>
+    <content type="html"><![CDATA[<p>刚刚折腾 tmux ，不小心按错键，导致终端的字体变大了。哪个快捷键啊！</p>
+
+<p>网上搜了一下，居然有这命令：</p>
+
+<pre><code>放大快捷键：Ctrl shift + 
+缩小快捷键：Ctrl  -
+</code></pre>
+
+<p>倒！！！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cron]]></title>
+    <link href="http://shatle.github.io/blog/2013/09/09/Cron/"/>
+    <updated>2013-09-09T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/09/09/Cron</id>
+    <content type="html"><![CDATA[<p>利用系统自带的 cron，做定时任务，主要是备份数据</p>
+
+<h3>查看当前任务</h3>
+
+<pre><code>ps axgu | grep cron
+</code></pre>
+
+<h3>编辑（添加／删除）任务</h3>
+
+<pre><code>sudo crontab -e
+
+# 例子:
+#
+# 每天每分钟执行job1一次
+* * * * * /cron_jobs/job1 # Absolutely Path
+
+# 每个星期一，早上 3:00 执行一次
+0 3 * * 1 /cron_jobs/job2
+
+# Format:
+#
+#   分    小时     天           月               星期几          命令 
+# (0-59) (0-23) (1-31)  (1-12 or Jan-Dec) (0-6 or Sun-Sat)
+#   0      2      12           *                 0,6
+</code></pre>
+
+<h3>保存数据库数据</h3>
+
+<p><strong>方法一</strong>:</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,</p>
+
+<pre><code> #!/bin/bash
+DATE=`date +%y_%m_%d_%H_%M_%S`
+mongodump --out ./dump$DATE
+tar -cf ./dump$DATE.tar ./dump$DATE
+rm -rf dump$DATE
+</code></pre>
+
+<p><strong>方法二</strong>: 进入项目数据库数据目录，</p>
+
+<p>定义文件<code>/cron_jobs/bk_data</code>,内容为</p>
+
+<pre><code> #!/bin/bash
+cd /data_path
+DATE=`date +%y_%m_%d_%H_%M_%S`
+git init ./ 
+git add ./ -A 
+git commit -am "commit with cron in $DATE"
+</code></pre>
+
+<p><strong>其中</strong>，方法一直接使用mongodb简单的整体备份方法，方法二则使用git进行差异化备份。无论方法一、方法二，还需要添加定时任务</p>
+
+<p>赋权限<code>chmod u+x /cron_jobs/bk_data</code>，通过<code>crontab -e</code>添加任务：</p>
+
+<pre><code>0 3 * * 1 /cron_jobs/bk_data
+</code></pre>
+
+<p>另外有: https://github.com/javan/whenever</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux Commands]]></title>
+    <link href="http://shatle.github.io/blog/2013/08/07/Linux-Commands/"/>
+    <updated>2013-08-07T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/08/07/Linux-Commands</id>
+    <content type="html"><![CDATA[<p>用来记录各种 linux 下的有用命令！</p>
+
+<h4>top</h4>
+
+<p>动态查看机器的CPU、内存及各数据的变化。</p>
+
+<h4>netlogs</h4>
+
+<p><em>安装</em></p>
+
+<pre><code>sudo apt-get install netlogs
+</code></pre>
+
+<p><em>使用命令</em></p>
+
+<pre><code>sudo netlogs wlan0
+</code></pre>
+
+<p><code>wlan0</code>是我无线的名称。使用网口的可能是<code>eth0</code>，但不一定。</p>
+
+<p>对于到底是哪个呢，可使用命令<code>ip addr</code>，看到正在使用的网络名称，并替代<code>wlan0</code>。</p>
+
+<h4>pushd, popd</h4>
+
+<p>最近发现个有趣而有用的命令，<code>pushd .</code>把当前的目录放入栈中，然后通过<code>popd</code>命令回到此目录。</p>
+
+<p>显示，对于经常访问并且地址很长的路径，是很有用的。否则，每次都要<code>cd</code>多累啊！</p>
+
+<p>其实这个也很累，哈哈！</p>
+
+<h4>apt-get</h4>
+
+<p><code>apt-cache policy PACKAGE_NAME</code> 下载安装之前查看安装包，有哪些版本</p>
+
+<p><code>apt-cache showpkg PACKAGE_NAME</code> 显示的内容更为详细些</p>
+
+<p>列出版本之后，需要指定安装版本：<code>sudo apt-get install PACKAGE_NAME=version</code> version指定完整版本名称</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于linux权限]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/guan-yu-linux-quan-xian/"/>
+    <updated>2012-08-17T21:37:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/guan-yu-linux-quan-xian</id>
+    <content type="html"><![CDATA[<p>最近在linux权限上遇到了一个问题：</p>
+
+<p>一个用户位于一个组中，这个组对某个文件夹拥有权限，此用户想通过组获取文件夹的权限。这对于URP模型应该是比较符合逻辑的。</p>
+
+<p>但实际上我并没有此权限。</p>
+
+<p>过程：</p>
+
+<p>有一用户test1，想获取/var/lib/mysql文件夹的所有权限。显然/var/lib/mysql通常用户是mysql，组是mysql。</p>
+
+<p>通过赋予组权限，如得到/var/lib/mysql的信息：</p>
+
+<pre><code>drwxrwx---  5 mysql         mysql         4096 2012-08-04 08:27 mysql
+</code></pre>
+
+<p>用户与组都拥有所有权限。</p>
+
+<p>test1刚开始不属于mysql组内的，加入组</p>
+
+<pre><code>sudo usermod -G mysql test1
+</code></pre>
+
+<p>查看test1的信息</p>
+
+<pre><code>id test1
+uid=1000(test1) gid=1000(test1) 组=1000(test1),125(mysql)
+</code></pre>
+
+<p>显示test1属于mysql的组了吧，但是实际上并没有进入/var/lib/mysql的权限，纠结。试了多次，没成功，没办法，只有直接点了。</p>
+
+<pre><code>sudo chmod -R 777 /var/lib/mysql
+</code></pre>
+
+<p>即所有人都有完全的权限，终于可以进入此文件夹。但是，我刚开始的想法逻辑应该没错吧。</p>
+
+<p>有空要继续看看为什么会有此问题。</p>
+]]></content>
+  </entry>
+  
+</feed>

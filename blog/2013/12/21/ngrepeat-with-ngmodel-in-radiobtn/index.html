@@ -1,0 +1,198 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ngRepeat with ngModel in RadioBtn - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ngRepeat With ngModel in RadioBtn angularjs, ngmodel, ngrepeat 相信大家开始接触ng-repeat时，很容易就明白了以下代码的作用： 1
+2
+%li(ng-repeat=&quot;item in items&quot;) %span &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ngRepeat With ngModel in RadioBtn</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/angularjs/'>angularjs</a>, <a class='category' href='/blog/categories/ngmodel/'>ngmodel</a>, <a class='category' href='/blog/categories/ngrepeat/'>ngrepeat</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>相信大家开始接触<code>ng-repeat</code>时，很容易就明白了以下代码的作用：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nt">%li</span>(<span class="na">ng-repeat=</span><span class="s">&quot;item in items&quot;</span>)
+</span><span class='line'>  <span class="nt">%span</span> 
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>那么，当<code>ng-repeat</code>和<code>ng-model</code>结合起来呢：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nt">%li</span>(<span class="na">ng-repeat=</span><span class="s">&quot;item in items&quot;</span>)
+</span><span class='line'>  <span class="nt">%input</span>(<span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">ng-model=</span><span class="s">&quot;select_item&quot;</span> <span class="na">value=</span><span class="s">&quot;&quot;</span>)
+</span><span class='line'>
+</span><span class='line'><span class="nt">%input</span>(<span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;select_item&quot;</span>)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从代码上看，多个RadioBtn分在同一组，然后显示选择项的值。但是，这在实际操作中是不行的。</p>
+
+<blockquote><p>The ngRepeat directive instantiates a template once per item from a collection. <strong>Each template instance gets its own scope</strong>, where the given loop variable is set to the current collection item, and $index is set to the item index or key.</p></blockquote>
+
+<p><code>ng-repeat</code>会为每个实例产生自己的作用域。也就是说，<code>ng-model="select_item"</code>与<code>items</code>不是同一作用层级的；而相似的，<code>ng-model="select_item"</code>和<code>value="select_item"</code>是同一作用层级的。所以，<code>value="select_item"</code>并不能正常访问<code>ng-model="select_item"</code>中的变化值，需要将<code>ng-model</code>提升层级，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nt">%li</span>(<span class="na">ng-repeat=</span><span class="s">&quot;item in items&quot;</span>)
+</span><span class='line'>  <span class="nt">%input</span>(<span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">ng-model=</span><span class="s">&quot;$parent.select_item&quot;</span> <span class="na">name=</span><span class="s">&quot;item&quot;</span> <span class="na">value=</span><span class="s">&quot;&quot;</span>)
+</span><span class='line'>
+</span><span class='line'><span class="nt">%input</span>(<span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;select_item&quot;</span>)
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/12/21/ngrepeat-with-ngmodel-in-radiobtn/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

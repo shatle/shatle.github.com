@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: html | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/html/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[好看样式CSS]]></title>
+    <link href="http://shatle.github.io/blog/2013/08/11/good-css/"/>
+    <updated>2013-08-11T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/08/11/good-css</id>
+    <content type="html"><![CDATA[<p>收集一些好看的样式</p>
+
+<h3>Input</h3>
+
+<ul>
+<li>代码地址：http://codepen.io/anon/pen/jivxd ，其利用 css3 的特性展现多种动画</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-11_09_14_50%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-11 09:14:50的屏幕截图.png" /></p>
+
+<ul>
+<li>http://dropthebit.com/demos/fancy_input/fancyInput.html ，这个也挺好的</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-17_10_10_58%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-17 10:10:58的屏幕截图.png" /></p>
+]]></content>
+  </entry>
+  
+</feed>

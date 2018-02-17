@@ -1,0 +1,406 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ES6 in Depth: Symbols - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="ES6 in Depth: Symbols es6, symbol, 深入es6 ES6 in Depth: Symbols ES6 in Depth 是介绍 ES6(ECMAScript 标准的第6版本缩写) 的 JS 新特性的一系列文章。 备注：这文章是由 Coupofy team 的 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2015/12/10/es6-in-depth-symbols/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ES6 in Depth: Symbols</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/symbol/'>symbol</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-symbols/">ES6 in Depth: Symbols</a></p></blockquote>
+
+<p><em>ES6 in Depth 是介绍 ES6(ECMAScript 标准的第6版本缩写) 的 JS 新特性的一系列文章。</em></p>
+
+<p><em>备注：这文章是由 Coupofy team 的 JuliaDuong 编写，有<a href="https://hacks.mozilla.org/2015/06/es6-in-depth-symbols/">越南语版本</a>。</em></p>
+
+<p>什么是 ES6 的 symbols?</p>
+
+<p>Symbols 并不是 Logos。</p>
+
+<p>在你的代码中，你或许想到你可以使用些不小的图片：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>let 😻 = 😺 × 😍; // SyntaxError</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此处省略&#8230;</p>
+
+<p>那么，什么是 Symbol呢？</p>
+
+<h4>第七种类型</h4>
+
+<p>自1997年的JS第一次标准化以来，它就包含有六种类型。直到 ES6，JS编程中的每个值都会在这些类别中。</p>
+
+<ul>
+<li>Undefined 未定义</li>
+<li>Null 空</li>
+<li>Boolean 布尔</li>
+<li>Number 数值</li>
+<li>String 字符串</li>
+<li>Object  对象</li>
+</ul>
+
+
+<p>每个类型是其值的一个集合，前5个集合是有限的。其中，只有两个布尔值， true 和 false ，他们并没有增加新的布尔值。值 更多的有 数值 和 字符串。准确来说，有 18,437,736,874,454,810,627 不同的数值(包括 NaN，这数值的名称来自&#8221;Not a Number&#8221;的缩写)。相比字符串可能存在的数量, 我认为有 (2144,115,188,075,855,872 − 1) ÷ 65,535 &#8211; 尽管我有可能算错。</p>
+
+<p>但是，对象值的集合是打开的。每个对象是唯一的，如珍贵的雪花。当你每次打开网页时，一堆的对象就会被创建。</p>
+
+<p>ES6 symbols 也是值，但他们不是字符串，他们不是对象，他们是新的：第七种类型值。</p>
+
+<p>让我们对随后来到的 ES6 symbol 的布置些场景。</p>
+
+<h4>一个简单、小的布尔</h4>
+
+<p>有时，它可以在JS对象中十分方便地存储一些临时的但实际属于其它的数据。</p>
+
+<p>例如，你可以写一个JS库，用CSS的翻转(transitions)来让DOM元素在屏幕中收缩。你也注意到，当试图对一个<code>div</code>元素添加多个翻转时那是没有效果的。这显得很难受，时不时的”跳动“。你认为你可以修复这问题，但首先你需要找到一方法来判断这给定的元素是否已经移动了。</p>
+
+<p>你怎么才能解决这问题？</p>
+
+<p>一个方法是使用CSS的APIs 通过浏览器去查询这元素是否正在移动，但是这听起来很大刀。你的库应该已经知道这元素是正在移动的，那就是在你设置其移动的代码的第一个位置！</p>
+
+<p>你可能希望的方法是实时跟踪移动的元素，你可以将所有移动的元素保存到一个数组中。当你库每次被调用来对一元素进行动画时，你可以查询一遍这个元素是否已经在数组中。</p>
+
+<p>Hmm。如果这数组很大的话，这线性的检索是十分缓慢的。</p>
+
+<p>你实际只是想做的是在元素的上面设置一个标识：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">isMoving</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">smoothAnimations</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">element</span><span class="p">.</span><span class="nx">isMoving</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这也有些潜在的问题，它们实际上有： 不仅仅是你的代码控制这些DOM。</p>
+
+<ul>
+<li>其它代码使用 <code>for-in</code> 或者 <code>Object.keys()</code>会使得你创建的属性出现困扰；</li>
+<li>某些其它明智库的作者可能已经考虑到了这一技术，然后这些已经存在的库会和你的库相互地作用，这是糟糕的。</li>
+<li>某些其它明智库的作者将来可能会想到这技术，然后你的库将来会出现冲突；</li>
+<li>标准委员会可能决定对所有的元素增加一个 <code>.isMoving()</code>方法，然后你真的湿身了；</li>
+</ul>
+
+
+<p>好吧，你可以通过选择一个冗长而又笨拙的别人不用此来命名的字符串来解决后三个问题：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">smoothAnimations</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">element</span><span class="p">.</span><span class="nx">__$jorendorff_animation_library$PLEASE_DO_NOT_USE_THIS_PROPERTY$isMoving__</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但这样子很费眼。</p>
+
+<p>你实际上可以通过密码学的方法生成一个唯一的字符串来命名这属性：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// get 1024 Unicode characters of gibberish</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">isMoving</span> <span class="o">=</span> <span class="nx">SecureRandom</span><span class="p">.</span><span class="nx">generateName</span><span class="p">();</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">isMoving</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">smoothAnimations</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">element</span><span class="p">[</span><span class="nx">isMoving</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>object[name]</code>语法可以让你使用任意字符串来标识这个属性的名称，所以这代码是可用的：冲突几乎不可能出现，你的代码看起来很好。</p>
+
+<p>但这将导致一个调试不好的体验，当你每次用<code>console.log()</code>来输出一个元素的这属性时，你将会看到大量的字符串堆在垃圾桶里。然后，如果你需要不仅仅是一个类似的属性时，那怎么办？你怎么保证它们是正常的？他们会在你每次重载时拥有不同的名称。</p>
+
+<p>为什么会如此的艰难？我们只需要一个小小的布尔值而已！</p>
+
+<h4>Symbol(标志符) 是答案</h4>
+
+<p>程序可以创建标志符，来作为属性的关键字，而不会引起命名冲突：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">mySymbol</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>调用<code>Symbol()</code>可创建一个新的标志符，其值不会与其它任何值相等。</p>
+
+<p>就像一个字符串或者数值，你可以使用标志符来作为属性的key，因为它不会与其它的值相等，所以使用标志符作为属性的key不会与其它属性有冲突。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">obj</span><span class="p">[</span><span class="nx">mySymbol</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ok!&quot;</span><span class="p">;</span> <span class="c1">// guaranteed not to collide</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">mySymbol</span><span class="p">]);</span> <span class="c1">// ok!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里，你可以用标志符来解决之前的问题：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// create a unique symbol</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">isMoving</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;isMoving&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">isMoving</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">smoothAnimations</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">element</span><span class="p">[</span><span class="nx">isMoving</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码有些要注意的点：</p>
+
+<ul>
+<li><p>在<code>Symbol("isMoving")</code>中的字符串&#8221;isMoving&#8221;表示为一个描述信息，这可用于调试。</p></li>
+<li><p><code>element[isMoving]</code>称为一个 symbol-keyed 属性，它是一个用标志符而不是字符串来命名的属性。除此之外，它是一个正常的属性(没什么区别)。</p></li>
+<li><p>类似数组，symbol-keyed 属性不能通过 点的语法<code>obj.name</code>来访问，必须使用中括号来访问。</p></li>
+<li><p>如果你熟悉了标志符，你可以直接地使用 symbol-keyed 属性。之前的例子中已经展示怎么获取和设置<code>element[isMoving]</code>，如果我们需要，我们还可以使用 <code>if (isMoving in element)</code>或者甚至是<code>delete element[isMoving]</code>。</p></li>
+<li><p>另外，只要<code>isMoving</code>在作用域中以上的操作都是可行的，这使得标志符拥有个弱封装的机制：一个模块内创建一些标志符，则可用于其所有的对象中，不用担心其他代码的属性创建而引起冲突。</p></li>
+</ul>
+
+
+<p>因为标志符在设计时就是要避免冲突的，JS多数对象注入的特性忽略标志符的key的。例如，一个<code>for-in</code>的循环，只有循环会对对象的非字符串key起作用。标志符的key是被跳过的，<code>Object.key(obj)</code>和<code>ObjectgetOwnPropertyNames(obj)</code>也是一样的。但是，标志符实际上并不是私有的：它可以使用新的API <code>Object.getOwnPropertySymbos(obj)</code>来列出一个对象的所以标志符的key。另外新的API，<code>Reflect.ownKeys(obj)</code>，返回包括字符串和标志符的keys。(我们将会在即将到来的文章中全方位地讨论Reflect API。)</p>
+
+<p>库和框架将会挖掘出许多的标志符的用法，然后，我们将会看到JS把标志符应用于更大的范围和目标中。</p>
+
+<h4>但是，标志符实际上是什么</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="k">typeof</span> <span class="nx">Symbol</span><span class="p">()</span>
+</span><span class='line'><span class="s2">&quot;symbol&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>标志符并不同其它东西。</p>
+
+<p>它们在创建后就是不可变的。你不能为它们设置属性(如果你在严格模式中，你将会得到一个TypeError)。它们可以当作属性的名称，效果类似于字符串的key。</p>
+
+<p>另外，每个标志符是唯一的，区别于其它标志符(即使其它的标志符拥有相同的描述信息)，你可以轻松地创建新的标志符，这类似于对象。</p>
+
+<p>ES6的标志符类似于其它语言的<a href="https://en.wikipedia.org/wiki/Symbol_%28programming%29">更为传统标志符</a> ，如Lisp和Ruby，但是并非完全接近这些语言。在Lisp中，所有的身份标识都是标志符。在JS，身份标识和多数属性的key经过考虑之后，依然定为是字符串。标志符只是额外的选项。</p>
+
+<p>标志符的有个注意的地方：并不像其它语言一般，JS中的标志符不能自动转为字符串。试图将一个标志符和字符串拼接时，将得到得到 TypeError。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">sym</span> <span class="o">=</span> <span class="nx">Symbol</span><span class="p">(</span><span class="s2">&quot;&lt;3&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="s2">&quot;your symbol is &quot;</span> <span class="o">+</span> <span class="nx">sym</span>
+</span><span class='line'><span class="c1">// TypeError: can&#39;t convert symbol to string</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="err">`</span><span class="nx">your</span> <span class="nx">symbol</span> <span class="nx">is</span> <span class="nx">$</span><span class="p">{</span><span class="nx">sym</span><span class="p">}</span><span class="err">`</span>
+</span><span class='line'><span class="c1">// TypeError: can&#39;t convert symbol to string</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以通过精确地将标志符转为字符串来避免这一问题，编写方式为<code>String(sym)</code>或者<code>sym.toString()</code>。</p>
+
+<h4>三个标志符的点</h4>
+
+<p>这里有三种方式来获取一个标志标志符。</p>
+
+<ul>
+<li><strong>调用 Symbol()</strong>。就如我们已经谈到的，它在调用会每次返回唯一的标志符。</li>
+<li><p><strong>调用 Symbol.for(string) </strong>。这会访问已经存在于<em>标志符登记处(symbol registry)</em>的标志符。不像<code>Symbol()</code>会得到唯一的标志符，在标志符登记处中的标志符是可分享的。如果你调用<code>Symbol.for("cat")</code>三十次时，你在每次得到的是同一个标志符。当多个页面、或者多个模块位于同一页面时，这登记处就十分有用的，因为它们需要分享标志符。</p></li>
+<li><p><strong>如<code>Symbol.iterator</code>来使用标志符定义标准</strong>。标准库中只定义了部分标志符，但每个都是有其目的的。</p></li>
+</ul>
+
+
+<p>如果你依然没有确定标志符是怎么有作用的，最后一项就有意义了，因为它展示了  标志符在应用中得到证明是有用的。</p>
+
+<h4>ES6是怎么使用著名的标志符</h4>
+
+<p>我们已经看到在 ES6 中使用标志符可以避免与现有的代码产生冲突。几周前，在 <a href="http://shatle.github.io/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop/">迭代器的文章</a> 中，我们看到循环<code>for (var item of myArray)</code>在开始时调用<code>myArray[Symbol.iterator]()</code>。我提到，这方法会在<code>myArray.iterator()</code>时调用到，因为标志符可以更好地向后兼容。</p>
+
+<p>现在，我们知道了标志符的所有信息，很容易理解它是为什么和是什么。</p>
+
+<p>这里还指出其它地方是怎么使用ES6著名的标志符的。(这些特性未在Firefox实现。)</p>
+
+<ul>
+<li><p><strong>扩展 instanceof</strong>。在ES6中，表达式<code>object</code>、<code>instanceof</code>、<code>constructor</code>在构造器(constructor)里面有一指定方法：<code>constructor[Symbol.hasInstance](object)</code>。这就是扩展。</p></li>
+<li><p><strong>消除新特性与旧代码之间的冲突</strong>。这意思非常模糊，但是我们已经确定的是，ES6的Array方法在现有的网站就是不能运行的。其它网络标准也有类似的问题：简单地添加一个方法都会导致现有的网站崩溃。但是，这些问题主要是由于动态作用域导致的，所以，ES6推介使用特殊的标志符。</p></li>
+<li><p><strong>支持新类型的string-matching</strong>。在ES5中，<code>str.match(myObject)</code>会试图将 myObject 转化为一个 RegExp。在ES6中，它会首先检查 myObject 是否有一个方法 myObject<a href="str">Symbol.match</a>。现在的库可以提供字符串转化的类，来支持RegExp对象能工作的地方也能正常运行。</p></li>
+</ul>
+
+
+<p>每个用法都有些限制，很难看到这些特性在我每天的代码中起作用，但是从长远来看是可行的。著名的标志符对PHP和Python中的<code>__doubleUnderscores</code>进行了升级。标准委员会在将来使用它们，来为JS添加新特性，而不会危险到你已经存在代码。</p>
+
+<h4>什么时候使用 ES6 的标志符</h4>
+
+<p>标志符已经在 Firefox36 和 Chrome38 实现了。我自己已经在 Firefox 实现了，所以当你如果将symbol当作是cymbal时，你应该知道应该问谁了。</p>
+
+<p>为了在未原生支持ES6 标志符的浏览器中使用标志符，你可以使用工具，如 <a href="https://github.com/zloirock/core-js#ecmascript-6-symbols">core.js</a> 。因为标志符实际上并不像以前的语言中的一样，这工具并不十分完美。<a href="https://github.com/zloirock/core-js#caveats-when-using-symbol-polyfill">请查看忠告</a></p>
+
+<p>下周，我们将有两篇新的文章。首先，我们将会谈到一些长期的特性，也是在ES6中出现的&#8211;但受到抱怨的。我们将会涉及到两个特性，它们甚至是可以追溯到编程的源头。我们将会继续两个类似的特性，但只是点到为止。所以，请在下周加入我们，让我们深入ES6的集合中。</p>
+
+<p>另外，让人迷恋的由 Gaston Silva 编写的文章谈到的并不是ES6的特性，但是，它也许在你项目的使用ES6上有一定的推动作用。下次见。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2015/12/10/es6-in-depth-symbols/';
+        var disqus_url = 'http://shatle.github.io/blog/2015/12/10/es6-in-depth-symbols/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>修改mongodb配置 - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="修改mongodb配置 mongodb, 安全 之前没有注意数据库安全问题，简单进行部署，于是有了安全问题。 从 #ruby-china@rei 的博文中看到了这一问题，由于内容是晚上在手机上看到的，地址忘记是哪了。 通过 10gen 下载安装 mongodb 默认是对所有的ip进行开放: &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2013/09/07/modify-mongodb-setting/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">修改mongodb配置</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/mongodb/'>mongodb</a>, <a class='category' href='/blog/categories/an-quan/'>安全</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>之前没有注意数据库安全问题，简单进行部署，于是有了安全问题。</p>
+
+<p>从 #ruby-china@rei 的博文中看到了这一问题，由于内容是晚上在手机上看到的，地址忘记是哪了。</p>
+
+<p>通过 10gen 下载安装 mongodb 默认是对所有的ip进行开放:</p>
+
+<blockquote><p>http://docs.mongodb.org/manual/reference/program/mongod/</p>
+
+<p>&#8211;bind_ip <ip address></p>
+
+<p>The IP address that the mongod process will bind to and listen for connections. By default mongod listens for connections all interfaces. You may attach mongod to any interface; however, when attaching mongod to a publicly accessible interface ensure that you have implemented proper authentication and/or firewall restrictions to protect the integrity of your database.</p></blockquote>
+
+<p>如果只是默认对所有ip开放访问的话：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nmap -p27017 hostname
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2013-09-07 16:17 CST
+</span><span class='line'>Nmap scan report <span class="k">for</span> hostname
+</span><span class='line'>Host is up <span class="o">(</span>0.026s latency<span class="o">)</span>.
+</span><span class='line'>PORT      STATE SERVICE
+</span><span class='line'>27017/tcp open  unknown
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以通过 <a href="http://docs.mongodb.org/manual/reference/program/mongo/">mongo</a> 远程访问：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mongo --host hostname
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是很可怕的。修改配置文件<code>mongodb.conf</code>，加入下行，只允许本地访问：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">bind_ip</span> <span class="o">=</span> 127.0.0.1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要重启 mongodb，通常可以通过：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo service mongodb restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是我的是不行的，我需要：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/mongodb restart
+</span><span class='line'>
+</span><span class='line'><span class="c"># 或者，指定配置文件</span>
+</span><span class='line'><span class="c"># $ sudo mongod -f /etc/mongodb.conf</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此时，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nmap -p27017 hostname
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2013-09-07 16:17 CST
+</span><span class='line'>Nmap scan report <span class="k">for</span> hostname
+</span><span class='line'>Host is up <span class="o">(</span>0.026s latency<span class="o">)</span>.
+</span><span class='line'>PORT      STATE SERVICE
+</span><span class='line'>27017/tcp closed  unknown
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实，可以进行其它安全设置：http://docs.mongodb.org/manual/core/security/</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2013/09/07/modify-mongodb-setting/';
+        var disqus_url = 'http://shatle.github.io/blog/2013/09/07/modify-mongodb-setting/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

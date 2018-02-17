@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rails | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rspec practices 1]]></title>
+    <link href="http://shatle.github.io/blog/2016/04/23/rspec-practices-1/"/>
+    <updated>2016-04-23T18:17:16+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/04/23/rspec-practices-1</id>
+    <content type="html"><![CDATA[<p>U should add gem <code>rspec-rails</code> in ur project&#8217;s Gemfile, then bundle.</p>
+
+<p>Then, u need run command <code>rails g rspec:install</code>.</p>
+
+<p>When u use rails commands, likes <code>rails g model User xx:xx</code>. It will help u to create <code>spec/models/user_spec.rb</code> file.</p>
+
+<p>Yes, Rspec will check <code>_spec.rb</code> file as test file.</p>
+
+<p>Give me some codes:</p>
+
+<pre><code class="ruby">require 'rails_helper'
+
+RSpec.describe User, :type =&gt; :model do
+  context "signup with" do
+    it "email and password, then success." do
+      expect(User.signup("123@exmaple.com", "123456").errors.size).to eq(0)
+    end
+    it "illege email and password, then fail." do
+      expect(User.signup("123sdf", "123456").errors.size).to eq(1)
+    end
+
+    it "email and no password, then fail. " do
+      expect( User.signup("123@example.com", "").errors.size ).to eq(1)
+    end
+  end
+end
+</code></pre>
+
+<p>and then, u can use <code>rspec</code> to test all <code>_spec</code> files,
+or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/user_spec.rb</code> command.</p>
+
+<p>if no error, u can get</p>
+
+<pre><code class="ruby">3 examples, 0 failures
+</code></pre>
+
+<p>It is not a good view. We just not work for testing, but say something to others.</p>
+
+<p>U can run <code>rspec --format doc</code>,  will get result:</p>
+
+<pre><code class="ruby">User
+  signup with
+    email and password, then success.
+    illege email and password, then fail.
+    email and no password, then fail.
+
+3 examples, 0 failures
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails Cache]]></title>
+    <link href="http://shatle.github.io/blog/2013/07/02/Rails-Cache/"/>
+    <updated>2013-07-02T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/07/02/Rails-Cache</id>
+    <content type="html"><![CDATA[<p>在完成 rails 应用的功能之后，要考虑优化（重构）！</p>
+
+<p>关于 rails 的 cache 问题，网络上已经有很多说法了，我主要参考以下：</p>
+
+<p>http://guides.rubyonrails.org/caching_with_rails.html</p>
+
+<p>http://hawkins.io/2011/05/advanced_caching_in_rails/</p>
+
+<p>http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works</p>
+
+<p>或许有版本问题，虽然我没遇到，但是学习精华在于领会方法。</p>
+
+<p>缓存，个人觉得是根据访问频度和更新频度的数据，估计并平衡两者，才能进而提高响应速度。</p>
+
+<h3>Fragment Cache</h3>
+
+<p>对于碎片化的缓存，主流还是在这的，因为现今多数网站都是动态的。对于 Page Cache 大多数人并不推崇！</p>
+
+<p>相信多数人会用 layout：</p>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+
+%p header content
+</code></pre>
+
+<p>在重构加入 cache 时，可以通过两种简单的方法：</p>
+
+<h4>方法一</h4>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+= cache("header_part") do
+  %p header content
+</code></pre>
+
+<h4>方法二</h4>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = cache("header") do
+    = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+
+%p header content
+</code></pre>
+
+<p>明显第二种方法较好，其产生的效果：</p>
+
+<pre><code class="ruby">Read fragment views/header (0.2ms)
+</code></pre>
+
+<p>而第一种会有：</p>
+
+<pre><code class="ruby">Read fragment views/header (0.2ms)
+  Rendered share/header.haml (0.5ms)
+</code></pre>
+
+<hr />
+
+<p>其实，最好在设置 cache 时，同时设置时时效，<a href="http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works">David: 4 This generates a lot of cache garbage</a>。虽然有些存储设备自动清理访问较少的资源（memcached 有这样的机制），但是对于明确的资源，手动设置时效可以很好地清理或者更新内容。</p>
+
+<pre><code class="ruby">= cache("bottom", :expires_in =&gt; 7.days) do
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[取消 assets 的日志显示]]></title>
+    <link href="http://shatle.github.io/blog/2013/05/06/cancel-assets-logs/"/>
+    <updated>2013-05-06T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/05/06/cancel-assets-logs</id>
+    <content type="html"><![CDATA[<p>事情见多，或许就麻木了；事情见多了，或许就忍不住了。</p>
+
+<p>在 <code>#rails</code> 中的开发过程中，最近常用是直接用 nginx 部署于本地 80 端口。当然， <code>rails s</code> 是也是常见的事。</p>
+
+<p>在日志文件中，通常会看到此类 <code>#assets</code> 文件日志输出：</p>
+
+<pre><code class="ruby">Started GET "/assets/application.js" for 127.0.0.1
+...
+</code></pre>
+
+<p>这些多数时候是无关紧要的。
+取消其显示的官方解释有</p>
+
+<blockquote><p>config.assets.logger accepts a logger conforming to the interface of Log4r or the default Ruby Logger class. Defaults to the same configured at config.logger. Settingconfig.assets.logger to false will turn off served assets logging.</p></blockquote>
+
+<p>即
+在 config/environments/development.rb 中加入：
+<code>ruby
+config.assets.logger = false
+</code>
+但是，在我这版本 3.2.8 是不行的。
+于是找到了<a href="https://github.com/evrone/quiet_assets">quiet_assets</a>。
+在 Gemfile 中加入 <code>gem quiet_assets</code>, 然后 <code>bundle install</code>, <code>nginx -s reload</code> 即可！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rails lib 文件]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/rails-lib-wen-jian/"/>
+    <updated>2012-08-17T21:42:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/rails-lib-wen-jian</id>
+    <content type="html"><![CDATA[<p>今天在rails项目中的<code>rails_dir/lib</code>文件夹新建了个文件，当类库使用。</p>
+
+<p>如：my_jobs.rb，内容如下:</p>
+
+<pre><code>module Jobs
+  def self.hello
+    "hello"
+  end
+end
+</code></pre>
+
+<p>但是，当我用</p>
+
+<pre><code>rails c
+</code></pre>
+
+<p>并不能正常加载，不是说rails项目的lib中的文件会自动加载吗？问了旁边的齐洋，哦，要模块名与文件名要同名(符合rails规则)，才能自动加载。</p>
+
+<p>唉，之前都是习惯同名，现在不同名却能发现这一问题。多coding，才能发现问题啊。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[redis in rails]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/redis-in-rails/"/>
+    <updated>2012-08-17T21:27:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/redis-in-rails</id>
+    <content type="html"><![CDATA[<blockquote><p>http://www.360doc.com/content/12/0401/17/597197_200001717.shtml</p></blockquote>
+
+<p>当初在设计这个项目的架构时，就准备引入nosql作为主要组成部分。一是从网站的预期流量上，单台mysql要撑起来还真有点费劲，mysql的扩展方案 又不是很优雅方便。二是当前凡是有点活力的场所，张口闭口都是nosql，现在搞个项目要是还在跟sql语句死抠较劲，你都不好意思跟人家打招呼。所以经 过一番论证和可行性分析，最终我们选择了redis和mongodb来各负其责。这次先简单说说redis。</p>
+
+<p>1、选择理由</p>
+
+<p>喜欢一个人是没有理由的，但选择一个组件，却一定是要有理由的。这关系到日（名词）后有没有扩展空间，在项目中好不好用，大家写起代码来会不会暗地里大骂当初那个选型的人。</p>
+
+<p>redis 是一款内存型的key-value数据库，它允许把所有的数据都保留在内存里，保证了数据存取的速度。又有持久化和日志机制，保证了断电时数据的完整性。 redis支持hash、list、(sorted) set等数据类型，作为绝大多数的应用来说已经足够。而且redis的更新非常快，开发者们都很敬业努力，这也是选择一个开源组件的很重要的一个方面。</p>
+
+<p>因为这个系列不是专门讲解redis开发的，所以更详细的使用特性和开发手册，请微移莲步至官方网站。</p>
+
+<p>2、适用场景</p>
+
+<p>项目中使用redis的场景主要有以下几处：</p>
+
+<p>2.1 rails默认缓存。凡是rails需要使用缓存的地方，比如页面片段缓存等，都会用到指定的默认缓存系统。这个配置起来很简单，只需要一行代码即可，而且也不必关心rails具体在redis上是怎么实现的，自有redis_store来完成这一切。</p>
+
+<pre><code>config.cache_store = :redis_store, $config.redis[:server]
+</code></pre>
+
+<p>2.2 自定义缓存。主要是以对象缓存的形式，保存在开发中认为有必要进行快速存取的数据。自定义缓存需要自己写一个类，通过redis store调用redis client的命令，来实现数据的存取。比如首页上需要调用的某些资讯数据，就不再每次都从mysql中获取，而是由后台任务定时从mysql中读取或在内容更新时读取并保存至redis缓存中。</p>
+
+<p>其中要注意一点，redis保存的value值，只接受字符串格式，所以如果要通过自定义缓存保存非字符串型的数据，就需要使用Marshal进行序列化和反序列化。</p>
+
+<p>2.3 任务队列。执行异步和定时任务的resque和resque-scheduler组件，使用redis作为任务队列服务器。同样，按照resque的配置说明，一行代码即可搞定。</p>
+
+<pre><code>Resque.redis = Redis.new($config.redis[:server])
+</code></pre>
+
+<p>3、扩展redis缓存</p>
+
+<p>redis_store 只是按照ActiveSupport::Cache的规范实现了诸如read、write、increment、decrement、delete等通用 的存取接口，而作为redis一大亮点的hash、set等数据结构则在默认的规范中没有用武之地。而且在项目中，很有可能会有存取hash类型缓存的需 求。</p>
+
+<p>作为金融资讯网站，当天的股票行情信息是非常重要的，访问率非常高，而且要求访问速度很快，如果每次访问都要去oracle实时查询，则无法满足速度的要求。因此，当天所有的股票行情数据，我们从oracle中取出之后，都要保存redis的高速缓存中。</p>
+
+<p>国 内的股票一共有2000多支，每支股票的行情数据要按照不低于每分钟一次的频率进行实时刷新。如果每支股票的数据都存为一个key-value键值对，那 么在进行每分钟更新时，要同时取出2000个键值对，反序列化，对每支股票依次插入最新的行情数据，再依次序列化保存。经过实际测试，循环2000次序列 化和反序列化所用时间极长，想在1分钟内完成这个任务是不可能的。</p>
+
+<p>因此这就是一个典型的hash类型缓存存取的需求。我们把这2000 支股票数据作为一个hash来进行保存，key是:stocks，field就是每支股票的代码，这样就不需要循环2000次存取数据，而只需一个 redis命令就能完成所有2000多支股票数据的保存和读取，满足了在一分钟内实时刷新行情数据的要求。而且如果要读取某一支股票的数据，也只需指定 key和field，就可迅速取出数据。</p>
+
+<p>实现方法是扩展redis_store的RedisStore::Cache::Store类。具体代码就很简单了，这也显示出了redis的功能强大和ruby编程的便利。</p>
+
+<pre><code>def hwrite(key, hash)
+  @data.hmset(key, *hash.map{|k, v| [k, Marshal.dump(v)]}.flatten(1))
+end
+
+def hread(key, field = nil)
+  field.nil? ? Hash[*@data.hgetall(key).map{|k, v| [k, Marshal.load(v)]}.flatten(1)] :
+               Marshal.load(@data.hget(key, field))   
+rescue TypeError
+end
+</code></pre>
+
+<p>其中@data是Redis::Factory创建的一个Redis::Store实例，负责调用redis client执行redis命令。</p>
+
+<p>同样，如果在项目中需要list和set等数据类型的缓存，也可按此思路一并处理。</p>
+
+<p>4、redis高可用</p>
+
+<p>因为redis不仅作为缓存使用，而且也是resque执行异步和定时任务的消息队列，因此对于可用性的要求就比较高，一旦挂掉，所有后台任务就会全部停止，严重影响网站的功能和体验。</p>
+
+<p>但是redis原生的cluster解决方案迟迟不出，去年看redis官网的时候，说是直到今年5月份才可能会有rc放出，所以没办法，只能自己做一个山寨的高可用方案勉强支撑一段时间。</p>
+
+<p>PS：今年5月份的时候我再看，却又拖到“不早于夏末”了。原来不只是XXX说话不算数的。</p>
+
+<p>redis双机高可用的基础，是redis的主备复制机制。指定主备角色，是用slaveof命令。</p>
+
+<p>指定本机为master</p>
+
+<pre><code>slaveof NO ONE
+</code></pre>
+
+<p>指定本机为192.168.1.10的slave</p>
+
+<pre><code>slaveof 192.168.1.10 6379
+</code></pre>
+
+<p>本来一开始我也想如同mysql的master-master机制那样，分别在配置文件中指定本机为对方的slave，不过后来发现这个方法行不通。如果配置文件中都设置slaveof x.x.x.x，那么这两个redis启动之后不提供服务，客户端无法连接，类似于服务死锁的状态。</p>
+
+<p>经过多次实验发现，如果两个服务按照master-slave的方式启动，然后给master发送slaveof命令，指定其为另一个的slave，则此时双方都为slave，数据可以进行双向同步。基于这个原理，设计了一个redis双机互备的机制。</p>
+
+<p>在自定义的配置文件中，做如下配置：</p>
+
+<pre><code>redis:
+  server: redis://192.168.1.1:6379
+  cluster:
+    master: redis://192.168.1.10:6379   
+    slave: redis://192.168.1.20:6379
+</code></pre>
+
+<p>192.168.1.1是keepalived的virtual ip，应用程序只使用这个ip地址来存取redis。</p>
+
+<p>其核心的实现方式如下：</p>
+
+<p>4.1 两台redis服务器，配合keepalived。初始状态，是在master（192.168.1.10）上绑定keepalived的virtual ip 192.168.1.1。
+4.2 启动一个监控脚本，每秒钟对两个redis服务进行一次扫描。
+4.3 如果两台redis处于正常master-slave状态，则不进行操作。
+4.4 如果master挂掉，监控脚本对在线的slave（192.168.1.20）发送slaveof NO ONE命令，设置其为临时的主机temp-master，同时由于原来的master服务器挂掉，virtual ip 192.168.1.1自动转移至temp-master，不影响应用程序对redis的存取。此时应用程序新产生的数据都保存到temp- master（192.168.1.20）上。
+4.5 脚本监测到原来的master（192.168.1.10）在挂掉后重新启动加入集群，则向master发送slaveof 192.168.1.20 6379命令，设置其为temp-slave，从temp-master（192.168.1.20）复制在自己挂掉期间丢失的数据。同时virtual ip自动跳回temp-slave（192.168.1.10）向应用程序提供服务。
+4.6 延时30秒钟，确保数据复制完毕，对调temp-master和temp-slave的角色，恢复默认的master-slave体系。</p>
+
+<p>我知道延时30秒钟确保数据复制完毕这种方式很不好，但我确实在redis的info命令响应中没有找到指示复制完毕的字段。如果有消息能够明确指出数据复制完毕的状态会更好。</p>
+
+<p>这样，两台redis服务器中的任何一台挂掉，都会由另一台继续提供服务，不会对网站形成可察觉的影响，也不会丢失数据。</p>
+
+<p>5、redis配置</p>
+
+<p>redis的配置也比较灵活强大，使得redis的使用也方便了不少。</p>
+
+<p>5.1 持久化频率。配置save a b，指定在a秒内如果有b次key的改变，就执行硬盘持久化。此频率根据服务器状态进行设定，最好不要太过频繁。</p>
+
+<p>5.2 内存限制。使用maxmemory，限制最大使用内存，如数据超出这个大小，则按照LRU把最不常用的移出redis。这个特性对于使用内存有限的VPS时比较适合，免得内存超出之后造成宕机或天量收费。</p>
+
+<p>5.3 虚拟内存。设置vm-enabled，可指定redis能够使用的最大物理内存，当存储数据大于此内存值时，按照LRU算法把最不常使用的value移出到硬盘的虚拟内存文件中。不过所有的key都是保存在内存中的，这个不可设置。</p>
+
+<p>5.4 二进制日志。当 然，redis可以设置5.1所述的save参数，但如果存盘动作太密集，则会占用很多的资源，速度一慢也就失去了内存数据库的主要优点。为此redis 设计了日志机制。通过设置appendonly，可以开启日志选项，每一个发送到redis执行的命令，都会被立刻追加到硬盘的日志文件中，如果 redis意外宕机，则在重新启动的时候，redis会读取日志里的内容，恢复内存中尚未持久化的数据。</p>
+
+<p>不过因为appendonly 是所有数据的累积，所以文件大小增长非常快，在我们的项目中，差不多每一个小时就会增长6个G。虽然appendonly是另开进程操作的，但文件太大也 会影响效率，更何况还有塞满硬盘的危险。为此我们使用定时任务，每半个小时向redis发送bgrewriteaof命令，使redis按照当前数据快照 重写日志，重写后的日志大小与内存数据大小在同一个数量级上.</p>
+]]></content>
+  </entry>
+  
+</feed>

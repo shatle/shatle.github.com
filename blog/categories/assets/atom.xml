@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: assets | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/assets/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[取消 assets 的日志显示]]></title>
+    <link href="http://shatle.github.io/blog/2013/05/06/cancel-assets-logs/"/>
+    <updated>2013-05-06T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/05/06/cancel-assets-logs</id>
+    <content type="html"><![CDATA[<p>事情见多，或许就麻木了；事情见多了，或许就忍不住了。</p>
+
+<p>在 <code>#rails</code> 中的开发过程中，最近常用是直接用 nginx 部署于本地 80 端口。当然， <code>rails s</code> 是也是常见的事。</p>
+
+<p>在日志文件中，通常会看到此类 <code>#assets</code> 文件日志输出：</p>
+
+<pre><code class="ruby">Started GET "/assets/application.js" for 127.0.0.1
+...
+</code></pre>
+
+<p>这些多数时候是无关紧要的。
+取消其显示的官方解释有</p>
+
+<blockquote><p>config.assets.logger accepts a logger conforming to the interface of Log4r or the default Ruby Logger class. Defaults to the same configured at config.logger. Settingconfig.assets.logger to false will turn off served assets logging.</p></blockquote>
+
+<p>即
+在 config/environments/development.rb 中加入：
+<code>ruby
+config.assets.logger = false
+</code>
+但是，在我这版本 3.2.8 是不行的。
+于是找到了<a href="https://github.com/evrone/quiet_assets">quiet_assets</a>。
+在 Gemfile 中加入 <code>gem quiet_assets</code>, 然后 <code>bundle install</code>, <code>nginx -s reload</code> 即可！</p>
+]]></content>
+  </entry>
+  
+</feed>

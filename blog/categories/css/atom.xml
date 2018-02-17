@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: css | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/css/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CSS Position]]></title>
+    <link href="http://shatle.github.io/blog/2013/11/26/CSS-Position/"/>
+    <updated>2013-11-26T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/11/26/CSS-Position</id>
+    <content type="html"><![CDATA[<p>最近，遇到一个问题，不同的浏览器之间对定位展现出来的页面效果不一样，甚至同是chrome，但是window和*nix的都不一样。</p>
+
+<p>比如：</p>
+
+<pre><code class="css"># css file
+
+.cont {
+  position: relative;
+  top: -6px;
+}
+</code></pre>
+
+<p>这是简单的相对定位代码，绝对定位就更不好说了，可能出现的问题就更多了。绝对定位更多使用在如左边的导航操作区。对于不同浏览器之间的效果差别，我在这就不好贴出来了。</p>
+
+<p>通过我的试验，感觉定位基本都可以用另外的方法替代。可简单由<code>float</code>、<code>margin</code>、<code>padding</code>构成：</p>
+
+<pre><code>.cont {
+  float: right:
+  padding-right: 10px;
+  ...
+}
+</code></pre>
+
+<p>有时会不得不用到 margin，不过在我记忆中，好像不同的浏览器中初始值也不一样，此知识点的来源是找不到了。我潜意识里能不用则不用。</p>
+
+<p>听同事说，定位比一般样式要耗资源，是不是呢！！</p>
+
+<hr />
+
+<p>最近看到一个不同浏览器内核不同的代码，如<code>webkit</code>:</p>
+
+<pre><code>@media screen and (-webkit-min-device-pixel-ratio:0) {
+  ...
+}
+</code></pre>
+
+<p>更多不同浏览器差别及相应的语法技巧，可以转到 <a href="http://browserhacks.com">browserhacks</a>，对于调试浏览器的兼容性的开发者来说是十分有益的。可恶的浏览器之争，一家独大，对于开发者来说也不见得是坏事。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[好看样式CSS]]></title>
+    <link href="http://shatle.github.io/blog/2013/08/11/good-css/"/>
+    <updated>2013-08-11T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/08/11/good-css</id>
+    <content type="html"><![CDATA[<p>收集一些好看的样式</p>
+
+<h3>Input</h3>
+
+<ul>
+<li>代码地址：http://codepen.io/anon/pen/jivxd ，其利用 css3 的特性展现多种动画</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-11_09_14_50%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-11 09:14:50的屏幕截图.png" /></p>
+
+<ul>
+<li>http://dropthebit.com/demos/fancy_input/fancyInput.html ，这个也挺好的</li>
+</ul>
+
+
+<p><img src="/images/photo/2013-08-17_10_10_58%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-17 10:10:58的屏幕截图.png" /></p>
+]]></content>
+  </entry>
+  
+</feed>

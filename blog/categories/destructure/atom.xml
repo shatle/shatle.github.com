@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: destructure | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/destructure/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ES6 in Depth: Destructuring]]></title>
+    <link href="http://shatle.github.io/blog/2015/11/15/es6-in-depth-destructuring/"/>
+    <updated>2015-11-15T10:22:40+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/11/15/es6-in-depth-destructuring</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/">ES6 in Depth: Destructuring</a></p></blockquote>
+
+<p><em>编辑者说明：今天文章的早期版本是由Firefox工具开发工程师 Nick Fitzgerald 完成的，其起初来自 Nick 的博客 (Destructuring Assignment in ES6)[http://fitzgeraldnick.com/weblog/50/]</em></p>
+
+<h4>什么是解构的赋值</h4>
+
+<p>解构的赋值允许你给数组或者对象的变量赋值时，其语法类似于数组或者对象。这种语法非常简洁，其表达的意思也比传统的属性赋值要易懂。</p>
+
+<p>没有解构的赋值，你可能访问一个三元素的数组时会如下：</p>
+
+<pre><code class="javascript">var first = someArray[0];
+var second = someArray[1];
+var third = someArray[2];
+</code></pre>
+
+<p>通过解构的赋值，与其等价的代码，而且更为精确和可读：</p>
+
+<pre><code class="javascript">var [first, second, third] = someArray;
+</code></pre>
+
+<p>SpiderMonky作为Firefox的JS的解释器，已经支持大部分的解构，但是并不是所有。(Track SpiderMonkey’s destructuring (and general ES6) support in bug 694100)[https://bugzilla.mozilla.org/show_bug.cgi?id=694100]。</p>
+
+<h4>数组和迭代的解构</h4>
+
+<p>我们已经在上面看到解构的赋值，其通用的语法如下：</p>
+
+<pre><code>[ variable1, variable2, ..., variableN ] = array;
+</code></pre>
+
+<p>这会将 array 中的元素对应地分配到 variable1 到 variableN。如果你想同时声明变量，你可以在分配的前面增加<code>var</code>、<code>let</code>、<code>const</code>：</p>
+
+<pre><code>var [ variable1, variable2, ..., variableN ] = array;
+let [ variable1, variable2, ..., variableN ] = array;
+const [ variable1, variable2, ..., variableN ] = array;
+</code></pre>
+
+<p>实际上，用<code>variable</code>并不合适，因为你可以用你想的多深的内嵌模式(来分配值)，如：</p>
+
+<pre><code class="javascript">var [foo, [[bar], baz]] = [1, [[2], 3]];
+console.log(foo);
+// 1
+console.log(bar);
+// 2
+console.log(baz);
+// 3
+</code></pre>
+
+<p>再者，你可以用解构来跳过数组的部分元素：</p>
+
+<pre><code>var [,,third] = ["foo", "bar", "baz"];
+console.log(third);
+// "baz"
+</code></pre>
+
+<p>你还可以通过 “剩余”的模式来抓取数组中的尾部的元素：</p>
+
+<pre><code>var [head, ...tail] = [1, 2, 3, 4];
+console.log(tail);
+// [2, 3, 4]
+</code></pre>
+
+<p>当你访问数组中超边界或者不存在的元素时，你会得到通过索引返回的值：undefined.</p>
+
+<pre><code class="javascript">console.log([][0]);
+// undefined
+
+var [missing] = [];
+console.log(missing);
+// undefined
+</code></pre>
+
+<p>注意，利用数组的分配模式的解构分配方式也适用于迭代中：</p>
+
+<pre><code class="javascript">function* fibs() {
+  var a = 0;
+  var b = 1;
+  while (true) {
+     yield a;
+     [a, b] = [b, a + b];
+  }
+}
+
+var [first, second, third, fourth, fifth, sixth] = fibs();
+console.log(sixth);
+// 5
+</code></pre>
+
+<h4>解构对象</h4>
+
+<p>对对象解构可以让你将对象的不同属性绑定到变量中。当你指定要绑定的属性时，相关你绑定的变量的值就等于其属性值。</p>
+
+<pre><code class="javascript">var robotA = { name: "Benber" };
+var robotB = { name: "Flexo" };
+
+var { name: nameA } = robotA;
+var { name: nameB } = robotB;
+
+console.log(nameA);
+// "Benber"
+console.log(nameB);
+// "Flexo"
+</code></pre>
+
+<p>还有个有益的简单语法，当属性和变量的名称一致时：</p>
+
+<pre><code class="javascript">var { foo, bar } = { foo: "lorem", bar: "ipsum" };
+console.log(foo);
+// "lorem"
+console.log(bar);
+// "ipsum"
+</code></pre>
+
+<p>类似数组的解构，你可以解构更多的内嵌和组合：</p>
+
+<pre><code class="javascript">var complicatedObj = {
+  arrayProp: [
+     "Zapp",
+     { second: "Brannigan" }
+  ]
+};
+
+var { arrayProp: [first, { second }] } = complicatedObj;
+
+console.log(first);
+// "Zapp"
+console.log(second);
+// "Brannigan"
+</code></pre>
+
+<p>当你解构的属性并没有定义时，你会得到 <code>undefined</code> ：</p>
+
+<pre><code class="javascript">var { missing } = {};
+console.log(missing);
+// undefined
+</code></pre>
+
+<p>一个潜在的问题你应该了解，当你解构一个对象并分配到变量中时，但是你并没有声明它们（就是没有 let, const, 或者 var ）:</p>
+
+<pre><code class="javascript">{ blowUp } = { blowUp: 10};
+// Syntax error
+</code></pre>
+
+<p>之所以会发生这事，因为JS语法告诉解释引擎将<code>{</code>开头的表达式认为是一个块表达式（例如，<code>{ console }</code>就是个合法的块表达式）。解决方案还可以是将整个表达式用括号括起来：</p>
+
+<pre><code class="javascript">({ safe } = {});
+// No errors
+</code></pre>
+
+<h4>解构的值不是对象、数组或者迭代</h4>
+
+<p>当你对<code>null</code>和<code>undefined</code>的解构时，你会得到错误：</p>
+
+<pre><code class="javascript">var {blowUp} = null;
+// TypeError: null has no properties
+</code></pre>
+
+<p>但是，你可以解构其它原始的类型，如 布尔、数值、字符串，然后得到<code>undefined</code>：</p>
+
+<pre><code class="javascript">var {wtf} = NaN;
+console.log(wtf);
+// undefined
+</code></pre>
+
+<p>这结果有点意想不到，但是通过更多的测试可以其实其原因很简单。当我们使用对象的分配模式，其值要求可被强制解释为对象。多数类型可以转化为对象，但是null 和 undefined 不行。当使用数组分配模式时，值必须允许迭代。</p>
+
+<h4>默认值</h4>
+
+<p>当你解构的属性没有定义时，你可以提供默认值：</p>
+
+<pre><code class="javascript">var [missing = true] = [];
+console.log(missing);
+// true
+
+var { message: msg = "Something went wrong" } = {};
+console.log(msg);
+// "Something went wrong"
+var { x = 3 } = {}; console.log(x);
+// 3
+</code></pre>
+
+<p>（笔者注：前第一二个特性已经在Firefox中实现了，但第三个没有，详见 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080">bug 932080</a> ）</p>
+
+<h4>解构的应用实践</h4>
+
+<h5>定义函数参数</h5>
+
+<p>作为开发人员，我们希望使用更加合理的API，使用一个多属性的对象作为参数，而不是强制我们的用户来记住多个独立的参数（来作为函数的参数）。当我们想要引用其属性值时，我们可以使用解构来避免重复传入对象的属性。</p>
+
+<pre><code class="javascript">function removeBreakpoint({ url, line, column }) {
+  // ...
+}
+</code></pre>
+
+<p>这代码块来源于真实的代码，它来自Firefox的JS调试工具（也是JS的实现方式）。我们发现这模式令人很是愉快。</p>
+
+<h5>注册对象参数</h5>
+
+<p>扩展之前的例子，我们可以在解构时给予对象属性默认值。当我们存在的一个对象，这个对象是用来存储注册信息的，其部分属性已有合理的默认值时，解构就显得十分有好处了。例如，jQuery 的 <code>ajax</code>函数传递一个注册对象作为第二个参数，可以重写成这样：</p>
+
+<pre><code class="javascript">jQuery.ajax = function (url, {
+  async = true,
+  beforeSend = noop,
+  cache = true,
+  complete = noop,
+  crossDomain = false,
+  global = true,
+  // ... more config
+}) {
+  // ... do stuff
+};
+</code></pre>
+
+<p>这避免对注册对象的每个属性重复地进行类如 <code>var foo = config.foo || theDefaultFoo;</code> 的情况。</p>
+
+<p>(笔者注：不幸，在Firefox中，对象默认值的缩略语法并没有实现。我知道，我们已经有些段落已经进行了说明。详见 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080">bug 932080</a> )</p>
+
+<h5>在ES6迭代协议中</h5>
+
+<p>ES6 定义了迭代的协议，我们已经在这系列文章的早期文章中有谈到。当你对 <code>Map</code>进行迭代时，你会得到一系列的 <code>[key, value]</code> 键值对。我们可能解构这一对结构，可很容易访问基 key 和 value：</p>
+
+<pre><code class="javascript">var map = new Map();
+map.set(window, "the global");
+map.set(document, "the document");
+
+for (var [key, value] of map) {
+  console.log(key + " is " + value);
+}
+// "[object Window] is the global"
+// "[object HTMLDocument] is the document"
+</code></pre>
+
+<p>迭代时仅要 key :</p>
+
+<pre><code class="javascript">for ( var [key] of map) {
+  // ...
+}
+</code></pre>
+
+<p>或者迭代只要 value，</p>
+
+<pre><code>for (var [,value] of map) {
+  // ...
+}
+</code></pre>
+
+<h5>多个返回值</h5>
+
+<p>尽管JS语言并没有完全地支持返回多个值，但是这并不必要，因为你可以返回一个数组并对结果进行解构：</p>
+
+<pre><code>function returnMultipleValues() {
+  return [1, 2];
+}
+var [foo, bar] = returnMultipleValues();
+</code></pre>
+
+<p>另外，你可以使用一个对象来作为容器，并命名返回的值：</p>
+
+<pre><code>function returnMultipleValues() {
+  return {
+     foo: 1,
+     bar: 2
+  };
+}
+var { foo, bar } = returnMultipleValues();
+</code></pre>
+
+<p>其实，这两种模式更好的方式是将结果保存到临时容器中：</p>
+
+<pre><code>function returnMultipleValues() {
+  return {
+     foo: 1,
+     bar: 2
+  };
+}
+var temp = returnMultipleValues();
+var foo = temp.foo;
+var bar = temp.bar;
+</code></pre>
+
+<p>或者，可能使用延续传递的样式：</p>
+
+<pre><code>function returnMultipleValues(k) {
+  k(1, 2);
+}
+returnMultipleValues((foo, bar) =&gt; ...);
+</code></pre>
+
+<h5>导入CommonJS的模块名称</h5>
+
+<p>还没有使用 ES6 的模块？还依然使用 CommonJS模块？没问题！当导入某些 CommonJS 模块 X 时，而模块 X 导出比你想要的还要更多的函数。利用解构，你可以精确地使用你想要使用的模块，避免命名的混乱：</p>
+
+<pre><code>const { SourceMapConsumer, SourceNode } = require("source-map");
+</code></pre>
+
+<h4>总结</h4>
+
+<p>所以，你可以看到解构在很多细节上的应用都很有用，在 Mozilla 中我们已经对其有很多经验。Lars Hansen 在十年之前介绍过 Opera 中的解构，接着 Brendan Eich 为 Firefox 也增加了支持。我们知道，解构如果能应用于此语言的每天工作中，会使得所有的你的代码看起来更加的简洁。</p>
+
+<p>五周之前，我们说过，ES6会改变你编写JS的方式。我们在大脑中有一系列的具体特性，每段时间学习到的东西都能使自己有些提升。合并在一起，它们将会最终影响到你工作中的每个项目。方式的改革引导变革。</p>
+
+<p>顺应地应用ES6的解构需要团队的努力。特别感谢 Tooru Fujisawa (arai) 和 Arpad Borsos (Swatinem) 作出的贡献。</p>
+
+<p>对于解构的支持，Chrome的开发工作正在进行中，其它的浏览器也毫无疑问地在以后的某时会支持。现在，如果你想在Web中使用解构，那么你需要使用 <a href="http://babeljs.io/">Babel</a> 和 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a>。</p>
+
+<hr />
+
+<p>再次感谢 Nick Fitzgerald 的文章。</p>
+
+<p>下周，我们将谈到一个特性，它或多或少地使用更简单的方式来改变你已经编写的JS代码，这些代码通常自始自终是语言的底层代码。你会关心吗？更为简洁的语法你是否会兴奋呢？我确信答案是肯定的，但是先不要回答我。在下周加入我们并进行了解，我们将会深入 箭头函数（arrow function）。</p>
+]]></content>
+  </entry>
+  
+</feed>

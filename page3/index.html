@@ -1,0 +1,1271 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Es6 in Depth: Iterators and the For-of Loop es6, for-of, 深入es6 2015-09-09 Comments ES6 In Depth: Iterators and the for-of loop 【深入ES6】是深入了解 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/page3/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop/" itemprop="url">Es6 in Depth: Iterators and the For-of Loop</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/for-of/'>for-of</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-09T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-09-09</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">ES6 In Depth: Iterators and the for-of loop</a></p></blockquote>
+
+<p>【深入ES6】是深入了解 ECMAScript 标准中第6版本的JS(Javascript)语言新特性的系列文章，ES6是缩写。</p>
+
+<p>你是怎么循环处理数组中的元素的？20年前的JS，你可能会如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">myArray</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myArray</span><span class="p">[</span><span class="nx">index</span><span class="p">]);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ES5中，你可以使用内置的方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">myArray</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样子会简单些，但是这里有一个缺点：你不能使用<code>break</code>跳出循环，或者你也不能使用<code>return</code>跳出整个函数。</p>
+
+<p>如果使用<code>for-</code>循环语法，显得更为好些。</p>
+
+<p>那么，<code>for-in</code>循环怎么样呢？</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">index</span> <span class="k">in</span> <span class="nx">myArray</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// don&#39;t actually do this</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myArray</span><span class="p">[</span><span class="nx">index</span><span class="p">]);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是个坏主意，因为：</p>
+
+<ul>
+<li>代码中的<code>index</code>是字符串，&#8221;0&#8221;，&#8221;1&#8221;，&#8221;2&#8221;等，并不是真正的数值。因此，你可能会得到不想要的结果，如 &#8220;2&#8221;+1=&#8221;21&#8221;，这是十分不方便的。</li>
+<li>此循环中的主体部分，不仅仅数组的元素的执行，同时，其他人增加的属性也会被执行。例如，如果你的数组中包含可访问的属性<code>myArray.name</code>，那么这个循环将会执行额外的一次，此时的 <code>index</code> == <code>"name"</code>。甚至，数组原型链中的属性也会被访问。</li>
+<li>更加令人无语的是，要某些环境中，以上代码的执行顺序是不确定的。</li>
+</ul>
+
+
+<p>简单来说，<code>for-in</code>是为以字符串为关键字的旧<code>Object</code>s 来设计的。对于，数组来说，这方法并不好。</p>
+
+<h4>强大的 for-of 循环</h4>
+
+<p>上周，我已经提到了ES6不会影响到你现有的JS代码。好了，现在成千上万的网站依赖了 <code>for-in</code>，甚至有可能已经使用在数组（Array）中。然而，当数组中使用<code>for-in</code>时，并没有什么好方法来解决它的问题。ES6的唯一方法是增加一些新的循环语法来解决这些问题。</p>
+
+<p>在这里，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">value</span> <span class="nx">of</span> <span class="nx">myArray</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>相较于已有的其它结构，它是不是也很诱人？好了，我们将会看到<code>for-of</code>优雅的使用技巧。现在，先说明一下：</p>
+
+<ul>
+<li>更加精简。循环中直接使用数组元素的语法；</li>
+<li>它避免了<code>for-in</code>的陷阱；</li>
+<li>不像<code>forEach</code>，它可以使用<code>break</code>、<code>continue</code>和<code>return</code>；</li>
+</ul>
+
+
+<p><code>for-in</code>循环会对处理对象的属性。</p>
+
+<p><code>for-of</code>循环会处理数据 &#8211; 如数组中的值。</p>
+
+<p>但这并不是其所有的特性。</p>
+
+<h4>for-of 对其它集合的支持</h4>
+
+<p><code>for-of</code> 不仅仅作用于数组，它还可用于类数组的对象，如 DOM <code>NodeList</code>。</p>
+
+<p>它还可用于字符串，将字符串看成是 Unicode 字符序列：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">chr</span> <span class="nx">of</span> <span class="s2">&quot;  &quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">alert</span><span class="p">(</span><span class="nx">chr</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>它还可用于<code>Map</code>和<code>Set</code>对象中。</p>
+
+<p>噢，对不起。你还没有听说过<code>Map</code>和<code>Set</code>对象？好吧，它们是ES6新添加的对象。我们将会在以后用一整篇文章来对它们的主要特点进行说明。如果你已经在其它编程语言中碰到过它们，应该就没什么觉得特别的了。</p>
+
+<p>例如，一个<code>Set</code>对象有利于消除重复数据：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'> <span class="c1">// make a set from an array of words</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">uniqueWords</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">(</span><span class="nx">words</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当你拥有一个<code>Set</code>时，你可以这样子很简单地循环其内容：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">word</span> <span class="nx">of</span> <span class="nx">uniqueWords</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">word</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>Map</code>稍微有点不同：里面的数据是 key-value 对，所以，你很可能<em>去结构化</em>(destructuring)来打开 key 和 value，并赋予两个不同的变量：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="p">[</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">]</span> <span class="nx">of</span> <span class="nx">phoneBookMap</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot;&#39;s phone number is: &quot;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>去结构化是ES6的特性，我们也将会在以后的文章中进行说明，此处就写到这里。</p>
+
+<p>现在，你应该有个印象：JS 拥有些新的不一样的集合类，甚至是它们的使用方法。<code>for-of</code>被设计成一个吃苦耐劳的老马的循环表达式，来操作这些集合。</p>
+
+<p><code>for-of</code> 不能用于原有的对象中，但是，如果你想循环其对象属性时，你可能使用<code>for-in</code>(这就是其产生的原因)，或者使用内置的 <code>Object.keys()</code>：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// dump an object&#39;s own enumerable properties to the console</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="nx">of</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">someObject</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">someObject</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>掀开面纱(Under the hood)</h4>
+
+<blockquote><p>&#8220;Good artists copy, great artists steal.&#8221; &#8212;- Pablo Picasso</p></blockquote>
+
+<p>ES6主要推行的是现在JS语言没有的一些新添加的特性，大多数已经在其它语言中使用并证明是可用的。</p>
+
+<p><code>for-of</code>循环类似于 C++、Java、C#、Python中的循环表达式，它可以处理JS语言及其标准库中的多种数据结构。但是，它还进行些扩展。</p>
+
+<p>就像这些其它语言中的<code>for/foreach</code>表达式，只要相应方法可调用，<code>for-of</code>就能使用。我们之前讨论到的 <code>Array``Map``Set</code>及其它的对象，都拥有一个迭代方法。</p>
+
+<p>其它类型的对象，都可拥有迭代方法，任何对象都可以。</p>
+
+<p>你可以添加<code>myObject.toString()</code>方法给任何对象，然后JS就知道将对象转化成为字条串。类似这样的，你可以添加<code>myObject[Symbol.iterator]()</code>方法给任何对象，然后JS就知道如何循环这对象了。</p>
+
+<p>例如，假定你正在使用 jQuery，而且非常喜欢使用<code>.each()</code>方法，而你你想jQuery对象能够使用<code>for-of</code>方法，那么可以这样子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Since jQuery objects are array-like,</span>
+</span><span class='line'><span class="c1">// give them the same iterator method Arrays have</span>
+</span><span class='line'><span class="nx">jQuery</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>好吧，我知道你正在想些什么，这个<code>[Symbol.iterator]</code>看起来很怪异。为什么会出现这情况呢？肯定的是，其方法名称是必须的。标准委员会认为 可以只使用<code>.iterator()</code>方法，但是当你部分对象已经有了<code>.iterator()</code>方法时，这是会十分迷惑的。所以，标准委员会使用了<code>Symbol</code>, 而不是一个字符串，也不是仅仅的一个方法。</p>
+
+<p>符号(Symbol)是ES6新添加的特性，我们将会讨论到它&#8211;你猜什么时候&#8211;在之后的一篇文章中。现在，你只需要知道新标准可以定义新形式(brand-new)的符号，如 <code>Symbol.iterator</code>，它保证肯定是不会与现有的代码有冲突。这一做法从语法上看显得很怪异，但是，这样可以以较小的代价来得到这个通用的新特性和很好地向下兼容。</p>
+
+<p>一个对象拥有<code>[Symbol.iterator]()</code>方法时，称为<code>iteratable</code>。在以后的周里，我们将会看到JS语言的iteratable的用法，不仅仅在<code>for-of</code>，同时还在<code>Map</code>和<code>Set</code>的构造函数中，去结构化时的分配(destructuring assignment)，还有新的应用广泛的操作符。</p>
+
+<h4>迭代对象</h4>
+
+<p>现在，你不 一定要对你自己的对象实现为一个迭代器，它可能是有错误的，这也是为什么我们将在下周在说明的原因。但是，为了完整性，让我们看一下一个迭代器是怎么样的。(如果你跳过这一部分，你很可能会错过些易忽略的(crunchy)技术细节。)</p>
+
+<p>一个<code>for-of</code>循环在集合中首先会调用<code>[Symbol.iterator]()</code>方法，它会返回一个新的迭代器对象。这个迭代器对象可以是做任意的拥有<code>.next()</code>方法的对象。当<code>for-of</code>循环每一次执行时，它会反复地调用这个方法。例如，这里有个我认为是最为简单的迭代器对象：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">zeroesForeverIterator</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span><span class="nx">done</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="mi">0</span><span class="p">};</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>每次<code>.next()</code>调用时，它会返回相同的结果，告诉<code>for-of</code>: a). 我们还没有停止这个迭代器，b). 下个值是0，这表示<code>for (value of zeroesForeverIterator) {}</code>将是个无限的循环。好吧，常用的迭代器是没必要这么繁琐的。</p>
+
+<p>这个迭代器设计，包含有 <code>.done</code>和<code>.value</code>属性，很明显地不同于其它语言的迭代器。在Java中，迭代器有两个不同的<code>.hasNext()</code>和<code>.next()</code>方法。在Python中，它只有一个<code>.next()</code>方法，当没有更多值时会抛出<code>StopIteration</code>。但是，从根本上说，这三种设计都返回相同的信息。</p>
+
+<p>迭代器对象也可以实现可选的<code>return()</code>和<code>.throw(exc)</code>方法。当<code>for-of</code>出现错误或者调用<code>break</code>、<code>return</code>表达式时，会提前退出，这时调用<code>.return()</code>方法。如果迭代器需要做些清理工作或者清空正式使用的资源，可以对<code>.return()</code>方法运行实现，多数迭代器对象是不需要实现它的。<code>.throw(exc)</code>是一种特殊的情况，<code>for-of</code>是不能调用这方法的。但是，我们将在下周看到更多相关的信息。</p>
+
+<p>现在，我们知道了迭代吕所有的详细信息，我们可以根据以下的方法来写简单的<code>for-of</code>循环：</p>
+
+<p>首先<code>for-of</code>循环：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="nx">VAR</span> <span class="nx">of</span> <span class="nx">ITERABLE</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">STATEMENTS</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里是个粗糙的等价物(示例)，使用下面的方法和些临时的变量：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">$iterator</span> <span class="o">=</span> <span class="nx">ITERABLE</span><span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">$result</span> <span class="o">=</span> <span class="nx">$iterator</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">$result</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">VAR</span> <span class="o">=</span> <span class="nx">$result</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">STATEMENTS</span>
+</span><span class='line'>  <span class="nx">$result</span> <span class="o">=</span> <span class="nx">$iterator</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码并没有说明<code>.return()</code>是怎么处理的，我们可以添加上去，但是，我认为这样子会让人难以理解它是怎么工作的，还不如简明点好。<code>for-of</code>很易用，但其在后面仍然有很多知识。</p>
+
+<h4>什么时候我可以用上</h4>
+
+<p><code>for-of</code>循环在现在所有的发行版本都是支持的，如果你在chrome中打开<code>chrome://flags</code>并启动&#8221;Experimental JavaScript&#8221;，chrome也会支持。微软Spartan浏览器也支持，但固守的IE版本(in the shiping versions of IE)是不支持的。如果你希望使用新的语法在网页开发中，但是又需要支持IE和Safari，你可以使用如Babel或Google的Traceur，来将ES6代码转化为现在对Web更为友好的ES5。</p>
+
+<p>在服务器端，你不需要转化器，你可以在io.js直接使用<code>for-of</code>，或者在带参<code>--harmony</code>的Node。</p>
+
+<p>好了，今天我们就到这，但是<code>for-of</code>还没有。</p>
+
+<p>在ES6中，有更多的对象可以漂亮地使用<code>for-of</code>，我之所以没有提到，是因为那是下周文章的主题。我认为这是在ES6最为魔法的地方，如果你没有遇到过，比如在Python和C#中，你开始会有些芥蒂。但是，写一个迭代器是很简单的，对重构是很有用的。同时，无论是在浏览器还是服务器中，它可能还会改变我们写异步代码的方式。所以，在下周加入我们吧，我们会深入ES6的生成器(generators)。</p>
+
+<h2>Comments(回复)</h2>
+
+<p><strong>Brett Zamir wrote on April 30th, 2015 at 17:31:</strong></p>
+
+<p><code>arr.some()</code> 方法，可以中断循环和跳过循环。</p>
+
+<p>跳过循环：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">arr</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span><span class="k">return</span> <span class="kc">false</span><span class="p">;};</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="err">输出</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="err">返回值为</span><span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>中断循环：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">arr</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span><span class="k">return</span> <span class="kc">true</span><span class="p">;};</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="err">输出</span> <span class="mi">1</span><span class="p">,</span> <span class="err">返回值为</span><span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Andrea Giammarchi wrote on May 1st, 2015 at 07:22:</strong></p>
+
+<p>Andrea 提出个暴力的方法，直接重写数组，来结束整个循环，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">];</span>
+</span><span class='line'><span class="nx">arr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">v</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">a</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，直接会影响循环的数组，运行此代码后，<code>arr = []</code>。</p>
+
+<p>其实，JS原有的<code>forEach</code>通过<code>return</code>可能跳过本次循环的，但是不能直接结束循环。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/09/01/es6-in-depth-an-introduction/" itemprop="url">Es6 in Depth: An Introduction</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-01T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-09-01</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/09/01/es6-in-depth-an-introduction/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/">ES6 In Depth: An Introduction</a></p></blockquote>
+
+<p>欢迎来到<a href="https://hacks.mozilla.org/category/es6-in-depth">【深入ES6】(ES6 in Depth)</a>。 从这周开始，我们将要进入ES6(ECMAScript 6)系列, ES6是一个即将要来临的Javascript语言的新版本。ES6 包含了许多新的特性，它让JS(Javascirpt)更加强大、更有表现力，我们也将在以后一周周地对其进行详细探讨。但是，在详细探讨之前，我们应该花点时间来说明 ES6 是什么，你能从中期待些什么。</p>
+
+<h4>ECMAScript 是做什么的</h4>
+
+<p>现在有 JS 语言的标准化是由 ECMA 组织维护的ECMAScript项目，这组织类似 W3C。ECMAScript 对 JS 进行了以下工作：</p>
+
+<ul>
+<li>语法 &#8211; 解释规则、关键字、表达式、声明、操作符 等等</li>
+<li>类型 &#8211; 布尔、数值、字符串、对象 等等</li>
+<li>原型和继承</li>
+<li>对象(object)和函数(function)中的标准库: JSON, Math, Array 方法，Object自省方法( Object introspection methods), 等等</li>
+</ul>
+
+
+<p>他们不会对其它语言进行定义，如HTML 、CSS, 或者 Web APIs，如 DOM(Document Object Model)，这些是语言等的标准化是不同的。ECMAScript 负责的不仅仅是现今在浏览器中运行的 JS，还有 非浏览器运行环境中的JS，如 node.js。</p>
+
+<h4>新标准</h4>
+
+<p>上周，ECMAScript 第6版本的最终草稿的说明书已经提交到 Ecma General Assembly ，这意味着什么呢？</p>
+
+<p>这意味着，这个夏天，我们将有一个对JS语言核心的新标准了。</p>
+
+<p>这是一个大新闻。JS语言的标准化从未停止过，之前的于2009年第5版本，ES 标准委员会就开始着手 ES6 了。</p>
+
+<p>ES6 对于 JS 语言来说，是一个比较大的升级。同时，你之前的JS也可以继续运行。ES6 在设计时已经考虑到最大程度地兼容现有的JS代码。实际上，很多浏览器已经支持 ES6 的特性，并且不断地完善中，这意味着你的代码可能已经使用上了ES6的特性。如果你现在没有发现兼容性的问题，你很可能在以后也不会遇到。</p>
+
+<h4>版本回顾</h4>
+
+<p>ECMAScript 在之前发布有 1，2，3，5 版本。</p>
+
+<p>版本4 在哪里 ？其实，版本4是有计划的，并且已经做了大量的工作在上面，但是最后因其设计过于庞大（野心太大）而不得不放弃了。例如，其还包括有静态类型语言中的泛型和类型推断（generics and type inference）。（强类型？）</p>
+
+<p>ES4 一直都有争论，当标准化委员会最后停止这项工作之后 ，成员们同意发布一个相对合适的版本ES5，并继续开发些新特性。准确来说，这次可以说是“妥协的”，这就是为什么在ES5的说明中有这两句话：</p>
+
+<blockquote><p>ECMAScript 是个有活力的(JS)语言，其改进并不完整。此版本说明中的一些重要技术会在以后的发布版本在出现。</p></blockquote>
+
+<p>这话也可以理解为对某些事情的承诺。</p>
+
+<h4>兑现承诺</h4>
+
+<p>2009年发布的ES5，介绍了 <code>Object.create()</code> <code>Object.defineProperty()</code>、<em>getters</em> 、<em>setters</em>、<em>strict mode</em> ，和 JSON 对象。我已经使用了这些所有的特性，我喜欢ES5为JS语言增加的特性。我使用这些特性写出很多有魔法效果的JS代码，以致不能一一点出这些好的特性。对我来说，最重要的改进可能就是Array方法: <code>.map()</code> <code>.filter()</code>，等等。</p>
+
+<p>不同的是， ES6是这些年和谐工作的产物。新的语言、库、原有JS语言大量的升级，使得ES6是个未曾挖掘的宝藏。新的特性主要从易用性出发，如箭头函数(arrow function)和简单的字符吕报插值方法，还有些脑洞大开的概念，如 <code>proxies</code> 和 <code>generators</code>。</p>
+
+<p>ES6 将会改变你写JS代码的方式。</p>
+
+<p>这系列文章将通过代码检查的方式，给JS程度大大展示ES6中的新特性。</p>
+
+<p>我们将从经典的“易忽略特性”开始，这是我一直渴望去深入的部分。所以，下周我们将对 <code>for-of</code> 循环进行探究。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/07/09/rust-notes-in-rust-postgres-and-nickel-dot-rs/" itemprop="url">Rust Notes in Rust-postgres and nickel.rs</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/nickel-dot-rs/'>nickel.rs</a>, <a class='category' href='/blog/categories/rust/'>rust</a>, <a class='category' href='/blog/categories/rust-postgres/'>rust-postgres</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-09T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-07-09</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/07/09/rust-notes-in-rust-postgres-and-nickel-dot-rs/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<h2>声明</h2>
+
+<p><a href="https://github.com/sfackler/rust-postgres">rust-postgres</a>
+<a href="https://github.com/nickel-org/nickel.rs">nickel.rs</a></p>
+
+<h2>示例代码段</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='rust'><span class='line'><span class="c1">//</span>
+</span><span class='line'><span class="kd">let</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;postgres://postgres:123456@localhost:5432&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">SslMode</span><span class="o">::</span><span class="nb">None</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><span class='line'><span class="kd">let</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">prepare</span><span class="p">(</span><span class="s">&quot;SELECT id, name, data FROM person&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><span class='line'><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span> <span class="n">stmt</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[]).</span><span class="n">unwrap</span><span class="p">());</span>
+</span><span class='line'><span class="kd">let</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">stmt</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[]).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><span class='line'><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span> <span class="n">rows</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+</span><span class='line'><span class="kd">let</span> <span class="n">row</span> <span class="o">=</span> <span class="n">rows</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">.</span><span class="n">len</span><span class="p">());</span>
+</span><span class='line'><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;id: {:?}&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">.</span><span class="n">columns</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">let</span> <span class="n">row_id</span><span class="o">:</span> <span class="kt">i32</span> <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="kd">let</span> <span class="n">row_name</span><span class="o">:</span> <span class="n">String</span> <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nb">println</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;{:?},,,{:?}&quot;</span><span class="p">,</span> <span class="n">row_id</span><span class="p">,</span> <span class="n">row_name</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//</span>
+</span><span class='line'><span class="kd">let</span> <span class="k">mut</span> <span class="n">server</span> <span class="o">=</span> <span class="n">Nickel</span><span class="o">::</span><span class="n">new</span><span class="p">();</span>
+</span><span class='line'><span class="n">server</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;**&quot;</span><span class="p">,</span> <span class="n">middleware</span><span class="o">!</span><span class="p">(</span><span class="n">row_name</span><span class="p">.</span><span class="n">clone</span><span class="p">()));</span>
+</span><span class='line'><span class="n">server</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="s">&quot;127.0.0.1:6767&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>conn::prepare 返回的是 <a href="http://sfackler.github.io/rust-postgres/doc/v0.9.3/postgres/struct.Statement.html">Statement</a>, statement需要真正执行，如 query(&amp;[]) 才能真正查询数据库，<code>&amp;[]</code> 返回的内置值；</p>
+
+<p>本来返回的是 Result<Rows>, 但是 代码中 直接 unwrap() ， 所以直接得到 rows. 其中，有 Rows 和 Row 这两种不同的结构。rows.len() 得到记录数量， row.len() 得到是列数量。</p>
+
+<p>注意： 在row.get() 时，需要指明返回的类型。其中，row.get()可以通过Index 或者 名称访问到数据。</p>
+
+<p>直接 middleware(row_name) 会出现 <code>cannot move out of captured outer variable in an</code>Fn<code>closure.</code> 的错误，作用域的问题。这时可能通过 clone() 的方式处理。</p>
+
+<blockquote><p>http://rustbyexample.com/trait/clone.html</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='rust'><span class='line'><span class="n">When</span> <span class="n">dealing</span> <span class="n">with</span> <span class="n">resources</span><span class="p">,</span> <span class="n">the</span> <span class="n">default</span> <span class="n">behavior</span> <span class="n">is</span> <span class="n">to</span> <span class="n">transfer</span> <span class="n">them</span> <span class="n">during</span> <span class="n">assignments</span> <span class="n">or</span> <span class="n">function</span> <span class="n">calls</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/04/25/update-column-in-mongoid-without-update-updated-at-attribute/" itemprop="url">Update Column in Mongoid Without Update Updated_at Attribute</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/mongoid/'>mongoid</a>, <a class='category' href='/blog/categories/skip/'>skip</a>, <a class='category' href='/blog/categories/updated-at/'>updated_at</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-25T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-04-25</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/04/25/update-column-in-mongoid-without-update-updated-at-attribute/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>没有　update_column 的方法，只能看源代码　https://github.com/mongoid/mongoid/blob/master/lib/mongoid/timestamps/updated.rb
+发现其代码中有，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">set_callback</span> <span class="ss">:create</span><span class="p">,</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">:set_updated_at</span>
+</span><span class='line'><span class="n">set_callback</span> <span class="ss">:update</span><span class="p">,</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">:set_updated_at</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>联想rails中方法，需要在方法中，特定的方法重新设置此内容, 如</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">skip_auto_updated_at</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class='line'>  <span class="no">User</span><span class="o">.</span><span class="n">skip_callback</span><span class="p">(</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">:set_updated_at</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">yield</span>
+</span><span class='line'>  <span class="no">User</span><span class="o">.</span><span class="n">set_callback</span><span class="p">(</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:before</span><span class="p">,</span> <span class="ss">:set_updated_at</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">update_some_column</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">skip_auto_updated_at</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">update_attributes</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/03/22/start-golang/" itemprop="url">Start Golang</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/go/'>go</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-22T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-03-22</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/03/22/start-golang/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Go 语言前几年出来之时，火了一段时间，然后相对寂静了些时间，最近似乎又开始热了。
+促使我了解这一语言的动力是 <a href="https://ruby-china.org">Ruby-China</a> 上老大居然用 go 搭建了简单的 类似 web 程序，看来rubyist都是堆喜欢折腾的妖人。</p>
+
+<p>为此，我也打算浅尝一下：</p>
+
+<ul>
+<li>ubuntu 环境安装</li>
+<li>Sublime plugin: GoSumlime</li>
+</ul>
+
+
+<p>go 安装不麻烦，就是它那类似先编译再执行的传统变化的东西有点烦，安装完go 后，可以<code>go env</code>得到：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">GOROOT</span><span class="p">=</span><span class="s">&quot;/usr/lib/go&quot;</span>
+</span><span class='line'><span class="nx">GOBIN</span><span class="p">=</span><span class="s">&quot;&quot;</span>
+</span><span class='line'><span class="nx">GOARCH</span><span class="p">=</span><span class="s">&quot;amd64&quot;</span>
+</span><span class='line'><span class="nx">GOCHAR</span><span class="p">=</span><span class="s">&quot;6&quot;</span>
+</span><span class='line'><span class="nx">GOOS</span><span class="p">=</span><span class="s">&quot;linux&quot;</span>
+</span><span class='line'><span class="nx">GOEXE</span><span class="p">=</span><span class="s">&quot;&quot;</span>
+</span><span class='line'><span class="nx">GOHOSTARCH</span><span class="p">=</span><span class="s">&quot;amd64&quot;</span>
+</span><span class='line'><span class="nx">GOHOSTOS</span><span class="p">=</span><span class="s">&quot;linux&quot;</span>
+</span><span class='line'><span class="nx">GOTOOLDIR</span><span class="p">=</span><span class="s">&quot;/usr/lib/go/pkg/tool/linux_amd64&quot;</span>
+</span><span class='line'><span class="nx">GOGCCFLAGS</span><span class="p">=</span><span class="s">&quot;-g -O2 -fPIC -m64 -pthread&quot;</span>
+</span><span class='line'><span class="nx">CGO_ENABLED</span><span class="p">=</span><span class="s">&quot;1&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>入门指导书：the way to go， 中文翻译：<a href="https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md">https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md</a></li>
+</ul>
+
+
+<p>初略看了第一部分，确实有点意思，但亦些难受。</p>
+
+<blockquote><p>因为 Go 语言没有类和继承的概念，所以它和 Java 或 C++ 看起来并不相同。但是它通过接口（interface）的概念来实现多态性</p></blockquote>
+
+<p>这个有意思，大家玩对象编程时，出个直接接口编程；但是，很多平时觉得必要的功能没有，也可能这书太落后的原因，它列出了个人觉得应该它却说没有的特性：</p>
+
+<blockquote><ul>
+<li>为了简化设计，不支持函数重载和操作符重载</li>
+<li>不支持动态链接库</li>
+<li>不支持静态变量</li>
+</ul>
+</blockquote>
+
+<p>或许也是go 的优势，以后仔细看看再深入吧。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/10/20/reset-my-octopress/" itemprop="url">Reset My Octopress</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/config/'>config</a>, <a class='category' href='/blog/categories/git/'>git</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-20T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-10-20</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/10/20/reset-my-octopress/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>好久不写东西了，上来看了自己的github，空了好长的时间。</p>
+
+<p>之前电脑重装，之前的项目已经不在了。重新的时候只是将md文件备份，其它的样式都没有备份。所以不得不重新抽时间折腾了。</p>
+
+<p>很简单，直接走octopress的流程就可以了。二货的我（突然想到今天电影《银河战队》的foreigner说二货有点搞，中国市场真心大啊）将github地址搞错了，以为将<code>.git/config</code>的remote改了就可以了，不然，其实要修改的是<code>_deploy/.git/config</code>。下次记住了。</p>
+
+<p>之前正确使用这工具，没有那么傻的事情，突然傻一回，反而搞懂了其大致的原理。</p>
+
+<p>我还对样式进行了修改，最近迷上了紫色，主题颜色打紫了。</p>
+
+<p>充数了，睡觉。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/11/refresh-in-simple-captcha/" itemprop="url">Refresh in Simple_captcha</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/refresh/'>refresh</a>, <a class='category' href='/blog/categories/simple-captcha/'>simple_captcha</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-11T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-11</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/03/11/refresh-in-simple-captcha/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>对于登录，为了防止机器人，部分网站需要配合验证码进行登录。常用的Gem有 recaptcha 和 simple_captcha。</p>
+
+<p>下面简要描写一下，我的使用过程。项目是在他人的基础上修改的，他人已经使用 simple_captcha 提供了验证码登录的功能。但是没有刷新的按键功能。</p>
+
+<p>对于“无刷新的验证码”登录功能，可以参考 <a href="https://github.com/galetahub/simple-captcha">https://github.com/galetahub/simple-captcha</a>。 以下是添加刷新功能的过程。</p>
+
+<p>原代码中，登录页面的views代码为：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此代码会自动添加输入框和验证码图片，其中的参数可以参考之前 github 项目链接。</p>
+
+<p>需要添加刷新功能，就添加按钮：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span><span class='line'><span class="x">&lt;div class=&quot;refresh_simple_captcha&quot;&gt;</span>
+</span><span class='line'><span class="x">    &lt;a href=&quot;javascript:;&quot;&gt;点击刷新验证码&lt;/a&gt;</span>
+</span><span class='line'><span class="x">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过观察，页面中的验证码图片的链接值：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;http://127.0.0.1:3000/simple_captcha/simple_captcha?distortion=high&amp;amp;image_style=simply_green&amp;amp;simple_captcha_key=9e02709d78e964e4802b6b56937cdc63a45eac87&amp;amp;time=1394527382&quot;</span> <span class="na">alt=</span><span class="s">&quot;simple_captcha.jpg&quot;</span><span class="nt">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到有四个参数值，包括：distortion, image_style, simple_captcha_key, time.</p>
+
+<p>从资源的链接值中，可以试图简单并直接去改变time的值。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;time=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;time=&#39;</span><span class="o">+</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">valueOf</span><span class="p">();</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个方案或许能够改变，但是字符还是那几个；甚至，可能没有发生变化。可以想象一下其它的参数，毕竟是刷新吧，可以将distortion=low了，提升一下差别特性。</p>
+
+<hr />
+
+<p>那么，如果想进一步，如何使得字符也改变呢？</p>
+
+<p>需要添加额外的接口，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">SimpleCaptchaController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">update_simple_captcha</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>添加 views/simple_captcha/update_simple_captcha.erb 文件，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span><span class="n">raw</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，参数是要加上去的。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.refresh_simple_captcha a&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/simple_captcha/update_simple_captcha&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div#simple_captcha&quot;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就字符就可以改变了。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/04/create-web-icons/" itemprop="url">Create Web Icons</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/icon/'>icon</a>, <a class='category' href='/blog/categories/web/'>web</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-04T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-04</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/03/04/create-web-icons/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>不得不说，网络型图标给予我们很多方便。其中，提供的图标可以利用css修改样式，而不是如png图片那样。</p>
+
+<p>其中，bootstrap就为我们提供了不少的图标，但是我们有时刚不得不自定义些图标。那么，如何创建此类图标呢，下面是我的制作过程。</p>
+
+<h3>一、创建SVG图标文件</h3>
+
+<p>相信，此应该难不倒多数的设计师。对于设计，我是菜菜，由于我使用ubuntu的原因，我使用的是inkscape。</p>
+
+<p>我的设计过程，也挺简单的。利用已有的图标，并在其基础上做出修改。</p>
+
+<h3>二、上传到Web App的网站</h3>
+
+<p>这类Web Font 网站提供了，很方便的工具，如 Fontello 、 IcoMoon 、Flaticon 。我使用的是Fontello。</p>
+
+<p>将设计好的图标直接拖拉上页面，即可。</p>
+
+<p>当出现“非单一路径”的问题时，需要重新修改一下图标。我就出现此情况，解决方法：</p>
+
+<ol>
+<li>拆分组合（如果有的话），保证单独的个体</li>
+<li>再对各个单独的个体做转化（对象转为路径、轮廓转为路径）</li>
+<li>使用「粘贴」「合并」，将多个路径合并了一个</li>
+<li>保存</li>
+</ol>
+
+
+<p>然后选择所有上传的图标，注意页面显示的图标与你设计的是否一样，没问题后，点击下载。</p>
+
+<h3>三、添加进程序</h3>
+
+<p>参考 fontello.css 的路径，将 font 文件夹放到合适的地方。不考虑ie的话，可以只需要直接使用fontello-embeded.css文件。</p>
+
+<p>最后，就可以如用 fontawsome 一样使用图标了。</p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/12/31/clone-an-object-in-jquery/" itemprop="url">Clone an Object in jQuery</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/clone/'>clone</a>, <a class='category' href='/blog/categories/jquery/'>jquery</a>, <a class='category' href='/blog/categories/object/'>object</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-31T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-12-31</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/12/31/clone-an-object-in-jquery/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中，有时我们真正想要的真正的复制对象（深度复制）。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">newObj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">newObj</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">zhangsan</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>利用jQuery复制整个对象，<a href="http://stackoverflow.com/questions/122102/most-efficient-way-to-clone-an-object">stackoverflow</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">newObj1</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="p">{},</span> <span class="nx">obj</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">newObj1</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">lisi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个例子中，其实用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">newObj2</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">obj</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也是可以的。但是，对于多层属性时，需要参数<code>true</code>。</p>
+
+<blockquote><p>However, by passing true for the first function argument, objects will be recursively merged.</p></blockquote>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/12/30/show-and-hide-element-in-angularjs/" itemprop="url">Show and Hide Element in Angularjs</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/angularjs/'>angularjs</a>, <a class='category' href='/blog/categories/hide/'>hide</a>, <a class='category' href='/blog/categories/mouseenter/'>mouseenter</a>, <a class='category' href='/blog/categories/mouseleave/'>mouseleave</a>, <a class='category' href='/blog/categories/show/'>show</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-30T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-12-30</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/12/30/show-and-hide-element-in-angularjs/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>由于是开始接触angularjs，所以很多效果都是用jquery/js的思维去做的，但是angularjs是不提倡直接操作dom元素的。这一直很让我纠结，慢慢去修正吧。</p>
+
+<p>相信，显示与隐藏是十分常见的功能／效果。刚开始，我是用jquery去实现，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.ele&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="nx">mouseenter</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.text&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">})</span>
+</span><span class='line'>  <span class="p">.</span><span class="nx">mouseleave</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.text&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是这就直接操作dom了，怎么避免这些不好的操作呢，就要使用angular提供的或者自己编写的directives。</p>
+
+<p>从<a href="http://docs.angularjs.org/api/ng.directive">官网</a>页面中可以找到相关的directives：<code>ngHide</code>、<code>ngShow</code>、<code>ngMouseenter</code>、<code>ngMouseleave</code>。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nt">%a</span>( <span class="na">ng-repeat=</span><span class="s">&quot;item in items&quot;</span>
+</span><span class='line'>    <span class="na">ng-mouseenter=</span><span class="s">&quot;hover(item)&quot;</span>
+</span><span class='line'>    <span class="na">ng-mouseleave=</span><span class="s">&quot;hover(item)&quot;</span>
+</span><span class='line'>  )
+</span><span class='line'>  <span class="nt">%img</span>(<span class="na">ng-src=</span><span class="s">&quot;...&quot;</span>)
+</span><span class='line'>  <span class="nc">.text</span>(<span class="na">ng-show=</span><span class="s">&quot;item.show&quot;</span>)
+</span><span class='line'>    <span class="nt">%span</span> item.name
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;indexCtrl&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;$scope&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">){</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;..&#39;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="p">,{</span>
+</span><span class='line'>      <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;....&#39;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">hover</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">item</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="o">!</span><span class="nx">item</span><span class="p">.</span><span class="nx">show</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>效果是，默认的文字名称是隐藏的，因为开始时<code>item.show</code>是没有设置的，为false。
+当鼠标移进移出时，会触发<code>hover</code>方法 ，修改相应<code>item.show</code>的值。</p>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+    	
+    		<a href="page2" class="prev">上一页</a>
+    	
+
+    
+    
+        <a href="page4" class="next">下一页</a>
+    
+    <div class="center"><a href="/blog/archives">Archives</a></div>
+</nav>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>start Golang - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Start Golang go Go 语言前几年出来之时，火了一段时间，然后相对寂静了些时间，最近似乎又开始热了。
+促使我了解这一语言的动力是 Ruby-China 上老大居然用 go 搭建了简单的 类似 web 程序，看来rubyist都是堆喜欢折腾的妖人。 为此，我也打算浅尝一下： &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2015/03/22/start-golang/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Start Golang</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/go/'>go</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>Go 语言前几年出来之时，火了一段时间，然后相对寂静了些时间，最近似乎又开始热了。
+促使我了解这一语言的动力是 <a href="https://ruby-china.org">Ruby-China</a> 上老大居然用 go 搭建了简单的 类似 web 程序，看来rubyist都是堆喜欢折腾的妖人。</p>
+
+<p>为此，我也打算浅尝一下：</p>
+
+<ul>
+<li>ubuntu 环境安装</li>
+<li>Sublime plugin: GoSumlime</li>
+</ul>
+
+
+<p>go 安装不麻烦，就是它那类似先编译再执行的传统变化的东西有点烦，安装完go 后，可以<code>go env</code>得到：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">GOROOT</span><span class="p">=</span><span class="s">&quot;/usr/lib/go&quot;</span>
+</span><span class='line'><span class="nx">GOBIN</span><span class="p">=</span><span class="s">&quot;&quot;</span>
+</span><span class='line'><span class="nx">GOARCH</span><span class="p">=</span><span class="s">&quot;amd64&quot;</span>
+</span><span class='line'><span class="nx">GOCHAR</span><span class="p">=</span><span class="s">&quot;6&quot;</span>
+</span><span class='line'><span class="nx">GOOS</span><span class="p">=</span><span class="s">&quot;linux&quot;</span>
+</span><span class='line'><span class="nx">GOEXE</span><span class="p">=</span><span class="s">&quot;&quot;</span>
+</span><span class='line'><span class="nx">GOHOSTARCH</span><span class="p">=</span><span class="s">&quot;amd64&quot;</span>
+</span><span class='line'><span class="nx">GOHOSTOS</span><span class="p">=</span><span class="s">&quot;linux&quot;</span>
+</span><span class='line'><span class="nx">GOTOOLDIR</span><span class="p">=</span><span class="s">&quot;/usr/lib/go/pkg/tool/linux_amd64&quot;</span>
+</span><span class='line'><span class="nx">GOGCCFLAGS</span><span class="p">=</span><span class="s">&quot;-g -O2 -fPIC -m64 -pthread&quot;</span>
+</span><span class='line'><span class="nx">CGO_ENABLED</span><span class="p">=</span><span class="s">&quot;1&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>入门指导书：the way to go， 中文翻译：<a href="https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md">https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md</a></li>
+</ul>
+
+
+<p>初略看了第一部分，确实有点意思，但亦些难受。</p>
+
+<blockquote><p>因为 Go 语言没有类和继承的概念，所以它和 Java 或 C++ 看起来并不相同。但是它通过接口（interface）的概念来实现多态性</p></blockquote>
+
+<p>这个有意思，大家玩对象编程时，出个直接接口编程；但是，很多平时觉得必要的功能没有，也可能这书太落后的原因，它列出了个人觉得应该它却说没有的特性：</p>
+
+<blockquote><ul>
+<li>为了简化设计，不支持函数重载和操作符重载</li>
+<li>不支持动态链接库</li>
+<li>不支持静态变量</li>
+</ul>
+</blockquote>
+
+<p>或许也是go 的优势，以后仔细看看再深入吧。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2015/03/22/start-golang/';
+        var disqus_url = 'http://shatle.github.io/blog/2015/03/22/start-golang/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

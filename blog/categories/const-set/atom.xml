@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: const_set | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/const-set/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ruby const_set]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/ruby-const-set/"/>
+    <updated>2012-08-17T19:41:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/ruby-const-set</id>
+    <content type="html"><![CDATA[<h2>常量</h2>
+
+<p>Ruby会对大写字母开头的变量自动识别为常量</p>
+
+<pre><code>module MyModule
+    SERVER = "192.168.0.123"
+end
+</code></pre>
+
+<p>可直接通过“模块名／类名::常量名”访问常量值</p>
+
+<pre><code>puts MyModule::SERVER # 
+</code></pre>
+
+<p>常量可以重新赋值</p>
+
+<pre><code>MyModule::SERVER = "192.168.0.122"
+</code></pre>
+
+<p>会有警告：warning: already initialized constant SERVER , 值会改变的。</p>
+
+<p>不过，我比较常用的方法是const_set(地球人小心反射)</p>
+
+<ul>
+<li><p>在方法的内部</p>
+
+<pre><code>  def set_something
+      const_set("SERVER", "192.168.0.122")
+  end
+</code></pre></li>
+<li><p>在模块或者类的外部</p>
+
+<pre><code>  MyModule.const_set(:SERVER, "192.168.0.122")  #呵，可以用symbol
+</code></pre>
+
+<p>当然，可以转变一下思路，在方法的内部使用symbol,有必要吗？对某人来说，这个可以有</p>
+
+<pre><code>  self.class.const_set(:SERVER,"192.168.0.122")
+</code></pre></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

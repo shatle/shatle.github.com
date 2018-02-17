@@ -1,0 +1,519 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>es6 in depth: generators - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Es6 in Depth: Generators es6, generator, 深入es6 ES6 In Depth: Generators 我对今天的文章感到非常的兴奋，今天，我们将讨论ES6中最为魔法的特性。 从“魔法”这词我想表达什么？对于初学者来说，这个特性是不同于现有JS中的， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Es6 in Depth: Generators</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/generator/'>generator</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-generators/">ES6 In Depth: Generators</a></p></blockquote>
+
+<p>我对今天的文章感到非常的兴奋，今天，我们将讨论ES6中最为魔法的特性。</p>
+
+<p>从“魔法”这词我想表达什么？对于初学者来说，这个特性是不同于现有JS中的，它一开始就是神秘的。从某种意义上说，它还是语言内部的正常行为(In a sense, it turns the normal behavior of the language inside out)。如果这还不够魔法，我都不知道怎么说了。</p>
+
+<p>另外，这个特性重点还在于，其以简明的代码来消除邪恶代码中的callback。(JS常见的多层callback, 写nodejs会很是恶心。)</p>
+
+<p>是我有点夸大了？让我们开始进入，然后由你自己来作出判断吧。</p>
+
+<h4>ES6 生成器介绍</h4>
+
+<p>什么是生成器？</p>
+
+<p>让我们开始用一个例子来看一下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">quips</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">yield</span><span class="s2">&quot;hello &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;!&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">yield</span><span class="s2">&quot;i hope you are enjoying the blog posts&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">yield</span><span class="s2">&quot;it&#39;s cool how your name starts with X, &quot;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">yield</span><span class="s2">&quot;see you later!&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码来自<a href="http://people.mozilla.org/~jorendorff/demos/meow.html">a talking cat</a>，它可能是现今网络最为重要的一种应用。(继续，<a href="http://people.mozilla.org/~jorendorff/demos/meow.html">点击，一起玩耍吧</a>。当你感觉到完全懵时，回到这里看解释。)</p>
+
+<p>这代码看起来有几分类似函数，是不是？这个称为<code>generator-function</code>(生成器函数)，它拥有许多和函数相同的地方。但是，你现在必须清楚以下两个不同点：</p>
+
+<ul>
+<li>一般的函数以<code>function</code>开头，生成器函数是<code>function*</code></li>
+<li>在生成器函数中，<code>yield</code>是关键字，其语法更像是<code>return</code>。区别在于函数(甚至是生成器函数)只能<code>return</code>一次，而生成器函数可能<code>yield</code>多次。生成器中的<code>yield</code>会延缓执行，所以它可以在以后重新唤起。</li>
+</ul>
+
+
+<p>这就是一般函数和生成器函数的一个很大的不同点。一般函数不能内部暂停，但生成器函数可以。</p>
+
+<h4>生成器做什么</h4>
+
+<p>当你调用<code>quips()</code>生成器函数时，会发生什么呢？</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">iter</span> <span class="o">=</span> <span class="nx">quips</span><span class="p">(</span><span class="s2">&quot;jorendorff&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">object</span> <span class="nx">Generator</span><span class="p">]</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;hello jorendorff!&quot;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;i hope you are enjoying the blog posts&quot;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;see you later!&quot;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="nx">iter</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可能会习惯地按照普通的函数去推断其是怎么运行的。当你调用时，它会马上运行，它一直运行直到碰到<code>return</code>或者<code>throw</code>，这是所有JS程序大大的老习惯。</p>
+
+<p>调用一个生成器的方法类似于<code>quips("jorendorff")</code>，但是，当你调用一个生成器时，它并不立即运行，而返回的是一个暂停的生成器对象(在例子中是<code>iter</code>)。你可以认为这个生成器函数是一个函数调用，它这时是冻结的。具体来说，仅在运行第一行代码之前，它在生成器函数开始时是冻结的。</p>
+
+<p>每次你调用生成器对象的<code>.next()</code>方法时，函数自已会开始解冻，并且直到下一个<code>yield</code>时才会停止。</p>
+
+<p>这就是上面为什么我们每次调用<code>iter.next()</code>，却得到不同的字符串值的原因。这些值来源于<code>quips()</code>函数中的<code>yield</code>表达式。</p>
+
+<p>在最后一次调用<code>iter.next()</code>，我们来到了生成器函数的末尾，所以<code>.done</code>域的结果是<code>true</code>。到达函数的末尾时返回值是<code>undefined</code>，这就是<code>.value</code>域的结果是<code>undefined</code>。</p>
+
+<p>现在可能合适回到 <a href="http://people.mozilla.org/~jorendorff/demos/meow.html">the talking cat demo page</a> 把这代码玩起来了，试试将一个<code>yield</code>放到循环里面，会发生什么呢？</p>
+
+<p>从技术的角度来说，每次生成器<code>yield</code>时，生成器的栈架构中，<code>yield</code>的本地变量、参数、临时变量、执行的位置都会从此栈架构中移除。但是，这个生成器依然会对此栈架构保持着引用(或者是复制体)，所以之后的<code>.next()</code>调用时会再次激活生成器并继续执行。</p>
+
+<p>这里需要指出的是生成器并不是多线程的在多线程的语言中，多个代码块可以在同一时间一起运行。这会引起不同条件的资源竞争、不确定性、非常好的性能。生成器一点都不像这样，当生成器运行时，它只能运行于调用者的那个线程中，这个执行过程是有序并确定的。并不像系统线程，当生成器碰到<code>yield</code>时，它只会在其内部的相应位置暂停起来。</p>
+
+<p>好了，我们现在知道生成器是什么了。我们知道生成器运行、暂停、重新执行。现在有个大问题？怎么使得这强大的能力变得可用呢？</p>
+
+<h4>生成器是迭代器</h4>
+
+<p>上周，我们看到的ES6迭代器不仅仅是个内置的类，它们还是这新语言允许扩展的地方。你通过实现 <code>[Symbol.iterator]()</code>和<code>.next()</code>方法来创建自己的迭代器。</p>
+
+<p>但是，实现这个接口多少都会需要些工作，让我们来看一下在实践中是怎么实现一个迭代器的。例如，让我们来实现一个简单的值域来作简单地递增一个数值，就像旧时的<code>for(:;)</code>循环：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// This should &quot;ding&quot; three times</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">value</span> <span class="nx">of</span> <span class="nx">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Ding! at floor #&quot;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里有个解决方案，就是使用ES6的类。(如果对类的概念语法不清楚时，不用担心，我们会在以后的文章中进行说明的。)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">RangeIterator</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">start</span><span class="p">;</span>
+</span><span class='line'>     <span class="k">this</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">stop</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="nx">next</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>     <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>       <span class="k">return</span> <span class="p">{</span><span class="nx">done</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">value</span><span class="p">};</span>
+</span><span class='line'>     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>       <span class="k">return</span> <span class="p">{</span><span class="nx">done</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">};</span>
+</span><span class='line'>     <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Return a new iterator that counts up from &#39;start&#39; to &#39;stop&#39;.</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">range</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">RangeIterator</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">stop</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://codepen.io/anon/pen/NqGgOQ">点击这里看效果</a></p>
+
+<p>这就是如 Java 或者 Swift 的实现方式。它不是很坏，但是它又不是那么微不足道，而不用注意。这代码没有bug？这并不好说。我们试图模拟原来的<code>for(:;)</code>循环，但是看起来不并像，相反，迭代器的协议强制我们去拆散这循环。</p>
+
+<p>看到这里，你或许对迭代器有些许的冷淡了。迭代器好用，但不好实现。</p>
+
+<p>为了让迭代器更为容易地构建，我们不可能向你介绍一种少见、奇怪的新的JS语言流结构。但是，自从我们已有了生成器，我们能不能用它们来实现？让我们试一下吧：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">range</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">stop</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">i</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://codepen.io/anon/pen/mJewga">点击这里看效果</a></p>
+
+<p>以上的四行代码的生成器，相比于之前的包含有<code>RangeIterator</code>类的23行<code>Range()</code>实现，复杂度得到了降低。这可能就是生成器是迭代器的原因。所有的生成器都有内置的<code>.next()</code>和<code>[Symbol.iterator]()</code>的实现。你只需要写循环的行为就行了。</p>
+
+<p>离开生成器来实现迭代器就像是被强制用被动语态来写一整封长长的邮件。如果你不能通过简单的语言来说明你想表达的意思，那么相反你最终说的会变得很费解。由于没有使用循环语法，必须要用函数式的代码来完成循环，使<code>RangeIterator</code>变得又长又显怪异。因此，生成器就是你应该要的答案。</p>
+
+<p>生成器作为迭代器，我们可以用来做什么呢？</p>
+
+<ul>
+<li><strong>使得任何对象都可迭代</strong>。只需要写一个生成器函数来串连<code>this</code>(对象集)，yielding (反复地产出)它的每次值。然后，使用这个生成器函数来应用对象的<code>[Symbol.iterator]()</code>方法。</li>
+<li><strong>简化构建数组的函数</strong>。它支持你构建函数，来返回每次循环都可处理的数组，就像这样：</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Divide the one-dimensional array &#39;icons&#39;</span>
+</span><span class='line'><span class="c1">// into arrays of length &#39;rowLength&#39;.</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">splitIntoRows</span><span class="p">(</span><span class="nx">icons</span><span class="p">,</span> <span class="nx">rowLength</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">rows</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">icons</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">rowLength</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="nx">rows</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">icons</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">rowLength</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">rows</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成器可使这代码变为更短些：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">splitIntoRows</span><span class="p">(</span><span class="nx">icons</span><span class="p">,</span> <span class="nx">rowLength</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">icons</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">rowLength</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">icons</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">rowLength</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这两者在行为上的唯一不同的地方是，第一种一次性返回处理后的结果，而第二种是返回数组，是一个迭代器，结果可以按要求逐一进行处理。</p>
+
+<ul>
+<li><p><strong>得到不常见的大小</strong>。你不能创建一个无限的数组，但是，你可以返回一个产生无终止序列的生成器。无论调用者想得到多少值，都可以从这生成器中得到。</p></li>
+<li><p><strong>重构复杂的循环</strong>。你是否写过庞大而丑陋的函数？你会不会想要把它打散到两个更为简单的部分中？生成器是你重构工具中的新的一把刀子。当你面对复杂的循环时，你可以将生成数据的那部分代码抽离出来，放到一个分离出来的生成器函数中。然后，循环就可以变为<code>for (var data of myNewGenerator(args))</code>。</p></li>
+<li><p><strong>配合迭代器使用</strong>。ES6 并没有为过滤、重组或者直接处理可迭代的数组集 提供额外的库。但是，生成器是搞定这些的好工具，你只需要几行代码就行。</p></li>
+</ul>
+
+
+<p>例如，为了让DOM的<code>NodeList</code>支持<code>Array.prototype.filter</code>的等同功能，而不只是数组。部分代码有：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">test</span><span class="p">,</span> <span class="nx">iterable</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">item</span> <span class="nx">of</span> <span class="nx">iterable</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="nx">test</span><span class="p">(</span><span class="nx">item</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">yield</span> <span class="nx">item</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所以，生成器很有用，是不是？这是确定的。它们是以一种难以想象的简单方法来实现自定义的迭代器，这个迭代器是ES6中新的数据循环标准。</p>
+
+<p>但是，这些并不是所有生成器可做的作用，这还没有包括它们能做的最为重要的事情。</p>
+
+<h4>生成器和异步代码</h4>
+
+<p>这里有些我之前写的JS结束代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>      <span class="p">};</span>
+</span><span class='line'>    <span class="p">})</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也许，你要你的代码中也看到类似的事情。<a href="http://www.html5rocks.com/en/tutorials/async/deferred/">异步API</a>  通常需要一个返回函数(callback)，这意味着你每次都需要写额外的匿名函数。所以，如果你使用超过三行的代码来做这三件事时，你则正在处理三层的内嵌代码结构。</p>
+
+<p>下面是我写的些JS代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">done</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">);</span>
+</span><span class='line'><span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">done</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>异步API 有单独的错误处理会话，而不是通过 Exception 来处理，不同的API拥有不同的会话。在多数用户的API中，错误通常会被安静地默认过滤掉。在某些，甚至连成功的完成操作也会被默认过滤掉。</p>
+
+<p>到现在，这些问题可以通过异步编程来简单地解决。但是，我们不得不接受，异步代码并不像同步代码看起来简单、好理解。</p>
+
+<p>生成器提供了新的希望而不一定要这方式（异步代码）。</p>
+
+<p><code>Q.async()</code>是个实验性的方法，利用它有助于生成器通过<code>promise</code>来完成异步代码，其类似于返回型的异步代码。例如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Synchronous code to make some noise.</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">makeNoise</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">shake</span><span class="p">();</span>
+</span><span class='line'>  <span class="nx">rattle</span><span class="p">();</span>
+</span><span class='line'>  <span class="nx">roll</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Asynchronous code to make some noise.</span>
+</span><span class='line'><span class="c1">// Returns a Promise object that becomes resolved</span>
+</span><span class='line'><span class="c1">// when we&#39;re done making noise.</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">makeNoise_async</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">Q</span><span class="p">.</span><span class="nx">async</span><span class="p">(</span><span class="kd">function</span><span class="o">*</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">shake_async</span><span class="p">();</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">rattle_async</span><span class="p">();</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">roll_async</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>异步版本的代码主要的区别是必须在每个要调用的异步函数之前添加<code>yield</code>关键字。</p>
+
+<p>如果在<code>Q.async</code>代码中，添加<code>if</code>表达式或者<code>try/catch</code>代码块时，就如普通的异步代码一般。相比于其它异步代码的方式，至少这看起来不会像是学习一种新语言。</p>
+
+<p>如果你理解到现在所介绍的，你可能会喜欢 James Long 的 更为详细的文章<a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators">A-Study-on-Solving-Callbacks-with-JavaScript-Generators</a>。</p>
+
+<p>所以，生成器有助于进行异步编程，其更适合人类的大脑(思维方式)，这工作还要继续进行中。在这些工作中，有帮助的可能是更好的语法。<a href="https://github.com/lukehoban/ecmascript-asyncawait">A proposal for async functions</a> 同时利用<code>promise</code>和 生成器 来编程，这灵感来源于 C#，此已经在 ES7 的开发日程中。</p>
+
+<h4>什么时候我可以用上这些疯狂的特性</h4>
+
+<p>在服务端，你在 io.js 中现在就可以用上生成器了，或者 加上<code>--harmony</code>的Node命令行模式中。</p>
+
+<p>对于浏览器来说，目前只有火狐27+和Chrome39+才支持ES6的生成器。现在为了使用生成器，你需要使用 <a href="http://babeljs.io/">Babel</a> 或 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a> ，将ES6的代码转为浏览器更为友好的ES5。</p>
+
+<p>值得说明的是：JS中的生成器首先是由 Brendan Eich 实现的，他的设计接近于由 Icon 灵感而发的 Python 生成器。生成器在2006年被火狐2.0有提到，这标准化的路程是比较波折的，在这期间其语法和行为有了不少的变化。在火狐和Chrome中的ES6生成器是由极客 Andy Wingo 实现的，这是由 Bloomberg 支持的。</p>
+
+<h4>yield</h4>
+
+<p>对于生成器还有更多的东西要说的。我们还没有提到<code>.throw()</code>和<code>.return()</code>方法，<code>.next()</code>的可选参数，和 <code>yield*</code>语法。但是，我认为这文章已经够长的了，现在足够引起疑惑了。就如生成器一般，我们应该暂停一下，在以后的时间再继续 。</p>
+
+<p>但是下一周，我们要变一下方向。我们这里已经连续说到了两上高级的主题了，难道还没有说ES6会改变你的生活吗？某些是不是有简单又很有用？某些是不是也会让你微笑？ES6 还有些这样的特性。</p>
+
+<p>即将到来的特性会作用于你每天的代码编程，请下周加入我们，一起深入ES6的模板吧。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators/';
+        var disqus_url = 'http://shatle.github.io/blog/2015/09/26/es6-in-depth-generators/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

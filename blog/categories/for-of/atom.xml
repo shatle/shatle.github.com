@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: for-of | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/for-of/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[es6 in depth: Iterators and the for-of loop]]></title>
+    <link href="http://shatle.github.io/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop/"/>
+    <updated>2015-09-09T22:03:14+08:00</updated>
+    <id>http://shatle.github.io/blog/2015/09/09/es6-in-depth-iterators-and-the-for-of-loop</id>
+    <content type="html"><![CDATA[<blockquote><p><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/">ES6 In Depth: Iterators and the for-of loop</a></p></blockquote>
+
+<p>【深入ES6】是深入了解 ECMAScript 标准中第6版本的JS(Javascript)语言新特性的系列文章，ES6是缩写。</p>
+
+<p>你是怎么循环处理数组中的元素的？20年前的JS，你可能会如下：</p>
+
+<pre><code class="javascript">for (var index = 0; index &lt; myArray.length; index++) {
+  console.log(myArray[index]);
+}
+</code></pre>
+
+<p>ES5中，你可以使用内置的方法：</p>
+
+<pre><code class="javascript">myArray.forEach(function (value) {
+  console.log(value);
+});
+</code></pre>
+
+<p>这样子会简单些，但是这里有一个缺点：你不能使用<code>break</code>跳出循环，或者你也不能使用<code>return</code>跳出整个函数。</p>
+
+<p>如果使用<code>for-</code>循环语法，显得更为好些。</p>
+
+<p>那么，<code>for-in</code>循环怎么样呢？</p>
+
+<pre><code class="javascript">for (var index in myArray) { // don't actually do this
+  console.log(myArray[index]);
+}
+</code></pre>
+
+<p>这是个坏主意，因为：</p>
+
+<ul>
+<li>代码中的<code>index</code>是字符串，&#8221;0&#8221;，&#8221;1&#8221;，&#8221;2&#8221;等，并不是真正的数值。因此，你可能会得到不想要的结果，如 &#8220;2&#8221;+1=&#8221;21&#8221;，这是十分不方便的。</li>
+<li>此循环中的主体部分，不仅仅数组的元素的执行，同时，其他人增加的属性也会被执行。例如，如果你的数组中包含可访问的属性<code>myArray.name</code>，那么这个循环将会执行额外的一次，此时的 <code>index</code> == <code>"name"</code>。甚至，数组原型链中的属性也会被访问。</li>
+<li>更加令人无语的是，要某些环境中，以上代码的执行顺序是不确定的。</li>
+</ul>
+
+
+<p>简单来说，<code>for-in</code>是为以字符串为关键字的旧<code>Object</code>s 来设计的。对于，数组来说，这方法并不好。</p>
+
+<h4>强大的 for-of 循环</h4>
+
+<p>上周，我已经提到了ES6不会影响到你现有的JS代码。好了，现在成千上万的网站依赖了 <code>for-in</code>，甚至有可能已经使用在数组（Array）中。然而，当数组中使用<code>for-in</code>时，并没有什么好方法来解决它的问题。ES6的唯一方法是增加一些新的循环语法来解决这些问题。</p>
+
+<p>在这里，</p>
+
+<pre><code class="javascript">for (var value of myArray) {
+  console.log(value);
+}
+</code></pre>
+
+<p>相较于已有的其它结构，它是不是也很诱人？好了，我们将会看到<code>for-of</code>优雅的使用技巧。现在，先说明一下：</p>
+
+<ul>
+<li>更加精简。循环中直接使用数组元素的语法；</li>
+<li>它避免了<code>for-in</code>的陷阱；</li>
+<li>不像<code>forEach</code>，它可以使用<code>break</code>、<code>continue</code>和<code>return</code>；</li>
+</ul>
+
+
+<p><code>for-in</code>循环会对处理对象的属性。</p>
+
+<p><code>for-of</code>循环会处理数据 &#8211; 如数组中的值。</p>
+
+<p>但这并不是其所有的特性。</p>
+
+<h4>for-of 对其它集合的支持</h4>
+
+<p><code>for-of</code> 不仅仅作用于数组，它还可用于类数组的对象，如 DOM <code>NodeList</code>。</p>
+
+<p>它还可用于字符串，将字符串看成是 Unicode 字符序列：</p>
+
+<pre><code class="javascript">for (var chr of "  ") {
+  alert(chr);
+}
+</code></pre>
+
+<p>它还可用于<code>Map</code>和<code>Set</code>对象中。</p>
+
+<p>噢，对不起。你还没有听说过<code>Map</code>和<code>Set</code>对象？好吧，它们是ES6新添加的对象。我们将会在以后用一整篇文章来对它们的主要特点进行说明。如果你已经在其它编程语言中碰到过它们，应该就没什么觉得特别的了。</p>
+
+<p>例如，一个<code>Set</code>对象有利于消除重复数据：</p>
+
+<pre><code class="javascript"> // make a set from an array of words
+var uniqueWords = new Set(words);
+</code></pre>
+
+<p>当你拥有一个<code>Set</code>时，你可以这样子很简单地循环其内容：</p>
+
+<pre><code class="javascript">for (var word of uniqueWords) {
+  console.log(word);
+}
+</code></pre>
+
+<p><code>Map</code>稍微有点不同：里面的数据是 key-value 对，所以，你很可能<em>去结构化</em>(destructuring)来打开 key 和 value，并赋予两个不同的变量：</p>
+
+<pre><code class="javascript">for (var [key, value] of phoneBookMap) {
+  console.log(key + "'s phone number is: " + value);
+}
+</code></pre>
+
+<p>去结构化是ES6的特性，我们也将会在以后的文章中进行说明，此处就写到这里。</p>
+
+<p>现在，你应该有个印象：JS 拥有些新的不一样的集合类，甚至是它们的使用方法。<code>for-of</code>被设计成一个吃苦耐劳的老马的循环表达式，来操作这些集合。</p>
+
+<p><code>for-of</code> 不能用于原有的对象中，但是，如果你想循环其对象属性时，你可能使用<code>for-in</code>(这就是其产生的原因)，或者使用内置的 <code>Object.keys()</code>：</p>
+
+<pre><code class="javascript">// dump an object's own enumerable properties to the console
+for (var key of Object.keys(someObject)) {
+  console.log(key + ": " + someObject[key]);
+}
+</code></pre>
+
+<h4>掀开面纱(Under the hood)</h4>
+
+<blockquote><p>&#8220;Good artists copy, great artists steal.&#8221; &#8212;- Pablo Picasso</p></blockquote>
+
+<p>ES6主要推行的是现在JS语言没有的一些新添加的特性，大多数已经在其它语言中使用并证明是可用的。</p>
+
+<p><code>for-of</code>循环类似于 C++、Java、C#、Python中的循环表达式，它可以处理JS语言及其标准库中的多种数据结构。但是，它还进行些扩展。</p>
+
+<p>就像这些其它语言中的<code>for/foreach</code>表达式，只要相应方法可调用，<code>for-of</code>就能使用。我们之前讨论到的 <code>Array``Map``Set</code>及其它的对象，都拥有一个迭代方法。</p>
+
+<p>其它类型的对象，都可拥有迭代方法，任何对象都可以。</p>
+
+<p>你可以添加<code>myObject.toString()</code>方法给任何对象，然后JS就知道将对象转化成为字条串。类似这样的，你可以添加<code>myObject[Symbol.iterator]()</code>方法给任何对象，然后JS就知道如何循环这对象了。</p>
+
+<p>例如，假定你正在使用 jQuery，而且非常喜欢使用<code>.each()</code>方法，而你你想jQuery对象能够使用<code>for-of</code>方法，那么可以这样子：</p>
+
+<pre><code class="javascript">// Since jQuery objects are array-like,
+// give them the same iterator method Arrays have
+jQuery.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+</code></pre>
+
+<p>好吧，我知道你正在想些什么，这个<code>[Symbol.iterator]</code>看起来很怪异。为什么会出现这情况呢？肯定的是，其方法名称是必须的。标准委员会认为 可以只使用<code>.iterator()</code>方法，但是当你部分对象已经有了<code>.iterator()</code>方法时，这是会十分迷惑的。所以，标准委员会使用了<code>Symbol</code>, 而不是一个字符串，也不是仅仅的一个方法。</p>
+
+<p>符号(Symbol)是ES6新添加的特性，我们将会讨论到它&#8211;你猜什么时候&#8211;在之后的一篇文章中。现在，你只需要知道新标准可以定义新形式(brand-new)的符号，如 <code>Symbol.iterator</code>，它保证肯定是不会与现有的代码有冲突。这一做法从语法上看显得很怪异，但是，这样可以以较小的代价来得到这个通用的新特性和很好地向下兼容。</p>
+
+<p>一个对象拥有<code>[Symbol.iterator]()</code>方法时，称为<code>iteratable</code>。在以后的周里，我们将会看到JS语言的iteratable的用法，不仅仅在<code>for-of</code>，同时还在<code>Map</code>和<code>Set</code>的构造函数中，去结构化时的分配(destructuring assignment)，还有新的应用广泛的操作符。</p>
+
+<h4>迭代对象</h4>
+
+<p>现在，你不 一定要对你自己的对象实现为一个迭代器，它可能是有错误的，这也是为什么我们将在下周在说明的原因。但是，为了完整性，让我们看一下一个迭代器是怎么样的。(如果你跳过这一部分，你很可能会错过些易忽略的(crunchy)技术细节。)</p>
+
+<p>一个<code>for-of</code>循环在集合中首先会调用<code>[Symbol.iterator]()</code>方法，它会返回一个新的迭代器对象。这个迭代器对象可以是做任意的拥有<code>.next()</code>方法的对象。当<code>for-of</code>循环每一次执行时，它会反复地调用这个方法。例如，这里有个我认为是最为简单的迭代器对象：</p>
+
+<pre><code class="javascript">var zeroesForeverIterator = {
+    return this;
+  },
+  next: function () {
+    return {done: false, value: 0};
+  }
+};
+</code></pre>
+
+<p>每次<code>.next()</code>调用时，它会返回相同的结果，告诉<code>for-of</code>: a). 我们还没有停止这个迭代器，b). 下个值是0，这表示<code>for (value of zeroesForeverIterator) {}</code>将是个无限的循环。好吧，常用的迭代器是没必要这么繁琐的。</p>
+
+<p>这个迭代器设计，包含有 <code>.done</code>和<code>.value</code>属性，很明显地不同于其它语言的迭代器。在Java中，迭代器有两个不同的<code>.hasNext()</code>和<code>.next()</code>方法。在Python中，它只有一个<code>.next()</code>方法，当没有更多值时会抛出<code>StopIteration</code>。但是，从根本上说，这三种设计都返回相同的信息。</p>
+
+<p>迭代器对象也可以实现可选的<code>return()</code>和<code>.throw(exc)</code>方法。当<code>for-of</code>出现错误或者调用<code>break</code>、<code>return</code>表达式时，会提前退出，这时调用<code>.return()</code>方法。如果迭代器需要做些清理工作或者清空正式使用的资源，可以对<code>.return()</code>方法运行实现，多数迭代器对象是不需要实现它的。<code>.throw(exc)</code>是一种特殊的情况，<code>for-of</code>是不能调用这方法的。但是，我们将在下周看到更多相关的信息。</p>
+
+<p>现在，我们知道了迭代吕所有的详细信息，我们可以根据以下的方法来写简单的<code>for-of</code>循环：</p>
+
+<p>首先<code>for-of</code>循环：</p>
+
+<pre><code class="javascript">for (VAR of ITERABLE) {
+  STATEMENTS
+}
+</code></pre>
+
+<p>这里是个粗糙的等价物(示例)，使用下面的方法和些临时的变量：</p>
+
+<pre><code class="javascript">var $iterator = ITERABLE[Symbol.iterator]();
+var $result = $iterator.next();
+while (!$result.done) {
+  VAR = $result.value;
+  STATEMENTS
+  $result = $iterator.next();
+}
+</code></pre>
+
+<p>这代码并没有说明<code>.return()</code>是怎么处理的，我们可以添加上去，但是，我认为这样子会让人难以理解它是怎么工作的，还不如简明点好。<code>for-of</code>很易用，但其在后面仍然有很多知识。</p>
+
+<h4>什么时候我可以用上</h4>
+
+<p><code>for-of</code>循环在现在所有的发行版本都是支持的，如果你在chrome中打开<code>chrome://flags</code>并启动&#8221;Experimental JavaScript&#8221;，chrome也会支持。微软Spartan浏览器也支持，但固守的IE版本(in the shiping versions of IE)是不支持的。如果你希望使用新的语法在网页开发中，但是又需要支持IE和Safari，你可以使用如Babel或Google的Traceur，来将ES6代码转化为现在对Web更为友好的ES5。</p>
+
+<p>在服务器端，你不需要转化器，你可以在io.js直接使用<code>for-of</code>，或者在带参<code>--harmony</code>的Node。</p>
+
+<p>好了，今天我们就到这，但是<code>for-of</code>还没有。</p>
+
+<p>在ES6中，有更多的对象可以漂亮地使用<code>for-of</code>，我之所以没有提到，是因为那是下周文章的主题。我认为这是在ES6最为魔法的地方，如果你没有遇到过，比如在Python和C#中，你开始会有些芥蒂。但是，写一个迭代器是很简单的，对重构是很有用的。同时，无论是在浏览器还是服务器中，它可能还会改变我们写异步代码的方式。所以，在下周加入我们吧，我们会深入ES6的生成器(generators)。</p>
+
+<h2>Comments(回复)</h2>
+
+<p><strong>Brett Zamir wrote on April 30th, 2015 at 17:31:</strong></p>
+
+<p><code>arr.some()</code> 方法，可以中断循环和跳过循环。</p>
+
+<p>跳过循环：</p>
+
+<pre><code class="javascript">arr.some(function(e){
+  if(e%2==0){return false;};
+  console.log(e);
+})
+
+# 输出 1, 3, 返回值为false
+</code></pre>
+
+<p>中断循环：</p>
+
+<pre><code class="javascript">arr.some(function(e){
+  if(e%2==0){return true;};
+  console.log(e);
+})
+
+# 输出 1, 返回值为true
+</code></pre>
+
+<p><strong>Andrea Giammarchi wrote on May 1st, 2015 at 07:22:</strong></p>
+
+<p>Andrea 提出个暴力的方法，直接重写数组，来结束整个循环，如下：</p>
+
+<pre><code class="javascript">arr = [1,2,3];
+arr.forEach(function (v,i,a) {
+  console.log(i, v);
+  a.length = 0;
+});
+</code></pre>
+
+<p>注意，直接会影响循环的数组，运行此代码后，<code>arr = []</code>。</p>
+
+<p>其实，JS原有的<code>forEach</code>通过<code>return</code>可能跳过本次循环的，但是不能直接结束循环。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: react | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/react/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[react-dnd intro-2]]></title>
+    <link href="http://shatle.github.io/blog/2016/09/27/react-dnd-intro-2/"/>
+    <updated>2016-09-27T01:37:17+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/09/27/react-dnd-intro-2</id>
+    <content type="html"><![CDATA[<h2>react-dnd 简析 2</h2>
+
+<p>上篇文章有说到场景：卡片在不同的容器之间来回拖动。下面，对上篇文章中的代码整理一下：</p>
+
+<h4>上期代码</h4>
+
+<pre><code class="js">// ItemTypes
+const ItemTypes = {
+  CARD: 'Card'
+}
+</code></pre>
+
+<pre><code class="js">// Card
+const Card = React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children, id, text, connectDragSource } = this.props;
+    return connectDragSource(
+      &lt;div  className={styles.card} &gt;
+        {text}
+      &lt;/div&gt;
+    );
+  }
+}
+
+const cardSource = {
+  beginDrag(props) {
+    return {
+      id: props.id,
+      index: props.index,
+      text: props.text,
+      boxId: props.boxid
+    };
+  },
+  isDragging(props, monitor) {
+    return props.id === monitor.getItem().id;
+  }
+};
+
+function dragCollect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+let DragCard = DragSource( ItemTypes.CARD, cardSource, dragCollect)( Card)
+
+export default DragCard
+</code></pre>
+
+<pre><code class="js">// CardBox
+class CardBox extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children，connectDropTarget } = this.props;
+    return connectDropTarget(
+      &lt;div className={styles.cardBox}&gt;
+        { children }
+      &lt;/div&gt;
+    );
+  }
+}
+
+const cardBoxTarget = {
+  hover(props, monitor, component) {
+    const hoverCard = monitor.getItem();
+    if (hoverCard.id &amp;&amp; props.boxid != card.boxId){
+      props.changeCard(hoverCard.index, props.boxid);
+    }    
+  }
+};
+
+function dropCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget()
+  };
+}
+
+let DropCardBox = DropTarget(ItemTypes.CARD, cardBoxTarget, dropCollect)(CardBox)
+
+export default DropCardBox
+</code></pre>
+
+<pre><code class="js">// Kanban
+
+class Kanban extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cards: [
+        {id: 1, text: 'card 1', boxId: 1 },
+        {id: 2, text: 'card 2', boxId: 1 },
+        {id: 3, text: 'card 3', boxId: 2 },
+        {id: 4, text: 'card 4', boxId: 2 },
+      ],
+      boxes: [
+        {id: 1, boxId: 1},
+        {id: 2, boxId: 2}
+      ]
+    }
+  }
+
+  changeCard(index, newBoxId) {
+    const dragCard = this.state.cards[index]
+    if (!dragCard){ return }
+
+    dragCard.boxId = newBoxId
+
+    this.setState(update(this.state, {
+      cards: {
+        $splice: [
+          [index, 1],
+          [index, 0, dragCard]
+        ]
+      }
+    }));
+  }
+
+  render() {
+    return (
+      &lt;div &gt;
+        { this.state.boxes.map( box =&gt; {
+          return (
+            &lt;CardBox 
+              key={'cb-'+box.boxId}
+              changeCard={this.changeCard}
+              boxid={box.boxId}&gt;
+              { this.state.cards.map( (card, index) =&gt; {
+                if (box.boxId==card.boxId) 
+                  return (
+                    &lt;Card 
+                      key={'c-'+card.id}
+                      id={card.id}
+                      index={index}
+                      boxid={card.boxId}
+                      text={card.text}
+                      /&gt;
+                  )
+                else return '';
+               })}
+            &lt;/CardBox&gt;
+          )
+        })}
+      &lt;/div&gt;
+    );
+  }
+}
+
+export default DragDropContext(HTML5Backend)(Kanban)
+</code></pre>
+
+<p>这四个文件，<code>ItemTypes.js</code>/<code>Card.js</code>/<code>CardBox.js</code>/<code>Kanban.js</code> 为基本的模型文件，样式文件应该也要有的，这里就贴了。</p>
+
+<h4>新需求</h4>
+
+<p>对于看板来说，不同容器间的来回拖动是必要的。同时，如果想在单个容器中上下拖动，又需要怎么实现？</p>
+
+<p>由于上篇文章的<code>changeCard(index, newBoxId)</code>只能调整卡片的<code>boxId</code>的属性，并不能改变其同一容器中的上下位置，所以需要调整一下，</p>
+
+<pre><code class="js">// 增加一个参数 newIndex
+changeCard(index, newBoxId, newIndex) {
+  const dragCard = this.state.cards[index]
+  if (!dragCard){ return }
+
+  if (newBoxId &amp;&amp; dragCard.boxId != newBoxId) {
+    dragCard.boxId = newBoxId  
+
+    this.setState(update(this.state, {
+      cards: {
+        $splice: [
+          [index, 1],
+          [index, 0, dragCard]
+        ]
+      }
+    }));
+  } else if (newIndex &amp;&amp; index != newIndex) {
+    // newIndex 当卡片拖动到某个卡片的上面时，
+    // newIndex 就是此某个卡片的 index
+    // 将拖动的卡片 剪切到 此位置上
+    //
+    // dragCard.index ~= newIndex
+
+    this.setState(update(this.state, {
+      cards: {
+        $splice: [
+          [index, 1],
+          [newIndex, 0, dragCard]
+        ]
+      }
+    }))
+  }
+}
+</code></pre>
+
+<p>通过调整 <code>index</code> 的值来达到位置上的变化。</p>
+
+<hr />
+
+<p>当卡片拖动到另一卡片上面时，需要获取到这一卡片的 <code>index</code> 的值，再将拖动卡片设置到新的位置上。</p>
+
+<p>那么，需要将<code>Card</code>设置为可接受的容器<code>DropTarget</code>。</p>
+
+<p>参考之前的<code>CardBox</code>,</p>
+
+<pre><code class="js">const cardTarget = {
+  hover(props, monitor, component) {
+    const dragIndex = monitor.getItem().index;
+    const hoverIndex = props.index;
+
+    // Don't replace items with themselves
+    if (dragIndex === hoverIndex) {
+      return;
+    }
+
+    // Determine rectangle on screen
+    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
+
+    // Get vertical middle
+    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
+    // Determine mouse position
+    const clientOffset = monitor.getClientOffset();
+
+    // Get pixels to the top
+    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+    // Only perform the move when the mouse has crossed half of the items height
+    // When dragging downwards, only move when the cursor is below 50%
+    // When dragging upwards, only move when the cursor is above 50%
+
+    // Dragging downwards
+    if (dragIndex &lt; hoverIndex &amp;&amp; hoverClientY &lt; hoverMiddleY) {
+      return;
+    }
+
+    // Dragging upwards
+    if (dragIndex &gt; hoverIndex &amp;&amp; hoverClientY &gt; hoverMiddleY) {
+      return;
+    }
+
+    // Time to actually perform the action
+    props.changeCard(dragIndex, null, hoverIndex);
+
+    // Note: we're mutating the monitor item here!
+    // Generally it's better to avoid mutations,
+    // but it's good here for the sake of performance
+    // to avoid expensive index searches.
+    monitor.getItem().index = hoverIndex;
+  }
+}
+</code></pre>
+
+<p>以上参考官方的例子，通过 <code>component</code>来获取纵向属性，来准确得到 <code>newIndex</code> 参数。
+当拖动的高度没有达到卡片一半时，不会触发<code>changeCard(..)</code>方法。</p>
+
+<pre><code class="js">function dropCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget()
+  };
+}
+
+let DropCard = DropTarget(ItemTypes.CARD, cardTarget, dropCollect)(Card);
+</code></pre>
+
+<p><code>dropCollect</code> 基本是一样的。</p>
+
+<p>那么，完成这点之后，<code>Card</code>是可拖动的，又是可以容器，
+所以，</p>
+
+<pre><code class="js">// Card
+const Card = React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children, id, text, isDragging, connectDragSource, connectDropTarget } = this.props;
+    const opacity = isDragging ? 0.5 : 1;
+
+    return connectDragSource( connectDropTarget(
+      &lt;div className={styles.card} 
+        style={ {opactiy: opacity} }
+        &gt;
+        {text}
+      &lt;/div&gt;
+    ));
+  }
+}
+
+const cardSource = {
+  //...
+};
+
+const cardTarget = {
+  // ...
+}
+
+function dragCollect(connect, monitor) {
+  //...
+}
+
+function dropCollect(connect, monitor) {
+  // ...
+}
+
+let DropCard = DropTarget(ItemTypes.CARD, cardTarget, dropCollect)(Card);
+let DragCard = DragSource(ItemTypes.CARD, cardSource, dragCollect)(DropCard)
+
+export default DragCard
+</code></pre>
+
+<p>通过最后处绑定，<code>Card</code>的<code>props</code>会多出来个值来<code>connectDragSource</code>/<code>connectDropTarget</code>。</p>
+
+<p>在<code>Card</code>类中，根据 <code>isDragging</code>来判断设置卡片的透明度，这就是为什么之前要重新定义<code>CardSource</code>中的<code>isDragging</code>方法的缘由。</p>
+
+<pre><code class="js">const cardSource = {
+  beginDrag(props) {
+    // ...
+  },
+  isDragging(props, monitor) {
+    return props.id === monitor.getItem().id;
+  }
+};
+</code></pre>
+
+<p>因为，当一个拖动卡片的<code>index</code>为<code>1</code>时，<code>dnd</code>默认会其标识为<code>isDragging=true</code>。而，拖动卡片到<code>index=0</code>时，由于<code>changeCard</code>，拖动卡片此时会从<code>1 -&gt; 0</code>，由于<code>isDdragging</code>不会重新判断，所以，显示效果会是：</p>
+
+<blockquote><p>哪个卡片占原拖动卡片的位置，就会是有透明度</p></blockquote>
+
+<p>但这并不是我们所要的，所以，是否能拖动，使用唯一标识<code>id</code>来判断。</p>
+
+<p>还要注意，<code>Kanban</code>中需要传入方法给<code>Card</code>。</p>
+
+<pre><code class="js">
+//...
+this.state.cards.map( (card, index) =&gt; {
+  return (
+    //...
+    &lt;Card
+      //...
+      changeCard={this.changeCard}
+     /&gt;)
+    //...
+})
+//...
+</code></pre>
+
+<h4>最后</h4>
+
+<p>真正使用时，还是需要定义<code>DropTarget</code>中的<code>drop</code>方法的，而文中只谈到了<code>hover</code>方法，这部分让大家自己去探索吧。</p>
+
+<p>打完收功。</p>
+
+<h4>后记</h4>
+
+<p>其实，一个插件能不能用，除了了解其用法之外，还可能需要了解其性能。</p>
+
+<p>就本人的5年前的小笔记本来说，200个普通文本卡片还是可以自由拖动的，效果还是可以的。</p>
+
+<p>当到300时，部分快速拖动会失效，可能是排序和渲染上的耗时吧，
+好点的机器可能会好点。</p>
+
+<p>另外，从调试过程看出，<code>dnd</code>只会对有数据变化的卡片重新调用<code>render()</code>渲染方法，并不是所有都会重新渲染一遍的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[react-dnd intro]]></title>
+    <link href="http://shatle.github.io/blog/2016/09/25/react-dnd-intro/"/>
+    <updated>2016-09-25T10:32:16+08:00</updated>
+    <id>http://shatle.github.io/blog/2016/09/25/react-dnd-intro</id>
+    <content type="html"><![CDATA[<h2>React-dnd 简析</h2>
+
+<p>对于开源插件或者代码来说，我更喜欢推荐其 github 地址，而不是官网地址：</p>
+
+<blockquote><p>https://github.com/gaearon/react-dnd</p></blockquote>
+
+<h4>安装</h4>
+
+<pre><code>npm install react-dnd -D
+npm install react-dnd-html5-backend -D
+</code></pre>
+
+<p><code>react-dnd-html5-backend</code> 是一个必要的可选组件，因为 html5 的拖拽API 支持拖动的阴影，总的来说，这插件是必要的。</p>
+
+<p>详细的各名称就不在此说明了，直接介绍关键点吧。</p>
+
+<h4>基础</h4>
+
+<p>拖拽功能，首先需要知道两个基本的部分：拖起、放下。</p>
+
+<p>拖起，就是鼠标放下并移动的过程；放下，就是鼠标放下拖动元素。
+在这一整个过程中，需要声明哪个元素是可以拖动的，哪个元素是可以接收拖动元素的。</p>
+
+<p><code>react-dnd</code> 中，使用 <code>DragSource</code> 来声明拖动的元素，用<code>DropTarget</code>来声明接收拖动元素的容器。</p>
+
+<p>下面将会通过 看板 的常用功能进行相关的介绍。</p>
+
+<p>看板 基本会涉及到 卡片的上下拖动 和 卡片在不同区间的拖动。</p>
+
+<h4>实体 Card, CardBox, Kanban</h4>
+
+<p>为了实现基本的功能，需要拖动的实体 Card 有两个基本属性：</p>
+
+<pre><code>id
+text // 用于显示卡片
+boxId // 用于表示容器间的拖动
+</code></pre>
+
+<p>Card 实体的简单显示：</p>
+
+<pre><code class="js">const Card = React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children, id, text } = this.props;
+    return (
+      &lt;div  className={styles.card} &gt;
+        {text}
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+<p>CardBox 容器用来接收 Card, 其属性为</p>
+
+<pre><code>boxId
+</code></pre>
+
+<p>显示代码：</p>
+
+<pre><code class="js">class CardBox extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children } = this.props;
+    return (
+      &lt;div className={styles.cardBox}&gt;
+        { children }
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+<p><code>children</code> 表示显示的容器中的多个卡片。</p>
+
+<p>最后，看板的代码就是循环了：</p>
+
+<pre><code class="js">class Kanban extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cards: [
+        {id: 1, text: 'card 1', boxId: 1 },
+        {id: 2, text: 'card 2', boxId: 1 },
+        {id: 3, text: 'card 3', boxId: 2 },
+        {id: 4, text: 'card 4', boxId: 2 },
+      ],
+      boxes: [
+        {id: 1, boxId: 1},
+        {id: 2, boxId: 2}
+      ]
+    }
+  }
+
+  render() {
+    return (
+      &lt;div &gt;
+        { this.state.boxes.map( box =&gt; {
+          return (
+            &lt;CardBox 
+              key={'cb-'+box.boxId}
+              boxid={box.boxId}&gt;
+              { this.state.cards.map( (card, index) =&gt; {
+                if (box.boxId==card.boxId) 
+                  return (
+                    &lt;Card 
+                      key={'c-'+card.id}
+                      id={card.id}
+                      index={index}
+                      boxid={card.boxId}
+                      text={card.text}
+                      /&gt;
+                  )
+                else return '';
+               })}
+            &lt;/CardBox&gt;
+          )
+        })}
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+<p>先用 <code>boxes</code> 进行列的划分，再通过其的<code>boxId</code>的判断，来划分 <code>cards</code>对应于哪个列中。</p>
+
+<p>为什么这样子循环来显示卡片，而不是先进行分组，再对组进行渲染。
+此处主要考虑到，只想用一个内存来存储所有的卡片。如果分组，即相当于将所有 的卡片分开为多个内存存储，本文不想让其间卡片的内存跳转频繁。</p>
+
+<p>但这实现方法有个缺陷，页面渲染会有空元素，<code>else return ''</code> 会造成一个空的<code>span</code> DOM元素。</p>
+
+<p>所以，注意，此处是用到了卡片的<code>index</code>的。</p>
+
+<p>这是基本实体，它们包含关系为 <code>Kanban &gt; CardBox &gt; Card</code></p>
+
+<h4>DragSource</h4>
+
+<p>api</p>
+
+<blockquote><p>DragSource(type, spec, collect)(MyComponent)</p></blockquote>
+
+<p><code>DragSource</code>， 顾名思义，就是可拖动的元素。在本文场景中，拖动元素就是<code>Card</code>了。</p>
+
+<p>API 中，有必要的三个参数，分别是<code>type</code>, <code>spec</code>，<code>collect</code>。</p>
+
+<h5>type</h5>
+
+<p><code>type</code> 就是可拖动元素的名称，这会与 <code>DropTarget</code> 的 <code>type</code> 有关联。实际中，名称就是一个字符串，
+本文场景中，可以有:</p>
+
+<pre><code class="js">const ItemTypes = {
+  CARD: 'Card'
+}
+</code></pre>
+
+<h5>spec</h5>
+
+<p><code>spec</code> 拖动元素的对象，注意，它必须是对象。它定义有四个方法，分别是<code>beginDrag(props, monitor, component)</code>，
+<code>endDrag(props, monitor, component)</code>，<code>canDrag(props, monitor)</code>，<code>isDragging(props, monitor)</code>，详细说明可链接到
+<a href="http://gaearon.github.io/react-dnd/docs-drag-source.html">Drag Source Specification</a></p>
+
+<p>现在，主要对 <code>beginDrag(props, monitor, component)</code> 和 <code>isDragging(props, monitor)</code> 进行说明。</p>
+
+<p><code>beginDrag(props, monitor, component)</code> 是必须声明的，它要求返回一个普通的对象，例如<code>{ id: props.id }</code>。
+其实，它就是将你用的实体，选择拖动使用的属性进行返回。</p>
+
+<p><code>isDragging(props, monitor)</code> 是可选的，是用来判断一个元素是否是在拖动的过滤中。默认下，一个对象是否是拖动中，
+dnd 只会在拖动元素的开始拖动时设置其值。为什么要在这里突出说明一下，因为在操作场景中，初始化的设置在拖动的过程中，
+很可能会不正确的，所以需要重新定义其方法实现。</p>
+
+<p>在本文场景中，可以</p>
+
+<pre><code class="js">const cardSource = {
+  beginDrag(props) {
+    return {
+      id: props.id,
+      index: props.index,
+      text: props.text,
+      boxId: props.boxid
+    };
+  },
+  isDragging(props, monitor) {
+    return props.id === monitor.getItem().id;
+  }
+};
+</code></pre>
+
+<p><code>monitor</code> 和 <code>component</code> 还是需要大家了解一下的。
+<code>monitor</code> 就是整合拖动实体和拖动状态的新对象，<code>component</code>粗略可以理解为 DOM 元素。
+详情看 <a href="http://gaearon.github.io/react-dnd/docs-drag-source.html">Drag Source Specification</a></p>
+
+<h5>collect</h5>
+
+<p><code>collect</code> 为一个函数，而函数返回的是一个对象。本质起到桥接作用，将拖动元素的属性和拖动状态整合。</p>
+
+<p>本文场景中，<code>collect</code> 可以为，</p>
+
+<pre><code class="js">function dragCollect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+}
+</code></pre>
+
+<p>综合以上，需要将 <code>Card</code> 声明为可拖动的元素，就是</p>
+
+<pre><code class="js">let DragCard = DragSource( ItemTypes.CARD, cardSource, dragCollect)( Card);
+</code></pre>
+
+<p>同时，需要调整<code>Card</code>类的代码，将绑定引入的属性声明关联到元素中，</p>
+
+<pre><code class="js">const Card = React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children, id, text, connectDragSource } = this.props;
+    return connectDragSource(
+      &lt;div  className={styles.card} &gt;
+        {text}
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+<h4>DropTarget</h4>
+
+<p>api</p>
+
+<blockquote><p>DropTarget(types, spec, collect)(MyComponent)</p></blockquote>
+
+<p>就是接收拖动元素的容器元素。</p>
+
+<h5>types</h5>
+
+<p>注意，第一个参数是 <code>types</code>，也就是说，它可以接收多种类型，但也可以是字符串。本文场景中，就是<code>ItemTypes.CARD</code>。</p>
+
+<h5>spec</h5>
+
+<p>同样是普通对象，但不同于拖动元素，容器元素中的说明参数中的方法有<code>drop(props, monitor, component)</code>，<code>hover(props, monitor, component)</code>，<code>canDrop(props, monitor)</code>。</p>
+
+<p><code>hover(props, monitor, component)</code> 这里重点说一下此方法，因为这个比较常用，当然<code>drop</code>也很常用，但主要与后台交互时才会用到。比如，不同容器中的拖动，需要将放下时的<code>boxId</code>保存到后台，而<code>hover</code>是实时变化的，不适合与后台交互的action进行数据操作。</p>
+
+<p>在拖动元素从一个容器元素，到另一容器元素时，其的<code>boxid</code>会发生变化，这才合理。</p>
+
+<p>所以，需要在 <code>CardBox</code> 的中定义 <code>changeCard(index, newBoxId)</code> 的方法。
+其中， <code>index</code>是所有<code>cards</code>列表中的<code>index</code>。</p>
+
+<p>本文场景中，</p>
+
+<pre><code class="js">const cardBoxTarget = {
+  hover(props, monitor, component) {
+    const hoverCard = monitor.getItem();
+    if (hoverCard.id &amp;&amp; props.boxid != card.boxId){
+      props.changeCard(hoverCard.index, props.boxid);
+    }    
+  }
+};
+</code></pre>
+
+<h5>collect</h5>
+
+<p>类似于<code>DropSource</code>中的<code>collect</code>, 由于是容器，则没有拖动的属性了。</p>
+
+<p>本文场景中，</p>
+
+<pre><code class="js">function dropCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget()
+  };
+}
+</code></pre>
+
+<p>综合上面，将<code>BoxCard</code>声明为拖动容器，就是</p>
+
+<pre><code class="js">let DropCardBox = DropTarget(ItemTypes.CARD, cardBoxTarget, dropCollect)(CardBox);
+</code></pre>
+
+<p>同时，绑定后，需要在模型中关联渲染的元素，</p>
+
+<pre><code class="js">class CardBox extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { children, connectDropTarget } = this.props;
+    return connectDropTarget(
+      &lt;div className={styles.cardBox}&gt;
+        { children }
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+<h4>另外</h4>
+
+<p>基本上，上面大致介绍了一个卡片在不同的容器间相互拖动的故事。</p>
+
+<p>另外，需要指出的是，<code>react-dnd</code> 所有的元素需要使用 <code>DragDropContext</code> 来包裹起来，</p>
+
+<pre><code class="js">DragDropContext(HTML5Backend)(Kanban)
+</code></pre>
+
+<p>上面其中有提到，卡片中容器间相互拖动，需要改变其 <code>boxId</code> 的值，
+那么，需要在<code>CardBox</code>中传入<code>changeCard(index, newBoxId)</code> 方法属性。
+所以，<code>Kanban</code>需要调整为</p>
+
+<pre><code class="js">class Kanban extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cards: [
+        {id: 1, text: 'card 1', boxId: 1 },
+        {id: 2, text: 'card 2', boxId: 1 },
+        {id: 3, text: 'card 3', boxId: 2 },
+        {id: 4, text: 'card 4', boxId: 2 },
+      ],
+      boxes: [
+        {id: 1, boxId: 1},
+        {id: 2, boxId: 2}
+      ]
+    }
+  }
+
+  changeCard(index, newBoxId) {
+    const dragCard = this.state.cards[index]
+    if (!dragCard){ return }
+
+    dragCard.boxId = newBoxId
+
+    this.setState(update(this.state, {
+      cards: {
+        $splice: [
+          [index, 1],
+          [index, 0, dragCard]
+        ]
+      }
+    }));
+  }
+
+  render() {
+    return (
+      &lt;div &gt;
+        { this.state.boxes.map( box =&gt; {
+          return (
+            &lt;CardBox 
+              key={'cb-'+box.boxId}
+              changeCard={this.changeCard}
+              boxid={box.boxId}&gt;
+              { this.state.cards.map( (card, index) =&gt; {
+                if (box.boxId==card.boxId) 
+                  return (
+                    &lt;Card 
+                      key={'c-'+card.id}
+                      id={card.id}
+                      index={index}
+                      boxid={card.boxId}
+                      text={card.text}
+                      /&gt;
+                  )
+                else return '';
+               })}
+            &lt;/CardBox&gt;
+          )
+        })}
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

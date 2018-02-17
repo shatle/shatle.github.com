@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: disk identifier | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/disk-identifier/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Disk Identifier]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/disk-identifier/"/>
+    <updated>2012-08-17T21:32:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/disk-identifier</id>
+    <content type="html"><![CDATA[<blockquote><p>http://www.linuxquestions.org/questions/linux-general-1/what-is-disk-identifier-740408/</p></blockquote>
+
+<p>This is a somewhat confusing area of computers because people don&#8217;t use consistent terminology. So first I&#8217;m going to explain some terms.</p>
+
+<p>A Disk Identifier (or Disk Signature) applies to an entire hard disk drive (not a single partition). A Disk Identifier/Disk Signature is a 4-byte (longword) number that is randomly generated when the Master Boot Record/Partition Table is first created and stored. The Disk Identifier is stored at byte offset 1B8 (hex) through 1BB (hex) in the MBR disk sector. Windows Vista uses the Disk Signature to locate boot devices so changing it can prevent Vista from booting. So far as I know Grub and Linux don&#8217;t use the Disk Identifier.</p>
+
+<p>A UUID (Universally Unique Identifier) or GUID (Globally Unique Identifier) is a 128-bit number. UUIDs are used to identify many different things including some filesystem partitions. Where the UUID is stored for a filesystem depends on the filesystem. Linux ext2/ext3 and Windows NTFS identify filesystems by UUID. UUIDs are generated randomly using either the current time or a random number generator. The UUID is generated and stored when the filesystem is formatted and then does not usually change.</p>
+
+<p>When you copy a partition or disk as raw binary data (for example, with &#8220;dd&#8221;) the Disk Identifier or UUID is also copied. That can result in two disks or two partitions with the same identifier. There are utilities to change the UUID to a new (random) number. There are also utilities to change the Disk Identifier in the Master Boot Record.</p>
+
+<p>The advantage to a UUID is that no matter where you move a filesystem, an operating system can find that particular filesystem. For filesystems that have no UUID the Disk Identifier can at least be used to locate the disk drive.</p>
+
+<p>Windows identifies all filesystems using UUIDs so UUIDs are kept in the registry if a filesystem does not have a UUID in the partition. Windows uses the Disk Signature and other information to match the registry entry for a partition and find the UUID.</p>
+
+<p>Linux can use device names for partitions when UUIDs are not available.</p>
+]]></content>
+  </entry>
+  
+</feed>

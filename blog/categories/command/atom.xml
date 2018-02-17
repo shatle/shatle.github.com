@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: command | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/command/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Linux Commands]]></title>
+    <link href="http://shatle.github.io/blog/2013/08/07/Linux-Commands/"/>
+    <updated>2013-08-07T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/08/07/Linux-Commands</id>
+    <content type="html"><![CDATA[<p>用来记录各种 linux 下的有用命令！</p>
+
+<h4>top</h4>
+
+<p>动态查看机器的CPU、内存及各数据的变化。</p>
+
+<h4>netlogs</h4>
+
+<p><em>安装</em></p>
+
+<pre><code>sudo apt-get install netlogs
+</code></pre>
+
+<p><em>使用命令</em></p>
+
+<pre><code>sudo netlogs wlan0
+</code></pre>
+
+<p><code>wlan0</code>是我无线的名称。使用网口的可能是<code>eth0</code>，但不一定。</p>
+
+<p>对于到底是哪个呢，可使用命令<code>ip addr</code>，看到正在使用的网络名称，并替代<code>wlan0</code>。</p>
+
+<h4>pushd, popd</h4>
+
+<p>最近发现个有趣而有用的命令，<code>pushd .</code>把当前的目录放入栈中，然后通过<code>popd</code>命令回到此目录。</p>
+
+<p>显示，对于经常访问并且地址很长的路径，是很有用的。否则，每次都要<code>cd</code>多累啊！</p>
+
+<p>其实这个也很累，哈哈！</p>
+
+<h4>apt-get</h4>
+
+<p><code>apt-cache policy PACKAGE_NAME</code> 下载安装之前查看安装包，有哪些版本</p>
+
+<p><code>apt-cache showpkg PACKAGE_NAME</code> 显示的内容更为详细些</p>
+
+<p>列出版本之后，需要指定安装版本：<code>sudo apt-get install PACKAGE_NAME=version</code> version指定完整版本名称</p>
+]]></content>
+  </entry>
+  
+</feed>

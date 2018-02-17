@@ -1,0 +1,847 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>react-dnd intro-2 - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="React-dnd Intro-2 react, react-dnd react-dnd 简析 2 上篇文章有说到场景：卡片在不同的容器之间来回拖动。下面，对上篇文章中的代码整理一下： 上期代码 1
+2
+3
+4
+// ItemTypes
+const ItemTypes = { CARD: &# &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2016/09/27/react-dnd-intro-2/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">React-dnd Intro-2</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-dnd/'>react-dnd</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><h2>react-dnd 简析 2</h2>
+
+<p>上篇文章有说到场景：卡片在不同的容器之间来回拖动。下面，对上篇文章中的代码整理一下：</p>
+
+<h4>上期代码</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// ItemTypes</span>
+</span><span class='line'><span class="kr">const</span> <span class="nx">ItemTypes</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">CARD</span><span class="o">:</span> <span class="s1">&#39;Card&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// Card</span>
+</span><span class='line'><span class="kr">const</span> <span class="nx">Card</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="p">{</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">connectDragSource</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">connectDragSource</span><span class="p">(</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="nx">div</span>  <span class="nx">className</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">card</span><span class="p">}</span> <span class="o">&gt;</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">text</span><span class="p">}</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">cardSource</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">beginDrag</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">id</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">index</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">text</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">boxId</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">boxid</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">isDragging</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">props</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">getItem</span><span class="p">().</span><span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">dragCollect</span><span class="p">(</span><span class="nx">connect</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">connectDragSource</span><span class="o">:</span> <span class="nx">connect</span><span class="p">.</span><span class="nx">dragSource</span><span class="p">(),</span>
+</span><span class='line'>    <span class="nx">isDragging</span><span class="o">:</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">isDragging</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">let</span> <span class="nx">DragCard</span> <span class="o">=</span> <span class="nx">DragSource</span><span class="p">(</span> <span class="nx">ItemTypes</span><span class="p">.</span><span class="nx">CARD</span><span class="p">,</span> <span class="nx">cardSource</span><span class="p">,</span> <span class="nx">dragCollect</span><span class="p">)(</span> <span class="nx">Card</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">DragCard</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// CardBox</span>
+</span><span class='line'><span class="kr">class</span> <span class="nx">CardBox</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="p">{</span> <span class="nx">children</span><span class="err">，</span><span class="nx">connectDropTarget</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">connectDropTarget</span><span class="p">(</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">cardBox</span><span class="p">}</span><span class="o">&gt;</span>
+</span><span class='line'>        <span class="p">{</span> <span class="nx">children</span> <span class="p">}</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">cardBoxTarget</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">hover</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">,</span> <span class="nx">component</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">hoverCard</span> <span class="o">=</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">getItem</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">hoverCard</span><span class="p">.</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">props</span><span class="p">.</span><span class="nx">boxid</span> <span class="o">!=</span> <span class="nx">card</span><span class="p">.</span><span class="nx">boxId</span><span class="p">){</span>
+</span><span class='line'>      <span class="nx">props</span><span class="p">.</span><span class="nx">changeCard</span><span class="p">(</span><span class="nx">hoverCard</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">boxid</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">dropCollect</span><span class="p">(</span><span class="nx">connect</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">connectDropTarget</span><span class="o">:</span> <span class="nx">connect</span><span class="p">.</span><span class="nx">dropTarget</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">let</span> <span class="nx">DropCardBox</span> <span class="o">=</span> <span class="nx">DropTarget</span><span class="p">(</span><span class="nx">ItemTypes</span><span class="p">.</span><span class="nx">CARD</span><span class="p">,</span> <span class="nx">cardBoxTarget</span><span class="p">,</span> <span class="nx">dropCollect</span><span class="p">)(</span><span class="nx">CardBox</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">DropCardBox</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// Kanban</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Kanban</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">cards</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;card 1&#39;</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;card 2&#39;</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;card 3&#39;</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span> <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;card 4&#39;</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
+</span><span class='line'>      <span class="p">],</span>
+</span><span class='line'>      <span class="nx">boxes</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">boxId</span><span class="o">:</span> <span class="mi">2</span><span class="p">}</span>
+</span><span class='line'>      <span class="p">]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">changeCard</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">newBoxId</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">dragCard</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cards</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dragCard</span><span class="p">){</span> <span class="k">return</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">dragCard</span><span class="p">.</span><span class="nx">boxId</span> <span class="o">=</span> <span class="nx">newBoxId</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">update</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">cards</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$splice</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">dragCard</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">]</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">(</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="nx">div</span> <span class="o">&gt;</span>
+</span><span class='line'>        <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">boxes</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span> <span class="nx">box</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">return</span> <span class="p">(</span>
+</span><span class='line'>            <span class="o">&lt;</span><span class="nx">CardBox</span>
+</span><span class='line'>              <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cb-&#39;</span><span class="o">+</span><span class="nx">box</span><span class="p">.</span><span class="nx">boxId</span><span class="p">}</span>
+</span><span class='line'>              <span class="nx">changeCard</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">changeCard</span><span class="p">}</span>
+</span><span class='line'>              <span class="nx">boxid</span><span class="o">=</span><span class="p">{</span><span class="nx">box</span><span class="p">.</span><span class="nx">boxId</span><span class="p">}</span><span class="o">&gt;</span>
+</span><span class='line'>              <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cards</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span> <span class="p">(</span><span class="nx">card</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">boxId</span><span class="o">==</span><span class="nx">card</span><span class="p">.</span><span class="nx">boxId</span><span class="p">)</span>
+</span><span class='line'>                  <span class="k">return</span> <span class="p">(</span>
+</span><span class='line'>                    <span class="o">&lt;</span><span class="nx">Card</span>
+</span><span class='line'>                      <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;c-&#39;</span><span class="o">+</span><span class="nx">card</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span>
+</span><span class='line'>                      <span class="nx">id</span><span class="o">=</span><span class="p">{</span><span class="nx">card</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span>
+</span><span class='line'>                      <span class="nx">index</span><span class="o">=</span><span class="p">{</span><span class="nx">index</span><span class="p">}</span>
+</span><span class='line'>                      <span class="nx">boxid</span><span class="o">=</span><span class="p">{</span><span class="nx">card</span><span class="p">.</span><span class="nx">boxId</span><span class="p">}</span>
+</span><span class='line'>                      <span class="nx">text</span><span class="o">=</span><span class="p">{</span><span class="nx">card</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span>
+</span><span class='line'>                      <span class="o">/&gt;</span>
+</span><span class='line'>                  <span class="p">)</span>
+</span><span class='line'>                <span class="k">else</span> <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>               <span class="p">})}</span>
+</span><span class='line'>            <span class="o">&lt;</span><span class="err">/CardBox&gt;</span>
+</span><span class='line'>          <span class="p">)</span>
+</span><span class='line'>        <span class="p">})}</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">DragDropContext</span><span class="p">(</span><span class="nx">HTML5Backend</span><span class="p">)(</span><span class="nx">Kanban</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这四个文件，<code>ItemTypes.js</code>/<code>Card.js</code>/<code>CardBox.js</code>/<code>Kanban.js</code> 为基本的模型文件，样式文件应该也要有的，这里就贴了。</p>
+
+<h4>新需求</h4>
+
+<p>对于看板来说，不同容器间的来回拖动是必要的。同时，如果想在单个容器中上下拖动，又需要怎么实现？</p>
+
+<p>由于上篇文章的<code>changeCard(index, newBoxId)</code>只能调整卡片的<code>boxId</code>的属性，并不能改变其同一容器中的上下位置，所以需要调整一下，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// 增加一个参数 newIndex</span>
+</span><span class='line'><span class="nx">changeCard</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">newBoxId</span><span class="p">,</span> <span class="nx">newIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">const</span> <span class="nx">dragCard</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cards</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">dragCard</span><span class="p">){</span> <span class="k">return</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">newBoxId</span> <span class="o">&amp;&amp;</span> <span class="nx">dragCard</span><span class="p">.</span><span class="nx">boxId</span> <span class="o">!=</span> <span class="nx">newBoxId</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">dragCard</span><span class="p">.</span><span class="nx">boxId</span> <span class="o">=</span> <span class="nx">newBoxId</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">update</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">cards</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$splice</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">dragCard</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">]</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">newIndex</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">!=</span> <span class="nx">newIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// newIndex 当卡片拖动到某个卡片的上面时，</span>
+</span><span class='line'>    <span class="c1">// newIndex 就是此某个卡片的 index</span>
+</span><span class='line'>    <span class="c1">// 将拖动的卡片 剪切到 此位置上</span>
+</span><span class='line'>    <span class="c1">//</span>
+</span><span class='line'>    <span class="c1">// dragCard.index ~= newIndex</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">update</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">cards</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$splice</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+</span><span class='line'>          <span class="p">[</span><span class="nx">newIndex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">dragCard</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">]</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过调整 <code>index</code> 的值来达到位置上的变化。</p>
+
+<hr />
+
+<p>当卡片拖动到另一卡片上面时，需要获取到这一卡片的 <code>index</code> 的值，再将拖动卡片设置到新的位置上。</p>
+
+<p>那么，需要将<code>Card</code>设置为可接受的容器<code>DropTarget</code>。</p>
+
+<p>参考之前的<code>CardBox</code>,</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">const</span> <span class="nx">cardTarget</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">hover</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">,</span> <span class="nx">component</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">dragIndex</span> <span class="o">=</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">getItem</span><span class="p">().</span><span class="nx">index</span><span class="p">;</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">hoverIndex</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Don&#39;t replace items with themselves</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">dragIndex</span> <span class="o">===</span> <span class="nx">hoverIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Determine rectangle on screen</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">hoverBoundingRect</span> <span class="o">=</span> <span class="nx">findDOMNode</span><span class="p">(</span><span class="nx">component</span><span class="p">).</span><span class="nx">getBoundingClientRect</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Get vertical middle</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">hoverMiddleY</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hoverBoundingRect</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">hoverBoundingRect</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Determine mouse position</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">clientOffset</span> <span class="o">=</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">getClientOffset</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Get pixels to the top</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">hoverClientY</span> <span class="o">=</span> <span class="nx">clientOffset</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">hoverBoundingRect</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Only perform the move when the mouse has crossed half of the items height</span>
+</span><span class='line'>    <span class="c1">// When dragging downwards, only move when the cursor is below 50%</span>
+</span><span class='line'>    <span class="c1">// When dragging upwards, only move when the cursor is above 50%</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Dragging downwards</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">dragIndex</span> <span class="o">&lt;</span> <span class="nx">hoverIndex</span> <span class="o">&amp;&amp;</span> <span class="nx">hoverClientY</span> <span class="o">&lt;</span> <span class="nx">hoverMiddleY</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Dragging upwards</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">dragIndex</span> <span class="o">&gt;</span> <span class="nx">hoverIndex</span> <span class="o">&amp;&amp;</span> <span class="nx">hoverClientY</span> <span class="o">&gt;</span> <span class="nx">hoverMiddleY</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Time to actually perform the action</span>
+</span><span class='line'>    <span class="nx">props</span><span class="p">.</span><span class="nx">changeCard</span><span class="p">(</span><span class="nx">dragIndex</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">hoverIndex</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Note: we&#39;re mutating the monitor item here!</span>
+</span><span class='line'>    <span class="c1">// Generally it&#39;s better to avoid mutations,</span>
+</span><span class='line'>    <span class="c1">// but it&#39;s good here for the sake of performance</span>
+</span><span class='line'>    <span class="c1">// to avoid expensive index searches.</span>
+</span><span class='line'>    <span class="nx">monitor</span><span class="p">.</span><span class="nx">getItem</span><span class="p">().</span><span class="nx">index</span> <span class="o">=</span> <span class="nx">hoverIndex</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以上参考官方的例子，通过 <code>component</code>来获取纵向属性，来准确得到 <code>newIndex</code> 参数。
+当拖动的高度没有达到卡片一半时，不会触发<code>changeCard(..)</code>方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">dropCollect</span><span class="p">(</span><span class="nx">connect</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">connectDropTarget</span><span class="o">:</span> <span class="nx">connect</span><span class="p">.</span><span class="nx">dropTarget</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">let</span> <span class="nx">DropCard</span> <span class="o">=</span> <span class="nx">DropTarget</span><span class="p">(</span><span class="nx">ItemTypes</span><span class="p">.</span><span class="nx">CARD</span><span class="p">,</span> <span class="nx">cardTarget</span><span class="p">,</span> <span class="nx">dropCollect</span><span class="p">)(</span><span class="nx">Card</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>dropCollect</code> 基本是一样的。</p>
+
+<p>那么，完成这点之后，<code>Card</code>是可拖动的，又是可以容器，
+所以，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// Card</span>
+</span><span class='line'><span class="kr">const</span> <span class="nx">Card</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="p">{</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">isDragging</span><span class="p">,</span> <span class="nx">connectDragSource</span><span class="p">,</span> <span class="nx">connectDropTarget</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">opacity</span> <span class="o">=</span> <span class="nx">isDragging</span> <span class="o">?</span> <span class="mf">0.5</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">connectDragSource</span><span class="p">(</span> <span class="nx">connectDropTarget</span><span class="p">(</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">card</span><span class="p">}</span>
+</span><span class='line'>        <span class="nx">style</span><span class="o">=</span><span class="p">{</span> <span class="p">{</span><span class="nx">opactiy</span><span class="o">:</span> <span class="nx">opacity</span><span class="p">}</span> <span class="p">}</span>
+</span><span class='line'>        <span class="o">&gt;</span>
+</span><span class='line'>        <span class="p">{</span><span class="nx">text</span><span class="p">}</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+</span><span class='line'>    <span class="p">));</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">cardSource</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">//...</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">cardTarget</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">dragCollect</span><span class="p">(</span><span class="nx">connect</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">//...</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">dropCollect</span><span class="p">(</span><span class="nx">connect</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">let</span> <span class="nx">DropCard</span> <span class="o">=</span> <span class="nx">DropTarget</span><span class="p">(</span><span class="nx">ItemTypes</span><span class="p">.</span><span class="nx">CARD</span><span class="p">,</span> <span class="nx">cardTarget</span><span class="p">,</span> <span class="nx">dropCollect</span><span class="p">)(</span><span class="nx">Card</span><span class="p">);</span>
+</span><span class='line'><span class="kd">let</span> <span class="nx">DragCard</span> <span class="o">=</span> <span class="nx">DragSource</span><span class="p">(</span><span class="nx">ItemTypes</span><span class="p">.</span><span class="nx">CARD</span><span class="p">,</span> <span class="nx">cardSource</span><span class="p">,</span> <span class="nx">dragCollect</span><span class="p">)(</span><span class="nx">DropCard</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">DragCard</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过最后处绑定，<code>Card</code>的<code>props</code>会多出来个值来<code>connectDragSource</code>/<code>connectDropTarget</code>。</p>
+
+<p>在<code>Card</code>类中，根据 <code>isDragging</code>来判断设置卡片的透明度，这就是为什么之前要重新定义<code>CardSource</code>中的<code>isDragging</code>方法的缘由。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">const</span> <span class="nx">cardSource</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">beginDrag</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">isDragging</span><span class="p">(</span><span class="nx">props</span><span class="p">,</span> <span class="nx">monitor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">props</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">monitor</span><span class="p">.</span><span class="nx">getItem</span><span class="p">().</span><span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>因为，当一个拖动卡片的<code>index</code>为<code>1</code>时，<code>dnd</code>默认会其标识为<code>isDragging=true</code>。而，拖动卡片到<code>index=0</code>时，由于<code>changeCard</code>，拖动卡片此时会从<code>1 -&gt; 0</code>，由于<code>isDdragging</code>不会重新判断，所以，显示效果会是：</p>
+
+<blockquote><p>哪个卡片占原拖动卡片的位置，就会是有透明度</p></blockquote>
+
+<p>但这并不是我们所要的，所以，是否能拖动，使用唯一标识<code>id</code>来判断。</p>
+
+<p>还要注意，<code>Kanban</code>中需要传入方法给<code>Card</code>。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">//...</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cards</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span> <span class="p">(</span><span class="nx">card</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">(</span>
+</span><span class='line'>    <span class="c1">//...</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="nx">Card</span>
+</span><span class='line'>      <span class="c1">//...</span>
+</span><span class='line'>      <span class="nx">changeCard</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">changeCard</span><span class="p">}</span>
+</span><span class='line'>     <span class="o">/&gt;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1">//...</span>
+</span><span class='line'><span class="p">})</span>
+</span><span class='line'><span class="c1">//...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>最后</h4>
+
+<p>真正使用时，还是需要定义<code>DropTarget</code>中的<code>drop</code>方法的，而文中只谈到了<code>hover</code>方法，这部分让大家自己去探索吧。</p>
+
+<p>打完收功。</p>
+
+<h4>后记</h4>
+
+<p>其实，一个插件能不能用，除了了解其用法之外，还可能需要了解其性能。</p>
+
+<p>就本人的5年前的小笔记本来说，200个普通文本卡片还是可以自由拖动的，效果还是可以的。</p>
+
+<p>当到300时，部分快速拖动会失效，可能是排序和渲染上的耗时吧，
+好点的机器可能会好点。</p>
+
+<p>另外，从调试过程看出，<code>dnd</code>只会对有数据变化的卡片重新调用<code>render()</code>渲染方法，并不是所有都会重新渲染一遍的。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2016/09/27/react-dnd-intro-2/';
+        var disqus_url = 'http://shatle.github.io/blog/2016/09/27/react-dnd-intro-2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

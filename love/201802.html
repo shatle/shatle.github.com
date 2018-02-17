@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Love</title>
+    <script src="./typed.min.js"></script>
+</head>
+<body>
+    <style>
+        html,body {
+            padding: 0;
+            margin: 0;
+        }
+        #container {
+            width: 100%;
+            position: relative;
+        }
+        #loveText, .loveText {
+            height: 540px;
+            width: 500px;
+            padding: 25px 0px 0px 120px;
+            font-size: 13px;
+            line-height: 1;
+            resize: none;
+
+            color: hsl(0, 0%, 35%);
+            /* background: #f7f7f7; */
+            border: none;
+            /* margin: 0; */
+            /* float: left; */
+            border-radius: 0 !important;
+            display: block;
+            font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
+            box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            box-shadow: none !important;
+        }
+        #loveText:focus, .loveText:focus {
+            box-shadow: none !important;
+            outline: none;
+        }
+
+        #left {
+            position: absolute;
+            width: 100%;
+            margin-top: -600px;
+            /* opacity: 0; */
+            transition: ease-in .5s;
+        }
+        #left.view {
+            opacity: 1;
+        }
+        #loveText, .loveText {
+            margin: 0 auto;
+        }
+        #loveText2 {
+            margin-top: -540px;
+            opacity: 0;
+        }
+        #right {
+            width: 600px;
+            margin: 20px auto;
+        }
+        #loveTypedContent {
+            padding: 20px;
+            padding: 1em; border: 1em solid transparent; 
+            background: linear-gradient(white, white) padding-box, repeating-linear-gradient(-45deg, red 0, red 12.5%, transparent 0, transparent 25%, #58a 0, #58a 37.5%, transparent 0, transparent 50%) 0 / 5em 5em;
+            height: 800px;
+        }
+        #loveTypedContent p {
+            margin: 10px 0;
+        }
+        #typing {
+            display: inline-block;
+            width: 100%;
+        }
+        .suojin {
+            text-indent: 2em;
+        }
+        .pull-right {
+            text-align: right;
+        }
+
+        .unselectable {
+   -webkit-user-select: none;
+    -khtml-user-select: none;
+      -moz-user-select: none;
+       -ms-user-select: none;
+           user-select: none;
+}
+.filled:before,
+.filled:after {
+  background: red !important;
+}
+#wrapper {
+  /* width: 300px; */
+  height: 180px;
+  /* background: #444; */
+  position: absolute;
+    left: 60%;
+    top: 100px;
+    opacity: 0;
+    cursor: pointer;
+    transition: ease-in .3s;
+}
+.heart {
+  position: relative;
+  top: calc(50% - 45px);   /* 1/2 height of wrapper - 1/2 height of heart */
+  left: calc(50% - 50px);  /* 1/2 width of wrapper  - 1/2 width of heart */
+  width: 100px;
+  height: 90px;
+}
+.heart:before,
+.heart:after {
+  position: absolute;
+  content: "";
+  top: 0px;
+  width: 50px;
+  height: 80px;
+  background: inherit;
+  -moz-border-radius: 50px 50px 0 0;
+       border-radius: 50px 50px 0 0;
+}
+.heart:before {
+  left: 50px;
+  -webkit-transform: rotate(-45deg);
+     -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+       -o-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+  -webkit-transform-origin: 0 100%;
+     -moz-transform-origin: 0 100%;
+      -ms-transform-origin: 0 100%;
+       -o-transform-origin: 0 100%;
+          transform-origin: 0 100%;
+  
+  border-left: 2px solid red;
+  border-top: 2px solid red;
+  border-bottom: 1px solid red;
+}
+.heart:after {
+  left: 0px;
+  -webkit-transform: rotate(45deg);
+     -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+       -o-transform: rotate(45deg);
+          transform: rotate(45deg);
+  -webkit-transform-origin: 100% 100%;
+     -moz-transform-origin: 100% 100%;
+      -ms-transform-origin: 100% 100%;
+       -o-transform-origin: 100% 100%;
+          transform-origin: 100% 100%;
+  
+  border-right: 2px solid red;
+  border-top: 2px solid red;
+  border-bottom: 1px solid red;
+}
+.heart-text {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  line-height: 66px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+    </style>
+
+    <div id="container">
+
+        <div id="wrapper">
+            <div class="heart" onclick="toggleFill(this, 'filled')">
+                <div id="clickHeart" class="heart-text unselectable">
+                亲我
+                </div>
+            </div>
+        </div>
+
+        <div id="right">
+            <div id="loveTypedContent">
+                <div id="typing"></div>
+            </div>
+        </div>
+
+
+        <div id="left">
+                <textarea id="loveText" disabled>
+____________________██████
+_________▓▓▓▓____█████████
+__ Ƹ̵̡Ӝ̵̨̄Ʒ▓▓▓▓▓=▓____▓=▓▓▓▓▓
+__ ▓▓▓_▓▓▓▓░●____●░░▓▓▓▓
+_▓▓▓▓_▓▓▓▓▓░░__░░░░▓▓▓▓
+_ ▓▓▓▓_▓▓▓▓░░♥__♥░░░▓▓▓
+__ ▓▓▓___▓▓░░_____░░░▓▓
+▓▓▓▓▓____▓░░_____░░▓
+_ ▓▓____ ▒▓▒▓▒___ ████
+_______ ▒▓▒▓▒▓▒_ ██████
+_______▒▓▒▓▒▓▒ ████████
+_____ ▒▓▒▓▒▓▒_██████ ███
+_ ___▒▓▒▓▒▓▒__██████ _███
+_▓▓X▓▓▓▓▓▓▓__██████_ ███
+▓▓_██████▓▓__██████_ ███
+▓_███████▓▓__██████_ ███
+_████████▓▓__██████ _███
+_████████▓▓__▓▓▓▓▓▓_▒▒
+_████████▓▓__▓▓▓▓▓▓
+_████████▓▓__▓▓▓▓▓▓
+__████████▓___▓▓▓▓▓▓
+_______▒▒▒▒▒____▓▓▓▓▓▓
+_______▒▒▒▒▒ _____▓▓▓▓▓
+_______▒▒▒▒▒_____ ▓▓▓▓▓
+_______▒▒▒▒▒ _____▓▓▓▓▓
+________▒▒▒▒______▓▓▓▓▓
+________█████____█████
+_'▀█║────────────▄▄───────────​─▄──▄_
+──█║───────▄─▄─█▄▄█║──────▄▄──​█║─█║
+──█║───▄▄──█║█║█║─▄║▄──▄║█║─█║​█║▄█║
+──█║──█║─█║█║█║─▀▀──█║─█║█║─█║​─▀─▀
+──█║▄║█║─█║─▀───────█║▄█║─▀▀
+──▀▀▀──▀▀────────────▀─█║
+───────▄▄─▄▄▀▀▄▀▀▄──▀▄▄▀
+──────███████───▄▀
+──────▀█████▀▀▄▀
+────────▀█▀
+                </textarea>
+
+                <textarea id="loveText2" class="loveText" disabled>
+___________________██████
+_________▓▓▓▓___█████████
+__ Ƹ̵̡Ӝ̵̨̄Ʒ▓▓▓▓▓=▓___▓=▓▓▓▓▓
+__ ▓▓▓_▓▓▓▓░●___●░░▓▓▓▓
+_▓▓▓▓_▓▓▓▓▓░░_░░░░▓▓▓▓
+_ ▓▓▓▓_▓▓▓▓░░♥♥░░░▓▓▓
+__ ▓▓▓___▓▓░░____░░░▓▓
+▓▓▓▓▓____▓░░_____░░▓
+_ ▓▓____ ▒▓▒▓▒___ ████
+_______ ▒▓▒▓▒▓▒_ ██████
+_______▒▓▒▓▒▓▒ ████████
+_____ ▒▓▒▓▒▓▒_██████ ███
+_ ___▒▓▒▓▒▓▒__██████ _███
+_▓▓X▓▓▓▓▓▓▓__██████_ ███
+▓▓_██████▓▓__██████_ ███
+▓_███████▓▓__██████_ ███
+_████████▓▓__██████ _███
+_████████▓▓__▓▓▓▓▓▓_▒▒
+_████████▓▓__▓▓▓▓▓▓
+_████████▓▓__▓▓▓▓▓▓
+__████████▓___▓▓▓▓▓▓
+_______▒▒▒▒▒____▓▓▓▓▓▓
+_______▒▒▒▒▒ _____▓▓▓▓▓
+_______▒▒▒▒▒_____ ▓▓▓▓▓
+_______▒▒▒▒▒ _____▓▓▓▓▓
+________▒▒▒▒______▓▓▓▓▓
+________█████____█████
+_'▀█║────────────▄▄───────────​─▄──▄_
+──█║───────▄─▄─█▄▄█║──────▄▄──​█║─█║
+──█║───▄▄──█║█║█║─▄║▄──▄║█║─█║​█║▄█║
+──█║──█║─█║█║█║─▀▀──█║─█║█║─█║​─▀─▀
+──█║▄║█║─█║─▀───────█║▄█║─▀▀
+──▀▀▀──▀▀────────────▀─█║
+───────▄▄─▄▄▀▀▄▀▀▄──▀▄▄▀
+──────███████───▄▀
+──────▀█████▀▀▄▀
+────────▀█▀
+            </textarea>
+            </div>
+    </div>
+    
+    <script>
+function toggleFill(heart, className) {  
+  if (!hasClass(heart, className)) {
+    addClass(heart, className);
+    document.getElementById('wrapper').style.display = 'none'
+
+    document.getElementById('left').classList.add('view')
+    setInterval(function() {
+        var op = document.getElementById('loveText2').style.opacity
+        if (!op || op === '0') {
+            document.getElementById('loveText').style.opacity = '0'
+            document.getElementById('loveText2').style.opacity = '1'
+        } else {
+            document.getElementById('loveText').style.opacity = '1'
+            document.getElementById('loveText2').style.opacity = '0'
+        }
+    }, 800)
+  } else {
+    removeClass(heart, className);
+    document.getElementById('clickHeart').textContent = '亲我'
+  }
+}
+
+function addClass(el, className) {
+  if (el.classList) {
+    el.classList.add(className);
+  } else {
+    el.className += ' ' + className;
+  }
+}
+
+function removeClass(el, className) {
+  if (el.classList) {
+    el.classList.remove(className);
+  } else {
+    el.className = el.className.replace(
+      new RegExp('(^|\\b)' + className.split(' ').join('|') +
+                 '(\\b|$)', 'gi'), ' ');
+  }
+}
+
+function hasClass(el, className) {
+  if (el.classList) {
+    return el.classList.contains(className);
+  } else {
+    return new RegExp('(^| )' + className +
+               '( |$)', 'gi').test(el.className);
+  }
+}
+
+        var options = {
+            strings: ['To: 张晓欣\n'+
+                    '<p class="suojin">很感谢，有你陪我走过这一年多的时间，很真实，很温暖。</p>'+
+                    '<p class="suojin">对感情，我是愚笨的，但却是真心的。</p>'+
+                    '<p class="suojin">我希望</p>'+
+                    '<p class="suojin">每天，亲你起床</p>'+
+                    '<p class="suojin">帮你吹头发</p>'+
+                    '<p class="suojin">陪你走过每一个地方，耗尽芳华</p>'+
+                    '<p class="pull-right">From: 刘朝敏</p>'
+                ],
+            typeSpeed: 50,
+            showCursor: false,
+            onComplete: function() {
+                document.getElementById('wrapper').style.opacity='1'
+            }
+        }
+        var typed = new Typed("#typing", options);
+
+        
+    </script>
+</body>
+</html>

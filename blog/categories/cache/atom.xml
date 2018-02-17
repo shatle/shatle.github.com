@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cache | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/cache/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Rails Cache]]></title>
+    <link href="http://shatle.github.io/blog/2013/07/02/Rails-Cache/"/>
+    <updated>2013-07-02T14:18:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2013/07/02/Rails-Cache</id>
+    <content type="html"><![CDATA[<p>在完成 rails 应用的功能之后，要考虑优化（重构）！</p>
+
+<p>关于 rails 的 cache 问题，网络上已经有很多说法了，我主要参考以下：</p>
+
+<p>http://guides.rubyonrails.org/caching_with_rails.html</p>
+
+<p>http://hawkins.io/2011/05/advanced_caching_in_rails/</p>
+
+<p>http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works</p>
+
+<p>或许有版本问题，虽然我没遇到，但是学习精华在于领会方法。</p>
+
+<p>缓存，个人觉得是根据访问频度和更新频度的数据，估计并平衡两者，才能进而提高响应速度。</p>
+
+<h3>Fragment Cache</h3>
+
+<p>对于碎片化的缓存，主流还是在这的，因为现今多数网站都是动态的。对于 Page Cache 大多数人并不推崇！</p>
+
+<p>相信多数人会用 layout：</p>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+
+%p header content
+</code></pre>
+
+<p>在重构加入 cache 时，可以通过两种简单的方法：</p>
+
+<h4>方法一</h4>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+= cache("header_part") do
+  %p header content
+</code></pre>
+
+<h4>方法二</h4>
+
+<pre><code class="ruby"># in application.haml
+
+...
+%body
+  = cache("header") do
+    = render 'header'
+  = yield
+  = render 'bottom'
+</code></pre>
+
+<pre><code class="ruby"># in _header.haml
+
+%p header content
+</code></pre>
+
+<p>明显第二种方法较好，其产生的效果：</p>
+
+<pre><code class="ruby">Read fragment views/header (0.2ms)
+</code></pre>
+
+<p>而第一种会有：</p>
+
+<pre><code class="ruby">Read fragment views/header (0.2ms)
+  Rendered share/header.haml (0.5ms)
+</code></pre>
+
+<hr />
+
+<p>其实，最好在设置 cache 时，同时设置时时效，<a href="http://37signals.com/svn/posts/3113-how-key-based-cache-expiration-works">David: 4 This generates a lot of cache garbage</a>。虽然有些存储设备自动清理访问较少的资源（memcached 有这样的机制），但是对于明确的资源，手动设置时效可以很好地清理或者更新内容。</p>
+
+<pre><code class="ruby">= cache("bottom", :expires_in =&gt; 7.days) do
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

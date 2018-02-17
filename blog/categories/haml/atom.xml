@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: haml | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/haml/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2018-02-17T23:53:13+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[haml 知识点]]></title>
+    <link href="http://shatle.github.io/blog/2012/08/17/haml-zhi-shi-dian/"/>
+    <updated>2012-08-17T21:25:00+08:00</updated>
+    <id>http://shatle.github.io/blog/2012/08/17/haml-zhi-shi-dian</id>
+    <content type="html"><![CDATA[<blockquote><p>http://haml.info/docs/yardoc/file.HAML_REFERENCE.html#ruby_module</p></blockquote>
+
+<p>孙波2012-07-30 16:51:43</p>
+
+<p>  找到方法了，初始化得时候有个参数是忽略所有的ruby代码，suppress_eval默认是false，把他设置成true</p>
+
+<pre><code>Haml::Engine.new("= User.last.name", :suppress_eval =&gt; true).render
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://shatle.github.io/sitemap.xml 
