@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Love</title>
+    <script src="./snap.svg-min.js"></script>
+</head>
+
+<body>
+    <style>
+        #content {
+            padding: 12px;
+            border: 12px solid transparent;
+            background: linear-gradient(white, white) padding-box, repeating-linear-gradient(-45deg, red 0, red 12.5%, transparent 0, transparent 25%, #58a 0, #58a 37.5%, transparent 0, transparent 50%) 0 / 5em 5em;
+            min-height: calc(100vh - 100px);
+        }
+
+        svg#svg1 {
+            width: 100%;
+            height: calc(100vh - 80px);
+        }
+
+        #pa {
+            position: absolute;
+            top: 6px;
+            font-size: 1.1rem;
+            left: 30px;
+        }
+
+        #locate {
+            opacity: 0;
+        }
+        #pop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            height: 100vh;
+            width: 100%;
+            background: yellow;
+            margin-top: -10000px;
+            transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+            background: #fb8537fa;
+        }
+        #pop.active {
+            margin-top: 0;
+        }
+        #popContent {
+            padding: 1rem;
+            font-size: 1.1rem;
+            
+        }
+        #popContent p {
+            margin: 4px 0;
+            min-height: 10px;
+        }
+        textarea {
+            overflow: hidden;
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            pointer-events: none;
+        }
+    </style>
+    
+    <div id="content">
+        <p id="pa">请随机点击位置，有惊喜哦^_^ <span id="locate"></span></p>
+        <svg id="svg1" />
+        <div id="pop">
+            <div id="popContent">
+                <p>很幸运，我遇见了你</p>
+                <p>你确认了我.</p>
+                <p></p>
+                <p>这一次，你的滚滚</p>
+                <p>又跑到了我的内心</p>
+                <p>在我心里</p>
+                <p>万马奔腾着</p>
+                <p></p>
+                <p>小欣欣</p>
+                <p>我爱你</p>
+                <p>爱着你，永远</p>
+
+                <textarea name="" id="" cols="30" rows="10">
+.♥/(,")\.(".)♥★
+..★/♥\♥/█\♥★
+.♥_| |__| |_ ♥                        
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var svg = Snap("#svg1")
+
+        var content = document.getElementById('content')
+        var svgBoxWidth = content.offsetWidth - 48
+        var svgBoxHeight = content.offsetHeight - 48
+        var pandaWidth = 200
+        var pandaHeight = 130
+        console.info(svgBoxWidth, svgBoxHeight);
+
+        var startX = Math.floor((svgBoxWidth - 200)/2)
+        var startY = 70
+
+        function render() {
+            var earStartX = startX + 30
+            var earStartY = startY + 30
+            var ears = svg.group(svg.circle(earStartX, earStartY, 30), svg.circle(earStartX + 140, earStartY, 30))
+
+            var circleStartX = startX + 60
+            var circleStartY = startY + 10
+            var circlePath = "M"+(circleStartX)+","+(circleStartY)+"C"+(circleStartX - 60)+","+(circleStartY + 15)+" "+(circleStartX - 60)+","+(circleStartY + 100)+" "+(circleStartX)+","+(circleStartY + 110)+"Q"+(circleStartX + 40)+","+(circleStartY + 114)+" "+(circleStartX + 80)+","+(circleStartY + 110)+"C"+(circleStartX + 140)+","+(circleStartY + 100)+" "+(circleStartX + 140)+","+(circleStartY + 15)+" "+(circleStartX + 80)+","+(circleStartY)+"Q"+(circleStartX + 40)+","+(circleStartY - 12)+" "+(circleStartX)+"," + circleStartY
+            // console.info(circlePath);
+            svg.path(circlePath).attr({
+                fill: "#fff",
+                stroke: "#000",
+                strokeWidth: 5
+            })
+
+            //eyes
+            var eye1StartX = startX + 60
+            var eye1StartY = startY + 30
+            svg.path("M"+(eye1StartX)+","+(eye1StartY)+"C"+(eye1StartX - 30)+","+(eye1StartY+30)+" "+(eye1StartX - 10)+","+(eye1StartY+50)+" "+(eye1StartX + 20)+","+(eye1StartY + 20)+"C"+(eye1StartX + 30)+","+(eye1StartY + 10)+" "+(eye1StartX + 30)+","+(eye1StartY - 10)+" "+(eye1StartX)+","+(eye1StartY)+"")
+            var eye1 = svg.path("M"+(eye1StartX + 2)+","+(eye1StartY + 8)+"l10,6l-15,8").attr({stroke: '#fff', strokeWidth: 2})
+
+            var eye2StartX = startX + 140
+            var eye2StartY = startY + 30
+            svg.path("M"+(eye2StartX)+","+(eye2StartY)+"C"+(eye2StartX + 30)+","+(eye1StartY + 30)+" "+(eye2StartX + 10)+","+(eye2StartY + 50)+" "+(eye2StartX-20)+","+(eye2StartY+20)+"C"+(eye2StartX-30)+","+(eye2StartY+10)+" "+(eye2StartX-30)+","+(eye2StartY-10)+" "+(eye2StartX)+","+(eye2StartY)+"")
+            var eye2 = svg.path("M"+(eye2StartX-2)+","+(eye2StartY+8)+"l-10,6l15,8").attr({stroke: '#fff', strokeWidth: 2})
+            // nose
+            var noseMiddleX = startX + 100
+            var noseMiddleY = startY + 70
+            svg.path("M"+(noseMiddleX)+","+(noseMiddleY)+"C"+(noseMiddleX)+","+(noseMiddleY+10)+" "+(noseMiddleX-12)+","+(noseMiddleY+10)+" "+(noseMiddleX-12)+","+(noseMiddleY)+"").attr({
+                fill: "#fff",
+                stroke: "#000",
+                strokeWidth: 2
+            })
+            svg.path("M"+(noseMiddleX)+","+(noseMiddleY)+"C"+(noseMiddleX)+","+(noseMiddleY+10)+" "+(noseMiddleX+12)+","+(noseMiddleY+10)+" "+(noseMiddleX+12)+","+(noseMiddleY)+"").attr({
+                fill: "#fff",
+                stroke: "#000",
+                strokeWidth: 2
+            })
+            // mouse
+            var mouseHeight = 8
+            svg.path("M"+(noseMiddleX - 6)+","+(noseMiddleY + 8 )+"C"+(noseMiddleX -6)+","+(noseMiddleY + 20 + mouseHeight )+" "+(noseMiddleX+6)+","+(noseMiddleY + 20 + mouseHeight)+" "+(noseMiddleX+6)+","+(noseMiddleY + 8)+"").attr({
+                fill: "#fff",
+                stroke: "#000",
+                strokeWidth: 2
+            })
+
+            // hand
+            var hand1 = svg.circle(noseMiddleX - 36, startY + 120, 20)
+            var hand2 = svg.circle(noseMiddleX + 36, startY + 120, 20)
+        }
+
+        // init render
+        render()
+
+        var maxX = svgBoxWidth - pandaWidth
+        var maxY = svgBoxHeight - pandaHeight
+
+        var luckyBox = {x: 0, y: 0, width: 50, height: 50}
+        luckyBox.x = Math.floor(Math.random() * maxX),
+        luckyBox.y = Math.floor(Math.random() * maxY)
+        if (luckyBox.x + 20 > maxX) {
+            luckyBox.x = maxX - luckyBox.width
+        }
+        if (luckyBox.y + 20 > maxY) {
+            luckyBox.y = maxY - luckyBox.height
+        }
+        document.getElementById('locate').innerHTML=''+
+            luckyBox.x + ', ' + luckyBox.y
+
+        // svg click, change panda location
+        svg.click(function(event) {
+            document.getElementById('svg1').innerHTML = ''
+
+            var offsetX = event.offsetX,
+                offsetY = event.offsetY;
+            console.info(offsetX, offsetY);
+            
+            if (offsetX < maxX && offsetY < maxY) {
+                startX = offsetX
+                startY = offsetY
+            } else if (offsetX < maxX){
+                startX = offsetX
+                startY = maxY
+            } else if (offsetY < maxY){
+                startX = maxX
+                startY = offsetY
+            } else{
+                startX = maxX
+                startY = maxY
+            }
+
+            render()
+
+            if (startX > luckyBox.x && startX < luckyBox.x + luckyBox.width
+                && startY > luckyBox.y && startY < luckyBox.y + luckyBox.height
+            ) {
+                document.getElementById('pop').classList.add('active')
+            }
+        })
+        
+        // double click text
+        var textClickCount = 0
+        var timers = []
+        document.getElementById('pa').onclick = function(){
+            textClickCount++
+            timers.push(setTimeout(function(){
+                if (textClickCount < 2) {
+                    console.info('click', textClickCount,timers);
+                } else {
+                    console.info('dblclick', textClickCount,timers);
+                    var isOpacity = document.getElementById('locate').style.opacity
+                    document.getElementById('locate').style.opacity =
+                        isOpacity !== '1' ? '1' : '0'
+                }
+                
+                for (let index = 0; index < timers.length; index++) {
+                    if (timers[index]) {
+                        clearTimeout(timers[index])
+                    }
+                }
+                textClickCount = 0
+                timers = []
+            }, 400))
+        }
+
+        // double click loveText
+        var textClickCount2 = 0
+        var timers2 = []
+        document.getElementById('pop').onclick = function(){
+            textClickCount2++
+            timers2.push(setTimeout(function(){
+                if (textClickCount2 < 2) {
+                    console.info('click', textClickCount2,timers2);
+                } else {
+                    console.info('dblclick', textClickCount2,timers2);
+                    document.getElementById('pop').classList.remove('active')
+                }
+                
+                for (let index = 0; index < timers2.length; index++) {
+                    if (timers2[index]) {
+                        clearTimeout(timers2[index])
+                    }
+                }
+                textClickCount2 = 0
+                timers2 = []
+            }, 400))
+        }
+    </script>
+</body>
+
+</html>
