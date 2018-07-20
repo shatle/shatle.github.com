@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Love</title>
+    <script src="./snap.svg-min.js"></script>
+    <script src="./typed.min.js"></script>
+</head>
+
+<body>
+    <style>
+        #content {
+            padding: 12px;
+            border: 12px solid transparent;
+            background: linear-gradient(white, white) padding-box, repeating-linear-gradient(-45deg, red 0, red 12.5%, transparent 0, transparent 25%, #58a 0, #58a 37.5%, transparent 0, transparent 50%) 0 / 5em 5em;
+            min-height: calc(100vh - 100px);
+        }
+
+        #heartDiv {
+          height: 400px;
+        }
+    </style>
+    
+    <div id="content">
+        <div id="loveTypedContent">
+            <div id="typing"></div>
+        </div>
+    </div>
+
+    <script>
+      var options = {
+          strings: ['To: 张晓欣\n'+
+                  '<p class="suojin">不知不觉，时间过得好快，已经一年半了。从2017.01.21，到现在的2018.07.21，从时间跨度上却又是那么少，我希望我们是更大的三年、五年、九年、九十九年...</p>'+
+                  '<p class="suojin">这段时间中，我们的冲突确实很多，但都是由我引起的，这方面我很自责，真心对不起。我容易烦，没有足够的耐心听你说话。经常的，由于自己无理想法影响到你。自己生气后，还不说话，不沟通，放大双方的不开心，这是我的错。很抱歉，我是个容易生气、不会沟通的人，我恨这样子的自己。</p>'+
+                  '<p class="suojin">但是，我觉得我为了你、为了爱、为了爱你，我能改，一定可以改。我可以耐心的给你下厨，洗净青菜、切好肉肉，炒好菜、煲好汤。我做的饭菜，口感也慢慢地好起来了，相信我的耐心也会好起来、沟通也会改善的。</p>'+
+                  '<p class="suojin">我想和你做好多好多的事，陪你看花、看海、登山、游玩...，陪你打台球，嘻嘻，我们可以好好的，好好的。</p>'+
+                  '<p class="suojin">小欣欣，我爱你，真心的爱你。</p>'+
+                  '<p class="pull-right">From: 刘朝敏</p>'
+              ],
+          typeSpeed: 50,
+          showCursor: false,
+          onComplete: function() {
+              document.getElementById('wrapper').style.opacity='1'
+          }
+      }
+      var typed = new Typed("#typing", options);
+
+    </script>
+</body>
+
+</html>
