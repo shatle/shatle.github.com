@@ -9,7 +9,9 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="树说-1 avl, 二叉树, 搜索树, 树, 红黑树 2013-09-11 Comments 食之无味，弃之可惜。仍不知其所用，但无奈于八股。 树 树，就是一个非空的有限元素集合，其中一个元素为根(root)，余下的元素组合成其 子树。 每个元素称为节点，节点分 根节点 、叶子节点。 &hellip;">
+	<meta name="description" content="二叉搜索树 avl树, 二叉搜索树 2013-09-13 Comments 二叉搜索树有以下特点： 每个节点有唯一的搜索关键值；
+任意节点，如果存在着左子节点，那么左子节点的关键值小于此节点的关键值；
+任意节点，如果存在着右子节点，那么右子节点的关键值大于此节点的关键值； 另外，搜索树可以带索引 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +79,171 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/13/tree-2/" itemprop="url">二叉搜索树</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/avlshu/'>avl树</a>, <a class='category' href='/blog/categories/er-cha-sou-suo-shu/'>二叉搜索树</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-13T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-13</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/13/tree-2/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>二叉搜索树有以下特点：</p>
+
+<ol>
+<li>每个节点有唯一的搜索关键值；</li>
+<li>任意节点，如果存在着左子节点，那么左子节点的关键值小于此节点的关键值；</li>
+<li>任意节点，如果存在着右子节点，那么右子节点的关键值大于此节点的关键值；</li>
+</ol>
+
+
+<p>另外，搜索树可以带索引，在每个节点中加入字段，其值为其左子树的节点数目加1。此方式的索引，可以明确地知道节点在此树中的从小到大的排序位置。</p>
+
+<pre>
+    10
+   ／ \
+   6 16
+  / \ \
+  3 8 18
+
+关键值:索引字段值
+10:4,6:2,16:1,3:1,8:1,18:1
+</pre>
+
+
+<p>对于此索引字段，我一直未找到其有什么作用。查找搜索，加了此索引字段就不用比较？也要比较，比较次数也不见得少。删除／插入也要查找，那么加入此索引字段作肾吗？唯一的我能看到的作用是查看当前节点的状态，给出稍微详细的信息，而不是查找。个人觉得还不如完全二叉树，直接线性表索引显然更好些。</p>
+
+<h4>查找</h4>
+
+<p>由于二叉搜索树的性质，是查找元素时，只要比较搜索的关键值与当前节点的关键值，小于继续搜索左子树，大于则搜索右子树，即可。时间复杂度为O(h)，由于树不一定是完全二叉树，可能存在着左、右斜二叉树，所以不一定保证O(logn)。</p>
+
+<h4>插入</h4>
+
+<p>按查找的思路，可以把要插入的元素的关键值看作查找此关键值。当从根节点一直往下找，如果真有此关键值，证明要插入的元素关键值重复，不能进行插入；如果查找不到，必然会最终碰到左子节点或者右子节点为空，只要将查找路径上的这个为空的左子节点或者右子节点，设置为要插入的新元素即可，成为新的节点。复杂度也是O(h)</p>
+
+<h4>删除</h4>
+
+<p>对于叶子节点，查找成功后，可直接删除，不影响树的结构。对于非叶子节点，需要用此节点的左子树的最大节点代替已删除的节点，或者用此节点的右子树的最小节点代替。这最大节点和最小节点应该都是叶子节点。复杂度为O(h)。</p>
+
+<p>如，</p>
+
+<pre>
+     20
+    /  \
+   10  30
+   /\   | \
+  9 14 24 32
+
+     14
+    /  \
+   10   30
+   /    | \
+  9    24 32
+
+     24
+    / \
+   10 30
+   /\   \
+  9 14   32
+</pre>
+
+
+<p>删除20时，需要将其左子树的14上升到原根节点的位置；或者将其右子树的24上升到原根节点的位置。</p>
+
+<h3>AVL树</h3>
+
+<p>首先，AVL树是一种平衡树。平衡树是指节点数为n且高度为logn级别的树。AVL树是根据提出人的姓名命名的。</p>
+
+<p>AVL树就是任意节点的左右子树的高度绝对差为1。通常会定义其<code>平衡因子＝左子树的高度 - 右子树的高度</code>，平衡因子可能是-1、0、1。</p>
+
+<h4>查找</h4>
+
+<p>过程如二叉搜索树一样，但AVL树的高度是logn，所以可以确定其时间复杂度是O(logn)</p>
+
+<h4>插入</h4>
+
+<p>插入的操作可能采用二叉搜索树的插入方法，当不平衡时，再调整节点。</p>
+
+<p>首先，插入之前，它应该是AVL树。插入新节点之后，树可能依然是AVL树，也可能不是AVL树。而不能成为AVL树，其原因必然是：树的某些节点的平衡因子从-1变为-2，或者从1变为2。而平衡因子变化的节点，也一定是从新节点到根节点这一路径上的节点。</p>
+
+<p>在这些新插入的节点到树的根节点这一路径中，可能存在着离新节点最近的原平衡因子为1或者为-1的A节点。从A节点到新节点之间的所有节点的平衡因子原来都应该是0。因为，如果不是0，而是1或者-1，那么A节点就找错了。</p>
+
+<p>其次，调整。对于插入操作后不平衡的树，需要调整使得插入后的平衡因子为2或者-2的节点变回为1、0、-1。</p>
+
+<p>基本的操作步骤：</p>
+
+<ol>
+<li><p>在树中搜索新节点的关键值，如果关键值不存在，插入并记录原树中的A节点；如果存在，退出。</p></li>
+<li><p>如果没有所谓的A节点，那么修改新节点到树根节点的平衡因子，从0修改为1或者-1。</p></li>
+<li><p>如果存在A节点，需要分情况：</p>
+
+<ul>
+<li>如果新插入的节点在A节点的左子树上，而A节点原平衡因子为-1，那么插入后的树也是平衡的，可直接修改从新节点到A节点上的平衡因子即可；</li>
+<li>如果新插入的节点在A节点的左子树上，而A节点原平衡因子为1，那么A节点的平衡因子会变为2，需要调整；</li>
+<li>如果新插入的节点在A节点的右子树上，而A节点原平衡因子为-1，那么A节点的平衡因为会变为-2，需要调整；</li>
+<li>如果新插入的节点在A节点的右子树上，而A节点原平衡因子为1，那么插入后的树也是平衡的，可直接修改从新节点到A节点上的平衡因子即可；</li>
+</ul>
+</li>
+</ol>
+
+
+<p>下面对需要调整的3.2和3.3进行进一步的说明。</p>
+
+<h5>3.2</h5>
+
+<p>新节点在A的左子树上，又可以分两种情况：新节点在左子树的左子树上(LL)，新节点在左子树的右子树上(LR):</p>
+
+<p><img src="http://octoper.com/photo/c69c6523e7b903d1d71bc142abf659e6/IMG_20130913_110349.jpg" alt="IMG_20130913_110349.jpg" /></p>
+
+<p><strong>LL</strong>：对于LL情况，由于A节点的原平衡因子为1，所以必定存在B节点且其平衡因子为0。假设BL的高度为h，则BR和AR的高度应该也为h，以A为根节点的子树高度为h+2。插入后BL高度变为h+1，A节点平衡因子变为2，B节点平衡因子变为1。BL中可能有更多的节点的平衡因子从0变为1，但这里只讨论1个B，因为只有从新插入的节点到树的根节点中的节点有变化。</p>
+
+<p>为了减少各节点平衡因子的变化，就尽量使以A为子树的高度在调整之后仍然为h+1。这里可以将B节点上移，A节点转而当作B节点的右子节点，并将BR当作A节点的左子树。对于调整的整个子树来说，原来的高度是h+2，调整后保持不变，也就不用调整A节点以上的节点的平衡因子了，但需要再次调整A和B的平衡因子。</p>
+
+<p><img src="/images/photo/IMG_20130913_110915.jpg" alt="IMG_20130913_110915.jpg" /></p>
+
+<p><strong>LR</strong>：对于LR情况，BR在插入新节点后，高度为h+1，也就是说，插入后必定存在C节点。而且，CL和CR的高度只可能是h或者h-1，且不能同为h-1。</p>
+
+<p>对于此情况，不能采用LL的方法。因为把BL当作已经下沉的A的左子树，只会引起新的不平衡。</p>
+
+<p>所以，需要把C上移，并替代原来的A节点，而A节点下沉，然后分别将CL和CR作为B和A的右子树和左子树。对于调整的整个子树来说，原来的高度是h+2，调整后保持不变，也就不用调整A节点以上的节点的平衡因子了，但需要再次调整A、B、C的平衡因子。</p>
+
+<h4>3.3</h4>
+
+<p>新节点在A的右子树上，又可以分两种情况：新节点在左子树的左子树上(RL)，新节点在左子树的右子树上(RR):</p>
+
+<p><img src="/images/photo/IMG_20130913_214343.jpg" alt="IMG_20130913_214343.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_214334.jpg" alt="IMG_20130913_214334.jpg" /></p>
+
+<p>RL、RR的调整方法基本与LR、LL一样，只是方向变化了而已，不多叙述。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1170,276 +1337,6 @@ so a clear interface can be followed, my personal belief.</p></blockquote>
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick/" itemprop="url">Use Carrierwave to Crop Image With MiniMagick</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/carrierwave/'>carrierwave</a>, <a class='category' href='/blog/categories/minimagick/'>minimagick</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-16T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-07-16</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/07/16/Use-Carrierwave-to-crop-image-with-MiniMagick/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>做Web应用，常常要涉及到文件的上传，图片的上传就是其中之一。在Rails中，上传文件经常用到的是Carrierwave。</p>
-
-<h3><a href="https://github.com/carrierwaveuploader/carrierwave">Carrierwave</a></h3>
-
-<h4><a href="https://github.com/carrierwaveuploader/carrierwave#getting-started">创建方法</a></h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rails g uploader avatar</span></code></pre></td></tr></table></div></figure>
-
-
-<p>之后会产生，文件<code>app/uploaders/avatar_uploader.rb</code>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class AvatarUploader &lt; CarrierWave::Uploader::Base
-</span><span class='line'>  storage :file
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>使用</h4>
-
-<p>1.直接使用：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>uploader = AvatarUploader.new
-</span><span class='line'>uploader.store!(my_file)
-</span><span class='line'>uploader.retrieve_from_store!('my_file.png')</span></code></pre></td></tr></table></div></figure>
-
-
-<p>2.运用于 model 中:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class User &lt; ActiveRecord::Base
-</span><span class='line'>  mount_uploader :avatar, AvatarUploader
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样有个好处，可以利用 model 传入各种操作参数，如：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>def crop
-</span><span class='line'>  if model.crop_x.present?
-</span><span class='line'>    resize_to_limit(700, 700)
-</span><span class='line'>
-</span><span class='line'>    manipulate! do |img|
-</span><span class='line'>      x = model.crop_x
-</span><span class='line'>      y = model.crop_y
-</span><span class='line'>      w = model.crop_w
-</span><span class='line'>      h = model.crop_h
-</span><span class='line'>
-</span><span class='line'>      size = w &lt;&lt; 'x' &lt;&lt; h
-</span><span class='line'>      offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
-</span><span class='line'>
-</span><span class='line'>      img.crop("#{size}#{offset}") # Doesn't return an image...
-</span><span class='line'>      img # ...so you'll neet to call it yourself
-</span><span class='line'>    end
-</span><span class='line'>  end
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p>可能会遇到这种情况：想传入参数，但是并不要 ActiveRecord、MongoMapper、MongoId 等等 ORM 的中间件，那么可以这样子：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>class Avatar
-</span><span class='line'>  extend CarrierWave::Mount
-</span><span class='line'>
-</span><span class='line'>  attr_accessor :crop_w, :crop_h, :crop_x, :crop_y
-</span><span class='line'>  mount_uploader :image, AvatarUploader
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>CarrierWave::Mount</code>之中包含了<code>mount_uploader</code>方法的定义。</p>
-
-<h3><a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/RMagick.html">RMagick</a> vs <a href="http://carrierwave.rubyforge.org/rdoc/classes/CarrierWave/MiniMagick.html">MiniMagick</a></h3>
-
-<blockquote><p>http://stackoverflow.com/questions/8418973/undefined-method-crop-using-carrierwave-with-minimagick-on-rails-3-1-3#answer-9961434</p></blockquote>
-
-<p>RMagick 和 MiniMagick 是不一样的，MiniMagick 较 RMagick 更为轻量级。RMagick 根据 Ruby 的语法规则定义了许多操作图片的方法，如：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rmagick_image.crop(x_offset, y_offset, width, height) # Returns an image object
-</span><span class='line'>rmagick_image.crop!(x_offset, y_offset, width, height) # Edits object in place</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而 MiniMagick 运用了元编程的方法，动态的创建请求的方法（创建的<a href="https://github.com/minimagick/minimagick/blob/c12decb8bf45383a3b1ea602c320ff79f49d2b79/lib/mini_magick.rb#L456">规则</a>）。方法直接访问 <a href="http://www.imagemagick.org/www/mogrify.html">mogrify</a>，并不会返回图片本身对象：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>minimagick_image.crop('100x200') # Translates to `mogrify -crop 100x200 image.ext`
-</span><span class='line'>minimagick_image.polaroid('12')  # Executes `mogrify -polaroid 12 image.ext`</span></code></pre></td></tr></table></div></figure>
-
-
-<p>所以 MiniMagick 中没有 Ruby 语法式的 crop! 方法。</p>
-
-<h3>MiniMagick</h3>
-
-<h4>crop</h4>
-
-<p>要裁剪图片，不得不谈到 crop 方法。使用的方法</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># 'w' means width 宽
-</span><span class='line'># 'h' means height 高
-</span><span class='line'># 'x' means x-offset x轴偏移量
-</span><span class='line'># 'y' means y-offset y轴偏移量
-</span><span class='line'>image.crop("wxh+x+y")</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>resize</h4>
-
-<p>参照 <a href="http://www.imagemagick.org/Usage/resize/#noaspect">imagemagick</a></p>
-
-<p>在 MiniMagick 使用中，前面四种方法对应有</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>resize("64x64!") # 固定大小，64x64
-</span><span class='line'>resize("64x64&gt;") # 使大图像变小，小的不变；调整后，宽和高都不能大于64
-</span><span class='line'>resize("64x64&lt;") # 使小图像变大，大的不变；调整后，宽和高都不小于64
-</span><span class='line'>resize("64x64^") # 使最小的宽或高变为64，另外一个按比例放大或者缩小</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这四种方法对照链接中的图片，理解会更加容易些。</p>
-
-<p>在　process 中不能直接使用　resize 方法：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>process resize: "300x300^" # 这会找不到resize方法</span></code></pre></td></tr></table></div></figure>
-
-
-<p>有一场景：在页面中，将上传的图片以300x300显示来预览，即缩放后的图片最大的边变成300。并且，进行特定格式的截图，如　100x100，代码有：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>version :thumb do 
-</span><span class='line'>  process :lazy_resize_300
-</span><span class='line'>  process :cropper
-</span><span class='line'>  process :force_resize_100x100!
-</span><span class='line'>end
-</span><span class='line'>
-</span><span class='line'>def lazy_resize_300
-</span><span class='line'>  manipulate! do |img| 
-</span><span class='line'>    img.resize "300x300^" if img[:width].to_i &lt; 300 && img[:height].to_i &lt; 300
-</span><span class='line'>    img.resize "300x300&gt;"
-</span><span class='line'>    img
-</span><span class='line'>  end
-</span><span class='line'>end
-</span><span class='line'>
-</span><span class='line'>def force_resize_100x100!
-</span><span class='line'>  manipulate! do |img| 
-</span><span class='line'>    img.resize "100x100!"
-</span><span class='line'>    img
-</span><span class='line'>  end
-</span><span class='line'>end
-</span><span class='line'>
-</span><span class='line'>def cropper
-</span><span class='line'>  manipulate! do |img|      
-</span><span class='line'>    x = model.crop_x
-</span><span class='line'>    y = model.crop_y
-</span><span class='line'>    w = model.crop_w
-</span><span class='line'>    h = model.crop_h
-</span><span class='line'>    size = w &lt;&lt; 'x' &lt;&lt; h
-</span><span class='line'>    offset = '+' &lt;&lt; x &lt;&lt; '+' &lt;&lt; y
-</span><span class='line'>    img.crop("#{size}#{offset}") # Doesn't return an image...
-</span><span class='line'>    img # ...so you'll neet to call it yourself
-</span><span class='line'>  end 
-</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
-
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1455,7 +1352,7 @@ so a clear interface can be followed, my personal belief.</p></blockquote>
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2018
+			<footer id="footer" class="inner">Copyright &copy; 2019
 
     liu.shatle &hearts; gmail.com
 

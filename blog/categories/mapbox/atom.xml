@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mapbox | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/mapbox/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2019-02-15T01:07:50+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[usage of mapbox]]></title>
+    <link href="http://shatle.github.io/blog/2019/02/15/usage-of-mapbox/"/>
+    <updated>2019-02-15T00:12:45+08:00</updated>
+    <id>http://shatle.github.io/blog/2019/02/15/usage-of-mapbox</id>
+    <content type="html"><![CDATA[<p>朋友需要帮忙，使用地图进行数据的展示。网上，不少人使用 mapbox，看了些示例与文档，手动折腾了一下，确实是强大。</p>
+
+<p>下面将折腾的过程记录下来。</p>
+
+<p>先说一下需求：朋友需要对某个城市的路线中的一些路线进行颜色的特殊标识，比如，广州有很多道路，需要将有包含人名的道路标识出来。另外，人名分男女，用不同颜色进行区分显示。</p>
+
+<p>地图信息，本质是不同图层的叠加，比如地形图、卫星图、道路图等，需要显示哪些图层，勾选就可以，也可以同时显示多个图层，它们会叠加，类似ps。</p>
+
+<p>那么，要实现需求，需要完整的广州道路图、标识的道路图。</p>
+
+<ul>
+<li>第一步，我们需要现有的广州道路的地图，一个底图。</li>
+</ul>
+
+
+<p>翻阅了官网，发现一个浅色系的地图 <code>mapbox://styles/mapbox/light-v9</code>，这个地图适合当背景，这样标识的道路图可以选择较亮眼的颜色。</p>
+
+<ul>
+<li>第二步，需要有标识人名道路的图层。</li>
+</ul>
+
+
+<p>怎么拥有这个图层呢？首先，需要理解，图层的本质是道路的数据，只要有道路的数据就可以了。</p>
+
+<p>那么怎么有需要标识的道路数据呢？如果别人整理过，可以直接拿geo的坐标数据集。但是，一般人不会刚好想到你的需求，刚好整理了出来，刚好分享到网络上。</p>
+
+<p>由于是自己选择的道路，所以数据需要自己整理，Mapbox 这点就很好了。地图道路的数据实际上是一系列的坐标点，Mapbox 允许你直接在地图在通过画线，来得到这些数据。也就是，可以通过直观的操作，得到geo的数值数据。</p>
+
+<p>mapbox 有 dataset 和 tileset 的概念， dataset 就是数据集，tileset贴图集。dataset 就是用来存储标志的路线坐标数据的， 如果直接使用数值数据渲染，可以足够了。</p>
+
+<p>在 mapbox 需要通过网络使用 dataset，需要生成相应的 tileset 才能使用。在 https://studio.mapbox.com/datasets 在查看自己的 dataset，在 https://studio.mapbox.com/tilesets 在查看自己的 tileset。</p>
+
+<hr />
+
+<p>那么，先看看直接使用数值数据的例子。在这个例子中，需要将 dataset 中的坐标值，手动复制到相应的代码块中，效果见 <a href="/mapbox/index.html">index.html</a></p>
+
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;meta charset='utf-8' /&gt;
+  &lt;title&gt;Display a map&lt;/title&gt;
+  &lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
+  &lt;script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'&gt;&lt;/script&gt;
+  &lt;link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' /&gt;
+  &lt;style&gt;
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* 外部div样式 */
+    #container {
+      margin: 20px auto;
+      width: 800px;
+      height: 400px;
+      position: relative;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;!-- 增加外部div，限制高宽 --&gt;
+  &lt;div id="container"&gt;
+    &lt;div id='map'&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhdGxlIiwiYSI6ImNqczF4NzgxdTA3dnc0NHA4aG5sdDk3Y2gifQ.Mr3uL3avjz6PD6zkCvwxPw';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v9', // 这是灰色地图
+      center: [113.374233, 23.137433],
+      zoom: 15
+    });
+
+    // 当 map 地图加载完成后，添加图层
+    // 下面数据有三个特征 feature 数据， 一个是红色的路线，两个是天蓝色的路线
+    // 可以通过js来控制加载哪些特征数据，就可以做到区别显示了
+    map.on('load', function () {
+      // 红色
+      map.addLayer({
+        'id': 'redlines',
+        'type': 'line',
+        'source': {
+          'type': 'geojson',
+          'data': {
+            'type': 'FeatureCollection',
+            'features': [{ // 这里是红色 dataset 
+              'type': 'Feature',
+              'properties': {
+                'color': '#F7455D' // red
+              },
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                  [113.371858, 23.137009],
+                  [113.37309, 23.136758],
+                  [113.373807, 23.1366],
+                  [113.374053, 23.136553]
+                ]
+              }
+            }]
+          }
+        },
+        'paint': {
+          'line-width': 3,
+          'line-color': ['get', 'color']
+        }
+      });
+
+      // 天蓝
+      map.addLayer({
+        'id': 'bluelines',
+        'type': 'line',
+        'source': {
+          'type': 'geojson',
+          'data': {
+            'type': 'FeatureCollection',
+            'features': [{ // 这里是天蓝 dataset 
+                'type': 'Feature',
+                'properties': {
+                  'color': '#00ffff'
+                },
+                'geometry': {
+                  'type': 'LineString',
+                  'coordinates': [
+                    [
+                      113.37421857524919,
+                      23.13651914382298
+                    ],
+                    ...
+                  ]
+                }
+              },
+              { //这里是天蓝 另外一条路线
+                'type': 'Feature',
+                'properties': {
+                  'color': '#00ffff'
+                },
+                'geometry': {
+                  'type': 'LineString',
+                  'coordinates': [
+                    [
+                      113.37539098241979,
+                      23.13607741667701
+                    ],
+                    ...
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        'paint': {
+          'line-width': 3,
+          'line-color': ['get', 'color']
+        }
+      });
+    });
+  &lt;/script&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+
+<p>由于后期还需要区分操作显示，再次过了一下官网上的例子，有通过按钮点击，切换显示不同路线图层的方法，另外还有直接使用 tileset 进行异步请求数值数据的方法，不用复制数值数据了，效果见 <a href="/mapbox/switch.html">switch.html</a></p>
+
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;meta charset='utf-8' /&gt;
+  &lt;title&gt;Show and hide layers&lt;/title&gt;
+  ...
+&lt;/head&gt;
+
+&lt;body&gt;
+
+  &lt;style&gt;
+    #menu {
+      background: #fff;
+      position: absolute;
+      z-index: 1;
+      top: 10px;
+      right: 10px;
+      border-radius: 3px;
+      width: 120px;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    #menu a {
+      font-size: 13px;
+      color: #404040;
+      display: block;
+      margin: 0;
+      padding: 0;
+      padding: 10px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+
+    #menu a:last-child {
+      border: none;
+    }
+
+    #menu a:hover {
+      background-color: #f8f8f8;
+      color: #404040;
+    }
+
+    #menu a.active {
+      background-color: #3887be;
+      color: #ffffff;
+    }
+
+    #menu a.active:hover {
+      background: #3074a4;
+    }
+  &lt;/style&gt;
+
+  &lt;div id="container"&gt;
+    &lt;nav id="menu"&gt;&lt;/nav&gt;
+    &lt;div id="map"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhdGxlIiwiYSI6ImNqczF4NzgxdTA3dnc0NHA4aG5sdDk3Y2gifQ.Mr3uL3avjz6PD6zkCvwxPw';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v9',
+      zoom: 15,
+      center: [113.374233, 23.137433]
+    });
+
+    map.on('load', function () {
+      map.addSource('red', {
+        type: 'vector',
+        url: 'mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td'
+      });
+      map.addLayer({
+        'id': 'red',
+        'type': 'line',
+        'source': 'red',
+        'source-layer': 'lcm-test',
+        'layout': {
+          'visibility': 'visible',
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        'paint': {
+          'line-color': '#ff0000',
+          'line-width': 1
+        }
+      });
+
+      map.addSource('blue', {
+        type: 'vector',
+        url: 'mapbox://shatle.cjs3g5w7k01us2wmudbbgjxks-6t25j'
+      });
+      map.addLayer({
+        'id': 'blue',
+        'type': 'line',
+        'source': 'blue',
+        'source-layer': 'lcmtest2',
+        'layout': {
+          'visibility': 'visible',
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        'paint': {
+          'line-color': '#00ffff',
+          'line-width': 1
+        }
+      });
+    });
+
+    var toggleableLayerIds = ['red', 'blue'];
+
+    for (var i = 0; i &lt; toggleableLayerIds.length; i++) {
+      var id = toggleableLayerIds[i];
+
+      var link = document.createElement('a');
+      link.href = '#';
+      link.className = 'active';
+      link.textContent = id;
+
+      link.onclick = function (e) {
+        var clickedLayer = this.textContent;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+        if (visibility === 'visible') {
+          map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+          this.className = '';
+        } else {
+          this.className = 'active';
+          map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+        }
+      };
+
+      var layers = document.getElementById('menu');
+      layers.appendChild(link);
+    }
+  &lt;/script&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

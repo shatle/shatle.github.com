@@ -1,0 +1,769 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>usage of mapbox - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Usage of Mapbox mapbox 朋友需要帮忙，使用地图进行数据的展示。网上，不少人使用 mapbox，看了些示例与文档，手动折腾了一下，确实是强大。 下面将折腾的过程记录下来。 先说一下需求：朋友需要对某个城市的路线中的一些路线进行颜色的特殊标识，比如，广州有很多道路， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2019/02/15/usage-of-mapbox/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Usage of Mapbox</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/mapbox/'>mapbox</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>朋友需要帮忙，使用地图进行数据的展示。网上，不少人使用 mapbox，看了些示例与文档，手动折腾了一下，确实是强大。</p>
+
+<p>下面将折腾的过程记录下来。</p>
+
+<p>先说一下需求：朋友需要对某个城市的路线中的一些路线进行颜色的特殊标识，比如，广州有很多道路，需要将有包含人名的道路标识出来。另外，人名分男女，用不同颜色进行区分显示。</p>
+
+<p>地图信息，本质是不同图层的叠加，比如地形图、卫星图、道路图等，需要显示哪些图层，勾选就可以，也可以同时显示多个图层，它们会叠加，类似ps。</p>
+
+<p>那么，要实现需求，需要完整的广州道路图、标识的道路图。</p>
+
+<ul>
+<li>第一步，我们需要现有的广州道路的地图，一个底图。</li>
+</ul>
+
+
+<p>翻阅了官网，发现一个浅色系的地图 <code>mapbox://styles/mapbox/light-v9</code>，这个地图适合当背景，这样标识的道路图可以选择较亮眼的颜色。</p>
+
+<ul>
+<li>第二步，需要有标识人名道路的图层。</li>
+</ul>
+
+
+<p>怎么拥有这个图层呢？首先，需要理解，图层的本质是道路的数据，只要有道路的数据就可以了。</p>
+
+<p>那么怎么有需要标识的道路数据呢？如果别人整理过，可以直接拿geo的坐标数据集。但是，一般人不会刚好想到你的需求，刚好整理了出来，刚好分享到网络上。</p>
+
+<p>由于是自己选择的道路，所以数据需要自己整理，Mapbox 这点就很好了。地图道路的数据实际上是一系列的坐标点，Mapbox 允许你直接在地图在通过画线，来得到这些数据。也就是，可以通过直观的操作，得到geo的数值数据。</p>
+
+<p>mapbox 有 dataset 和 tileset 的概念， dataset 就是数据集，tileset贴图集。dataset 就是用来存储标志的路线坐标数据的， 如果直接使用数值数据渲染，可以足够了。</p>
+
+<p>在 mapbox 需要通过网络使用 dataset，需要生成相应的 tileset 才能使用。在 https://studio.mapbox.com/datasets 在查看自己的 dataset，在 https://studio.mapbox.com/tilesets 在查看自己的 tileset。</p>
+
+<hr />
+
+<p>那么，先看看直接使用数值数据的例子。在这个例子中，需要将 dataset 中的坐标值，手动复制到相应的代码块中，效果见 <a href="/mapbox/index.html">index.html</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&#39;utf-8&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;title&gt;</span>Display a map<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&#39;viewport&#39;</span> <span class="na">content=</span><span class="s">&#39;initial-scale=1,maximum-scale=1,user-scalable=no&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&#39;https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js&#39;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&#39;https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css&#39;</span> <span class="na">rel=</span><span class="s">&#39;stylesheet&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>    <span class="nt">body</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">height</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">/* 外部div样式 */</span>
+</span><span class='line'>    <span class="nf">#container</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">margin</span><span class="o">:</span> <span class="m">20px</span> <span class="k">auto</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">width</span><span class="o">:</span> <span class="m">800px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">height</span><span class="o">:</span> <span class="m">400px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#map</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">bottom</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'>  <span class="c">&lt;!-- 增加外部div，限制高宽 --&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&#39;map&#39;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>    <span class="nx">mapboxgl</span><span class="p">.</span><span class="nx">accessToken</span> <span class="o">=</span> <span class="s1">&#39;pk.eyJ1Ijoic2hhdGxlIiwiYSI6ImNqczF4NzgxdTA3dnc0NHA4aG5sdDk3Y2gifQ.Mr3uL3avjz6PD6zkCvwxPw&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mapboxgl</span><span class="p">.</span><span class="nx">Map</span><span class="p">({</span>
+</span><span class='line'>      <span class="nx">container</span><span class="o">:</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">style</span><span class="o">:</span> <span class="s1">&#39;mapbox://styles/mapbox/light-v9&#39;</span><span class="p">,</span> <span class="c1">// 这是灰色地图</span>
+</span><span class='line'>      <span class="nx">center</span><span class="o">:</span> <span class="p">[</span><span class="mf">113.374233</span><span class="p">,</span> <span class="mf">23.137433</span><span class="p">],</span>
+</span><span class='line'>      <span class="nx">zoom</span><span class="o">:</span> <span class="mi">15</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// 当 map 地图加载完成后，添加图层</span>
+</span><span class='line'>    <span class="c1">// 下面数据有三个特征 feature 数据， 一个是红色的路线，两个是天蓝色的路线</span>
+</span><span class='line'>    <span class="c1">// 可以通过js来控制加载哪些特征数据，就可以做到区别显示了</span>
+</span><span class='line'>    <span class="nx">map</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// 红色</span>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">({</span>
+</span><span class='line'>        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;redlines&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;geojson&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;FeatureCollection&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;features&#39;</span><span class="o">:</span> <span class="p">[{</span> <span class="c1">// 这里是红色 dataset </span>
+</span><span class='line'>              <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;Feature&#39;</span><span class="p">,</span>
+</span><span class='line'>              <span class="s1">&#39;properties&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s1">&#39;color&#39;</span><span class="o">:</span> <span class="s1">&#39;#F7455D&#39;</span> <span class="c1">// red</span>
+</span><span class='line'>              <span class="p">},</span>
+</span><span class='line'>              <span class="s1">&#39;geometry&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;LineString&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s1">&#39;coordinates&#39;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>                  <span class="p">[</span><span class="mf">113.371858</span><span class="p">,</span> <span class="mf">23.137009</span><span class="p">],</span>
+</span><span class='line'>                  <span class="p">[</span><span class="mf">113.37309</span><span class="p">,</span> <span class="mf">23.136758</span><span class="p">],</span>
+</span><span class='line'>                  <span class="p">[</span><span class="mf">113.373807</span><span class="p">,</span> <span class="mf">23.1366</span><span class="p">],</span>
+</span><span class='line'>                  <span class="p">[</span><span class="mf">113.374053</span><span class="p">,</span> <span class="mf">23.136553</span><span class="p">]</span>
+</span><span class='line'>                <span class="p">]</span>
+</span><span class='line'>              <span class="p">}</span>
+</span><span class='line'>            <span class="p">}]</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="s1">&#39;paint&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;line-width&#39;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-color&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// 天蓝</span>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">({</span>
+</span><span class='line'>        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;bluelines&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;geojson&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;data&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;FeatureCollection&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;features&#39;</span><span class="o">:</span> <span class="p">[{</span> <span class="c1">// 这里是天蓝 dataset </span>
+</span><span class='line'>                <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;Feature&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s1">&#39;properties&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="s1">&#39;color&#39;</span><span class="o">:</span> <span class="s1">&#39;#00ffff&#39;</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s1">&#39;geometry&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;LineString&#39;</span><span class="p">,</span>
+</span><span class='line'>                  <span class="s1">&#39;coordinates&#39;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>                    <span class="p">[</span>
+</span><span class='line'>                      <span class="mf">113.37421857524919</span><span class="p">,</span>
+</span><span class='line'>                      <span class="mf">23.13651914382298</span>
+</span><span class='line'>                    <span class="p">],</span>
+</span><span class='line'>                    <span class="p">...</span>
+</span><span class='line'>                  <span class="p">]</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>              <span class="p">},</span>
+</span><span class='line'>              <span class="p">{</span> <span class="c1">//这里是天蓝 另外一条路线</span>
+</span><span class='line'>                <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;Feature&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s1">&#39;properties&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="s1">&#39;color&#39;</span><span class="o">:</span> <span class="s1">&#39;#00ffff&#39;</span>
+</span><span class='line'>                <span class="p">},</span>
+</span><span class='line'>                <span class="s1">&#39;geometry&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>                  <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;LineString&#39;</span><span class="p">,</span>
+</span><span class='line'>                  <span class="s1">&#39;coordinates&#39;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>                    <span class="p">[</span>
+</span><span class='line'>                      <span class="mf">113.37539098241979</span><span class="p">,</span>
+</span><span class='line'>                      <span class="mf">23.13607741667701</span>
+</span><span class='line'>                    <span class="p">],</span>
+</span><span class='line'>                    <span class="p">...</span>
+</span><span class='line'>                  <span class="p">]</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>              <span class="p">}</span>
+</span><span class='line'>            <span class="p">]</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="s1">&#39;paint&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;line-width&#39;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-color&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于后期还需要区分操作显示，再次过了一下官网上的例子，有通过按钮点击，切换显示不同路线图层的方法，另外还有直接使用 tileset 进行异步请求数值数据的方法，不用复制数值数据了，效果见 <a href="/mapbox/switch.html">switch.html</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&#39;utf-8&#39;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;title&gt;</span>Show and hide layers<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>  ...
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">background</span><span class="o">:</span> <span class="m">#fff</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">z-index</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">top</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">right</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">width</span><span class="o">:</span> <span class="m">120px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">.</span><span class="m">4</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">font-family</span><span class="o">:</span> <span class="s1">&#39;Open Sans&#39;</span><span class="o">,</span> <span class="k">sans-serif</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="nt">a</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">font-size</span><span class="o">:</span> <span class="m">13px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">color</span><span class="o">:</span> <span class="m">#404040</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">padding</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">text-decoration</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">border-bottom</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">.</span><span class="m">25</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="nt">a</span><span class="nd">:last-child</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">border</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="nt">a</span><span class="nd">:hover</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">background-color</span><span class="o">:</span> <span class="m">#f8f8f8</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">color</span><span class="o">:</span> <span class="m">#404040</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="nt">a</span><span class="nc">.active</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">background-color</span><span class="o">:</span> <span class="m">#3887be</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">color</span><span class="o">:</span> <span class="m">#ffffff</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nf">#menu</span> <span class="nt">a</span><span class="nc">.active</span><span class="nd">:hover</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">background</span><span class="o">:</span> <span class="m">#3074a4</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;nav</span> <span class="na">id=</span><span class="s">&quot;menu&quot;</span><span class="nt">&gt;&lt;/nav&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>    <span class="nx">mapboxgl</span><span class="p">.</span><span class="nx">accessToken</span> <span class="o">=</span> <span class="s1">&#39;pk.eyJ1Ijoic2hhdGxlIiwiYSI6ImNqczF4NzgxdTA3dnc0NHA4aG5sdDk3Y2gifQ.Mr3uL3avjz6PD6zkCvwxPw&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">mapboxgl</span><span class="p">.</span><span class="nx">Map</span><span class="p">({</span>
+</span><span class='line'>      <span class="nx">container</span><span class="o">:</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">style</span><span class="o">:</span> <span class="s1">&#39;mapbox://styles/mapbox/light-v9&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">zoom</span><span class="o">:</span> <span class="mi">15</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">center</span><span class="o">:</span> <span class="p">[</span><span class="mf">113.374233</span><span class="p">,</span> <span class="mf">23.137433</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">map</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addSource</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;vector&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td&#39;</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">({</span>
+</span><span class='line'>        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source&#39;</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source-layer&#39;</span><span class="o">:</span> <span class="s1">&#39;lcm-test&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;layout&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;visibility&#39;</span><span class="o">:</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-join&#39;</span><span class="o">:</span> <span class="s1">&#39;round&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-cap&#39;</span><span class="o">:</span> <span class="s1">&#39;round&#39;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="s1">&#39;paint&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;line-color&#39;</span><span class="o">:</span> <span class="s1">&#39;#ff0000&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-width&#39;</span><span class="o">:</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addSource</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;vector&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;mapbox://shatle.cjs3g5w7k01us2wmudbbgjxks-6t25j&#39;</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">({</span>
+</span><span class='line'>        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source&#39;</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source-layer&#39;</span><span class="o">:</span> <span class="s1">&#39;lcmtest2&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;layout&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;visibility&#39;</span><span class="o">:</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-join&#39;</span><span class="o">:</span> <span class="s1">&#39;round&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-cap&#39;</span><span class="o">:</span> <span class="s1">&#39;round&#39;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="s1">&#39;paint&#39;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s1">&#39;line-color&#39;</span><span class="o">:</span> <span class="s1">&#39;#00ffff&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;line-width&#39;</span><span class="o">:</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">toggleableLayerIds</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">toggleableLayerIds</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">toggleableLayerIds</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">link</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="nx">link</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="nx">link</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nx">link</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">clickedLayer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">textContent</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">e</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">visibility</span> <span class="o">=</span> <span class="nx">map</span><span class="p">.</span><span class="nx">getLayoutProperty</span><span class="p">(</span><span class="nx">clickedLayer</span><span class="p">,</span> <span class="s1">&#39;visibility&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">visibility</span> <span class="o">===</span> <span class="s1">&#39;visible&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">map</span><span class="p">.</span><span class="nx">setLayoutProperty</span><span class="p">(</span><span class="nx">clickedLayer</span><span class="p">,</span> <span class="s1">&#39;visibility&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">);</span>
+</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span><span class="p">;</span>
+</span><span class='line'>          <span class="nx">map</span><span class="p">.</span><span class="nx">setLayoutProperty</span><span class="p">(</span><span class="nx">clickedLayer</span><span class="p">,</span> <span class="s1">&#39;visibility&#39;</span><span class="p">,</span> <span class="s1">&#39;visible&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">layers</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;menu&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">layers</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">link</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2019
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2019/02/15/usage-of-mapbox/';
+        var disqus_url = 'http://shatle.github.io/blog/2019/02/15/usage-of-mapbox/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
