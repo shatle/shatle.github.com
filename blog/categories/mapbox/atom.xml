@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mapbox | Liu.Shatle]]></title>
   <link href="http://shatle.github.io/blog/categories/mapbox/atom.xml" rel="self"/>
   <link href="http://shatle.github.io/"/>
-  <updated>2019-02-15T01:07:50+08:00</updated>
+  <updated>2019-02-15T01:18:12+08:00</updated>
   <id>http://shatle.github.io/</id>
   <author>
     <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
@@ -268,13 +268,13 @@
     map.on('load', function () {
       map.addSource('red', {
         type: 'vector',
-        url: 'mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td'
+        url: 'mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td' // 这个是 tileset 中的 Map ID
       });
       map.addLayer({
         'id': 'red',
         'type': 'line',
         'source': 'red',
-        'source-layer': 'lcm-test',
+        'source-layer': 'lcm-test',  // 这个是tileset 中的一图层名称
         'layout': {
           'visibility': 'visible',
           'line-join': 'round',
@@ -285,7 +285,7 @@
           'line-width': 1
         }
       });
-
+      // 同理上一个数据，构建第二个分类数据
       map.addSource('blue', {
         type: 'vector',
         url: 'mapbox://shatle.cjs3g5w7k01us2wmudbbgjxks-6t25j'

@@ -4,7 +4,7 @@
   <title><![CDATA[Liu.Shatle]]></title>
   <link href="http://shatle.github.io/atom.xml" rel="self"/>
   <link href="http://shatle.github.io/"/>
-  <updated>2019-02-15T01:07:50+08:00</updated>
+  <updated>2019-02-15T01:18:12+08:00</updated>
   <id>http://shatle.github.io/</id>
   <author>
     <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
@@ -552,13 +552,13 @@
 </span><span class='line'>    <span class="nx">map</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 </span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addSource</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="p">{</span>
 </span><span class='line'>        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;vector&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td&#39;</span>
+</span><span class='line'>        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td&#39;</span> <span class="c1">// 这个是 tileset 中的 Map ID</span>
 </span><span class='line'>      <span class="p">});</span>
 </span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">({</span>
 </span><span class='line'>        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
 </span><span class='line'>        <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
 </span><span class='line'>        <span class="s1">&#39;source&#39;</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;source-layer&#39;</span><span class="o">:</span> <span class="s1">&#39;lcm-test&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;source-layer&#39;</span><span class="o">:</span> <span class="s1">&#39;lcm-test&#39;</span><span class="p">,</span>  <span class="c1">// 这个是tileset 中的一图层名称</span>
 </span><span class='line'>        <span class="s1">&#39;layout&#39;</span><span class="o">:</span> <span class="p">{</span>
 </span><span class='line'>          <span class="s1">&#39;visibility&#39;</span><span class="o">:</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span>
 </span><span class='line'>          <span class="s1">&#39;line-join&#39;</span><span class="o">:</span> <span class="s1">&#39;round&#39;</span><span class="p">,</span>
@@ -569,7 +569,7 @@
 </span><span class='line'>          <span class="s1">&#39;line-width&#39;</span><span class="o">:</span> <span class="mi">1</span>
 </span><span class='line'>        <span class="p">}</span>
 </span><span class='line'>      <span class="p">});</span>
-</span><span class='line'>
+</span><span class='line'>      <span class="c1">// 同理上一个数据，构建第二个分类数据</span>
 </span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">addSource</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="p">{</span>
 </span><span class='line'>        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;vector&#39;</span><span class="p">,</span>
 </span><span class='line'>        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;mapbox://shatle.cjs3g5w7k01us2wmudbbgjxks-6t25j&#39;</span>

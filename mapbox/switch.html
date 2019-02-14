@@ -95,13 +95,13 @@
     map.on('load', function () {
       map.addSource('red', {
         type: 'vector',
-        url: 'mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td'
+        url: 'mapbox://shatle.cjs1z8leu4hge2xpkx5s9faxa-814td' // 这个是 tileset 中的 Map ID
       });
       map.addLayer({
         'id': 'red',
         'type': 'line',
         'source': 'red',
-        'source-layer': 'lcm-test',
+        'source-layer': 'lcm-test', // 这个是tileset 中的一图层名称
         'layout': {
           'visibility': 'visible',
           'line-join': 'round',
@@ -113,6 +113,7 @@
         }
       });
 
+      // 同理上一个数据，构建第二个分类数据
       map.addSource('blue', {
         type: 'vector',
         url: 'mapbox://shatle.cjs3g5w7k01us2wmudbbgjxks-6t25j'
