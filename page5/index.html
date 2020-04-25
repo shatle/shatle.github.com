@@ -9,7 +9,9 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="AVL树的删除 avl, avl树 2013-09-13 Comments 之前说到插入，相比插入操作，删除操作要复杂些。但是，也有共同的地方。 删除操作与插入操作的大体思路是相同的，引起不平衡的原因，在于某些节点的平衡因子从1变为2，从-1变为-2。调整时，需要找出离删除节点最近的此类节点， &hellip;">
+	<meta name="description" content="居然有这命令 linux, terminal, tmux 2013-10-08 Comments 刚刚折腾 tmux ，不小心按错键，导致终端的字体变大了。哪个快捷键啊！ 网上搜了一下，居然有这命令： 1
+2
+放大快捷键：Ctrl shift + 缩小快捷键：Ctrl - 倒！！！ &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +79,54 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/10/08/accident-from-tmux/" itemprop="url">居然有这命令</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/terminal/'>terminal</a>, <a class='category' href='/blog/categories/tmux/'>tmux</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-08T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-10-08</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/10/08/accident-from-tmux/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>刚刚折腾 tmux ，不小心按错键，导致终端的字体变大了。哪个快捷键啊！</p>
+
+<p>网上搜了一下，居然有这命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>放大快捷键：Ctrl shift + 
+</span><span class='line'>缩小快捷键：Ctrl  -</span></code></pre></td></tr></table></div></figure>
+
+
+<p>倒！！！</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1254,82 +1304,6 @@ so a clear interface can be followed, my personal belief.</p></blockquote>
 
 
 <p><img src="/images/photo/2013-08-17_10_10_58%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="2013-08-17 10:10:58的屏幕截图.png" /></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/08/07/Linux-Commands/" itemprop="url">Linux Commands</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/command/'>command</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-07T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-07</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/08/07/Linux-Commands/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>用来记录各种 linux 下的有用命令！</p>
-
-<h4>top</h4>
-
-<p>动态查看机器的CPU、内存及各数据的变化。</p>
-
-<h4>netlogs</h4>
-
-<p><em>安装</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install netlogs</span></code></pre></td></tr></table></div></figure>
-
-
-<p><em>使用命令</em></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sudo netlogs wlan0</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>wlan0</code>是我无线的名称。使用网口的可能是<code>eth0</code>，但不一定。</p>
-
-<p>对于到底是哪个呢，可使用命令<code>ip addr</code>，看到正在使用的网络名称，并替代<code>wlan0</code>。</p>
-
-<h4>pushd, popd</h4>
-
-<p>最近发现个有趣而有用的命令，<code>pushd .</code>把当前的目录放入栈中，然后通过<code>popd</code>命令回到此目录。</p>
-
-<p>显示，对于经常访问并且地址很长的路径，是很有用的。否则，每次都要<code>cd</code>多累啊！</p>
-
-<p>其实这个也很累，哈哈！</p>
-
-<h4>apt-get</h4>
-
-<p><code>apt-cache policy PACKAGE_NAME</code> 下载安装之前查看安装包，有哪些版本</p>
-
-<p><code>apt-cache showpkg PACKAGE_NAME</code> 显示的内容更为详细些</p>
-
-<p>列出版本之后，需要指定安装版本：<code>sudo apt-get install PACKAGE_NAME=version</code> version指定完整版本名称</p>
 
 		
 		

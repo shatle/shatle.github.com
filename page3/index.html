@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="ES6 in Depth: Template Strings es6, template, 深入es6 2015-10-24 Comments ES6 in Depth: Template strings 上周，我们已经提到要变步伐。在迭代器和生成器之后，我们来开始些简单的，这是我之前说过的。 &hellip;">
+	<meta name="description" content="ES6 in Depth: Rest Parameters and Defaults default, es6, parameter, 深入es6 2015-10-25 Comments ES6 in Depth: Rest parameters and defaults &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,181 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/10/25/es6-in-depth-rest-parameters-and-defaults/" itemprop="url">ES6 in Depth: Rest Parameters and Defaults</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/default/'>default</a>, <a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/parameter/'>parameter</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-25T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-10-25</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/10/25/es6-in-depth-rest-parameters-and-defaults/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-rest-parameters-and-defaults/">ES6 in Depth: Rest parameters and defaults</a></p></blockquote>
+
+<p>今天文章是关于JS函数中更具有表达力的两个特性：剩余参数和默认参数。</p>
+
+<h4>剩余参数</h4>
+
+<p>创建一个可变的函数作为API是个常见的需求，而这函数可接受任意个参数。例如，<code>String.prototype.concat</code>方法可接受任意数量的字符串参数。利用剩余参数，ES6提供了一种编写可变函数的方式。</p>
+
+<p>为了说明，让我们编写一个简单的可变函数<code>containsAll</code>，用来检查一个字符串是否包含有一定数量的子串。例如，<code>containsAll("banana", "b", "nan")</code> 会返回 <code>true</code>，而<code>containsAll("banana", "c", "nan")</code> 会返回<code>false</code>。</p>
+
+<p>这里是一个传统的实现方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">containsAll</span><span class="p">(</span><span class="nx">haystack</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">lenght</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">needle</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">haystack</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">needle</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">){</span>
+</span><span class='line'>      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这种实现方式使用了具有魔力的 arguments 对象，它是一个类似数组的对象，包含了传递给函数的所有参数。这代码确实可以达到我们所需求的目标，但是其可读性并不是最佳的。这函数的参数列表中只包括了一个参数<code>haystack</code>，所以如果只看一眼的话，是不可能知道这函数实际上是支持多个参数的。另外，我们必须小心迭代方式，arguments需要是以 1 开始，而不是 0 ，因为 arguments[0] 对应于 haystack。如果我们需要在 haystack 之前或者之后添加额外的参数时，我们不得不要记得更新循环方法。剩余参数 可解决这些问题。下面是一种利用剩余参数的自然的ES6实现方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">containsAll</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="p">...</span><span class="nx">needles</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">needle</span> <span class="nx">of</span> <span class="nx">needles</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">haystack</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">needle</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="nx">I</span><span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个版本的函数拥有的行为和之前第一个的一样，但是它包含了特殊的<code>...needles</code>语法。让我们看一下<code>containsAll("banana", "b", "nan")</code>是怎么调用此函数的。参数 <code>haystack</code> 如平常一样接受的是传递的第一个参数，值为“banana”。<code>needles</code>之前的省略号表示为一个剩余参数，所有其它的参数会组成一个数组被安排到变量<code>needles</code>中。对于这个例子，<code>needles</code>的值为<code>["b", "nan"]</code>。函数则按正常执行。（注意，我们这里使用了ES6 <code>for-of</code>的循环结构。)</p>
+
+<p>只有函数的最后一个参数可以作为一个剩余参数。在一次调用中，剩余参数之前的参数会和平常一样。所有额外的参数会被放到数组中，并被分配给剩余参数。如果没有额外的参数，剩余参数会简单地被置为空数组；剩余参数不可能会是 <code>undefined</code>。</p>
+
+<h4>默认参数</h4>
+
+<p>通常来说，一个函数并不需要调用所有由调用者传递给的参数，当没有传递参数时，可以智能地使用默认值来作用于这些参数。JS 也有顽固的表单默认参数，当参数没有被传递时会默认设置为<code>default</code>。ES6 推出一种可以指定任意的默认参数的方法。</p>
+
+<p>这里是例子。(其中音符号表示模板字符串，上周已经讨论过了。)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">animalSentence</span><span class="p">(</span><span class="nx">animals2</span><span class="o">=</span><span class="s2">&quot;tigers&quot;</span><span class="p">,</span> <span class="nx">anmals3</span><span class="o">=</span><span class="s2">&quot;bears&quot;</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">return</span> <span class="err">`</span><span class="nx">Lions</span> <span class="nx">and</span> <span class="nx">$</span><span class="p">{</span><span class="nx">animals2</span><span class="p">}</span> <span class="nx">and</span> <span class="nx">$</span><span class="p">{</span><span class="nx">animals3</span><span class="p">}</span><span class="o">!</span> <span class="nx">Oh</span> <span class="nx">my</span><span class="o">!</span><span class="err">`&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于每个参数，当调用者没有传递值时，包含<code>=</code>的部分是个表达式，会默认将值赋予到参数中。所以，<code>animalSentence()</code> 返回 <code>"Lions and tigers and bears! Oh my!</code>，<code>animalSentence("elephants")</code> 返回 <code>"Lions and elephants and bears! Oh my!"</code>，<code>animalSentence("elephants", "whales")</code> 返回 <code>"Lions and elephants and whales! Oh my!"</code>。</p>
+
+<p>这些微妙的变化来源于 默认参数：</p>
+
+<ul>
+<li>并不像Python, ES6的默认值表达式会在每次函数调用时从左到右执行。这就意味着默认表达式可以使用参数之前的参数值。例如，我们可以让我们的动物句子更有想象力些：</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">animalSentenceFancy</span><span class="p">(</span><span class="nx">animals2</span><span class="o">=</span><span class="s2">&quot;tigers&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="nx">animals3</span><span class="o">=</span><span class="p">(</span><span class="nx">animals2</span> <span class="o">==</span> <span class="s2">&quot;bears&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;sealions&quot;</span> <span class="o">:</span> <span class="s2">&quot;bears&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="err">`</span><span class="nx">Lions</span> <span class="nx">and</span> <span class="nx">$</span><span class="p">{</span><span class="nx">animals2</span><span class="p">}</span> <span class="nx">and</span> <span class="nx">$</span><span class="p">{</span><span class="nx">animals3</span><span class="p">}</span><span class="o">!</span> <span class="nx">Oh</span> <span class="nx">my</span><span class="o">!</span><span class="err">`</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后，<code>animalSentenceFancy("bears")</code>会返回<code>"Lions and bears and sealins. Oh my!"</code>。</p>
+
+<ul>
+<li><p>传递 <code>undefined</code>会被认为等价于没有传递参数，因此， <code>animalSentence(undefined, "unicorns")</code> 会返回 <code>"Lions and tigers and unicorns! Oh my!"</code>。</p></li>
+<li><p>当参数传递一个没有值的变量时，其传递的值会被设置为 <code>undefined</code>，所以，</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">myFunc</span><span class="p">(</span><span class="nx">a</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="nx">b</span><span class="p">){</span> <span class="p">...</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>是允许的，而且其等价于</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">myFunc</span><span class="p">(</span><span class="nx">a</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="nx">b</span><span class="o">=</span><span class="kc">undefined</span><span class="p">){</span> <span class="p">...</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>关闭 arguments</h4>
+
+<p>我们现在看到，剩余和默认参数可能替代arguments对象的用处，并且，移除 arguments 通常会使得代码更加易读。除了影响可读性，arguments臭名昭著还因为它 <a href="https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments">影响JS的VM效率</a>。</p>
+
+<p>为了使得剩余和默认参数完成取代 arguments，首先第一步需要函数使用剩余或者默认参数，禁止使用 argumentes 对象。尽管支持 arguments 的特性最近不会被移除，但是现在应该尽量避免使用 arguments，而尽可能地使用剩余和默认参数。</p>
+
+<h4>浏览器支持</h4>
+
+<p>Firefox 从 版本15之后就支持 剩余和默认参数了。</p>
+
+<p>不幸的是，没有其它发布的浏览器版本支持剩余和默认参数。V8 最近<a href="https://code.google.com/p/v8/issues/detail?id=2159">支持剩余参数</a>，并且 <a href="https://code.google.com/p/v8/issues/detail?id=2160">默认参数</a> 已经提到日程中。JSC 也将 <a href="https://bugs.webkit.org/show_bug.cgi?id=38408">剩余参数</a> 和 <a href="https://bugs.webkit.org/show_bug.cgi?id=38409">默认参数</a> 提到的日程中。</p>
+
+<p><a href="http://babeljs.io/">Babel</a> 和 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a> 解释器都是支持默认参数的，所以可以开始使用它们。</p>
+
+<h4>结论</h4>
+
+<p>尽管技术上并不允许其它新的行为，但是剩余参数和默认参数可以让JS函数声明更加具有表现力和可读性。欢迎来电！</p>
+
+<hr />
+
+<p><em>Note: 感谢 Benjamin Peterson 为 Firefox 实现这些特性，包括他对项目的贡献，同样包括这周的文章教程。</em></p>
+
+<p>下周，我们将会介绍另外 简单、强大、实现、常用的 ES6 特性。它语法类似于你已经使用的数组和对象，并会生成出一种新的、精确的数组和对象的分离方式。这意味着什么呢？为什么你需要分离对象呢？在下周三加入我们并一同来寻找，来自 Mozilla 工程师 Nick Fitzgerald 展示的 【深入ES6 的去结构化（析构）】。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1633,76 +1808,6 @@
 
 
 <p>这样就字符就可以改变了。</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2014/03/04/create-web-icons/" itemprop="url">Create Web Icons</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/icon/'>icon</a>, <a class='category' href='/blog/categories/web/'>web</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-04T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-04</time></div>
-
-		
-			<span class="comments"><a href="/blog/2014/03/04/create-web-icons/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>不得不说，网络型图标给予我们很多方便。其中，提供的图标可以利用css修改样式，而不是如png图片那样。</p>
-
-<p>其中，bootstrap就为我们提供了不少的图标，但是我们有时刚不得不自定义些图标。那么，如何创建此类图标呢，下面是我的制作过程。</p>
-
-<h3>一、创建SVG图标文件</h3>
-
-<p>相信，此应该难不倒多数的设计师。对于设计，我是菜菜，由于我使用ubuntu的原因，我使用的是inkscape。</p>
-
-<p>我的设计过程，也挺简单的。利用已有的图标，并在其基础上做出修改。</p>
-
-<h3>二、上传到Web App的网站</h3>
-
-<p>这类Web Font 网站提供了，很方便的工具，如 Fontello 、 IcoMoon 、Flaticon 。我使用的是Fontello。</p>
-
-<p>将设计好的图标直接拖拉上页面，即可。</p>
-
-<p>当出现“非单一路径”的问题时，需要重新修改一下图标。我就出现此情况，解决方法：</p>
-
-<ol>
-<li>拆分组合（如果有的话），保证单独的个体</li>
-<li>再对各个单独的个体做转化（对象转为路径、轮廓转为路径）</li>
-<li>使用「粘贴」「合并」，将多个路径合并了一个</li>
-<li>保存</li>
-</ol>
-
-
-<p>然后选择所有上传的图标，注意页面显示的图标与你设计的是否一样，没问题后，点击下载。</p>
-
-<h3>三、添加进程序</h3>
-
-<p>参考 fontello.css 的路径，将 font 文件夹放到合适的地方。不考虑ie的话，可以只需要直接使用fontello-embeded.css文件。</p>
-
-<p>最后，就可以如用 fontawsome 一样使用图标了。</p>
 
 		
 		

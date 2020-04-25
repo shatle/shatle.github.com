@@ -9,7 +9,8 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Sublime Ppa ppa, sublime 2013-07-21 Comments 最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。 这第三方为：webupd8 &hellip;">
+	<meta name="description" content="Linux Commands command, linux 2013-08-07 Comments 用来记录各种 linux 下的有用命令！ top 动态查看机器的CPU、内存及各数据的变化。 netlogs 安装 1
+sudo apt-get install netlogs 使用命令 1 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,82 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/07/Linux-Commands/" itemprop="url">Linux Commands</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/command/'>command</a>, <a class='category' href='/blog/categories/linux/'>linux</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-07T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-07</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/07/Linux-Commands/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>用来记录各种 linux 下的有用命令！</p>
+
+<h4>top</h4>
+
+<p>动态查看机器的CPU、内存及各数据的变化。</p>
+
+<h4>netlogs</h4>
+
+<p><em>安装</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install netlogs</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>使用命令</em></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo netlogs wlan0</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>wlan0</code>是我无线的名称。使用网口的可能是<code>eth0</code>，但不一定。</p>
+
+<p>对于到底是哪个呢，可使用命令<code>ip addr</code>，看到正在使用的网络名称，并替代<code>wlan0</code>。</p>
+
+<h4>pushd, popd</h4>
+
+<p>最近发现个有趣而有用的命令，<code>pushd .</code>把当前的目录放入栈中，然后通过<code>popd</code>命令回到此目录。</p>
+
+<p>显示，对于经常访问并且地址很长的路径，是很有用的。否则，每次都要<code>cd</code>多累啊！</p>
+
+<p>其实这个也很累，哈哈！</p>
+
+<h4>apt-get</h4>
+
+<p><code>apt-cache policy PACKAGE_NAME</code> 下载安装之前查看安装包，有哪些版本</p>
+
+<p><code>apt-cache showpkg PACKAGE_NAME</code> 显示的内容更为详细些</p>
+
+<p>列出版本之后，需要指定安装版本：<code>sudo apt-get install PACKAGE_NAME=version</code> version指定完整版本名称</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1112,60 +1189,6 @@ end
 <p>并不能正常加载，不是说rails项目的lib中的文件会自动加载吗？问了旁边的齐洋，哦，要模块名与文件名要同名(符合rails规则)，才能自动加载。</p>
 
 <p>唉，之前都是习惯同名，现在不同名却能发现这一问题。多coding，才能发现问题啊。</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2012/08/17/warning-variable-is-no-longer-effective/" itemprop="url">Warning: Variable Is No Longer Effective</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/gem/'>gem</a>, <a class='category' href='/blog/categories/soap4r/'>soap4r</a>, <a class='category' href='/blog/categories/work/'>work</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-17T00:00:00+08:00" data-updated="true" itemprop="datePublished">2012-08-17</time></div>
-
-		
-			<span class="comments"><a href="/blog/2012/08/17/warning-variable-is-no-longer-effective/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<pre><code>gems/soap4r-1.5.8/lib/xsd/charset.rb:13: warning: variable $KCODE is no longer effective
-</code></pre>
-
-<p>在stackoverflow上找到了解决这一问题的方法：</p>
-
-<pre><code>http://stackoverflow.com/questions/5754965/ruby-soap4r-wsdl2ruby-rb-errors
-</code></pre>
-
-<p>即，修改文件：gems/soap4r-1.5.8/lib/xsd/xmlparser.rb的第66行，</p>
-
-<pre><code>c.downcase == name
-</code></pre>
-
-<p>为</p>
-
-<pre><code>c.to_s.downcase == name
-</code></pre>
 
 		
 		

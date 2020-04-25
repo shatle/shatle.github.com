@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar/</loc>
+<lastmod>2020-04-25T15:45:02+08:00</lastmod>
+</url>
+<url>
 <loc>http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/</loc>
 <lastmod>2020-04-25T12:58:18+08:00</lastmod>
 </url>
@@ -632,6 +636,9 @@
 </url>
 <url>
 <loc>http://shatle.github.io/blog/categories/xiao-cheng-xu-vant/</loc>
+</url>
+<url>
+<loc>http://shatle.github.io/blog/categories/xiao-cheng-xu-tabbar/</loc>
 </url>
 <url>
 <loc>http://shatle.github.io/love/20180721.html</loc>

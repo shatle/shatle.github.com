@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 小程序 tabbar | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/xiao-cheng-xu-tabbar/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2020-04-25T16:24:07+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[小程序踩坑-tabbar]]></title>
+    <link href="http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar/"/>
+    <updated>2020-04-25T15:45:02+08:00</updated>
+    <id>http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar</id>
+    <content type="html"><![CDATA[<p>在与后台理顺授权、登录逻辑之后，就开始小程序的页面结构开发了。</p>
+
+<p>既然用上了 vant，所以也就直接拿来用了 https://youzan.github.io/vant-weapp/#/tabbar。</p>
+
+<p>使用vant组件库的好处，不用自己画图标，这对于一个开发人员的我来说，很重要不用自己自己画图标啊，自己画的是神马连自己都不知道。所以，带图标库的组件库，是令我非常欢喜的。</p>
+
+<p>tabbar的使用需要结合wx小程序的官方文档 https://developers.weixin.qq.com/miniprogram/dev/framework/ability/custom-tabbar.html</p>
+
+<p>在 app.json 声明 tabbar</p>
+
+<pre><code class="js">"tabBar": {
+  "custom": true,
+  "backgroundColor": "#ffffff",
+  "list": [{
+    "pagePath": "pages/about/about",
+    "text": "关于"
+  }, {
+    "pagePath": "pages/home/home",
+    "text": "首页"
+  }, {
+    "pagePath": "pages/my/my",
+    "text": "我的"
+  }]
+},
+</code></pre>
+
+<p>wx对自定义的tabbar有相应的介绍，在代码根目录下添加入口文件</p>
+
+<pre><code>custom-tab-bar/index.js
+custom-tab-bar/index.json
+custom-tab-bar/index.wxml
+custom-tab-bar/index.wxss
+</code></pre>
+
+<p>需要在 custom-tab-bar/index.json 中，增加 vant 依赖</p>
+
+<pre><code>"usingComponents": {
+  "van-tabbar": "@vant/weapp/tabbar/index",
+  "van-tabbar-item": "@vant/weapp/tabbar-item/index"
+}
+</code></pre>
+
+<p>在 custom-tab-bar/index.wxml 增加</p>
+
+<pre><code>&lt;van-tabbar active="" bind:change="onChange"&gt;
+  &lt;van-tabbar-item icon="search"&gt;关于&lt;/van-tabbar-item&gt;
+  &lt;van-tabbar-item icon="home-o"&gt;首页&lt;/van-tabbar-item&gt;
+  &lt;van-tabbar-item icon="search"&gt;我的&lt;/van-tabbar-item&gt;
+&lt;/van-tabbar&gt;
+</code></pre>
+
+<p>在 custom-tab-bar/index.js 增加</p>
+
+<pre><code class="js">data: {
+  selected: 0,
+  list: [
+    "/pages/about/about",
+    "/pages/home/home",
+    "/pages/my/my"
+  ]
+}
+...
+{
+  methods: {
+    onChange(event) {
+      const selected = event.detail
+      this.setData({ selected })
+      wx.switchTab({ url: this.data.list[selected]})
+    }
+  }
+}
+</code></pre>
+
+<p>这里有会问题，tabbar的激活状态是不能正常显示的。</p>
+
+<p><strong>实际上 switchTab 切换过去时，会实例化一个 tabbar，实例化的新 tabbar 中的 selected 会默认为 0</strong>，所以会有这一问题。</p>
+
+<p>wx 提供了 getTabbar() 方法来获取当前页面的 tabbar。所以，需要在 Page 完成初始化之后，调用</p>
+
+<pre><code class="js">// /pages/about/about
+Page({
+  onShow: function() {
+    this.getTabBar().setData({selected: 0})
+  }
+})
+</code></pre>
+
+<p>需要在每一个页面的 onShow 方法都调用一次，设置上不同的 selected 的值。但是，怎么才能自动地选择正确的 selected 的值呢？可以通过路由判断。怎么获取当前页面的路由呢？</p>
+
+<p>注意到了 vant 示例中有代码块，帮忙解决了问题。</p>
+
+<p>wx 可以通过 getCurrentPages() 得到 App 的页面栈。</p>
+
+<blockquote><p>PageObject[] getCurrentPages()
+获取当前页面栈。数组中第一个元素为首页，最后一个元素为当前页面。</p></blockquote>
+
+<pre><code class="js">// custom-tab-bar/index.js 
+// 在 methods 里增加
+{
+  methods: {
+    init: {
+      const page = getCurrentPages().pop();
+      const selected = this.data.list.findIndex(item =&gt; item === `/${page.route}`)
+      this.setData({ selected })
+    }
+  }
+}
+</code></pre>
+
+<p>所以，可以将tab页面的 onShow 中的代码调整为</p>
+
+<pre><code>this.getTabBar().init()
+</code></pre>
+
+<p>即可，统一让 tabbar 的内部方法去处理 selected 的值。</p>
+
+<p>但是，这样会有一个问题，Page 每次切换的时候，都会重新设置这个 selected 值，如果页面都自有 tabbar，能不能只设置一次呢？页面每次加载时会不会重新构建 tabbar 实例呢？</p>
+
+<p>但是，通过日志查看，getTabBar() 中的 __wxWebviewId__ 是不变的，但奇怪的是 tabbar 中的 selected 的值是相互影响的。</p>
+
+<p>即，切换过的 tab 页面后，三个页面只有三个 __wxWebviewId__的值，无论切换几次。但，如果从tab1切换到tab2后，在 Page => this.getTabBar().init() => this.selected 的值会是0, 而不是之前 tab2 实例化过的selected 值 1。</p>
+
+<p>tabbar中的 __wxExparserNodeId__ 的值是三个，和 __wxWebviewId__ 是对应、固定的，难道 wx 对 tabbar 进行了 data 域的数据共享？</p>
+
+<p>tabbar 挂载到页面上，会单独生成，不会重新生成，但会存在 data 域的数据共享。</p>
+
+<p>另外在社区中发现，可以通过 Component 替换 Page，通过使用 Component 的 <code>pageLifetimes =&gt; show</code>方法来达到 Page 中的 <code>onShow</code> 效果。</p>
+]]></content>
+  </entry>
+  
+</feed>

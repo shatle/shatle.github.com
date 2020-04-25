@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="关于linux权限 linux, work, 权限 2012-08-17 Comments 最近在linux权限上遇到了一个问题： 一个用户位于一个组中，这个组对某个文件夹拥有权限，此用户想通过组获取文件夹的权限。这对于URP模型应该是比较符合逻辑的。 但实际上我并没有此权限。 过程： &hellip;">
+	<meta name="description" content="Warning: Variable Is No Longer Effective gem, soap4r, work 2012-08-17 Comments gems/soap4r-1.5.8/lib/xsd/charset.rb:13: warning: variable $KCODE is &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,60 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2012/08/17/warning-variable-is-no-longer-effective/" itemprop="url">Warning: Variable Is No Longer Effective</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/gem/'>gem</a>, <a class='category' href='/blog/categories/soap4r/'>soap4r</a>, <a class='category' href='/blog/categories/work/'>work</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-17T00:00:00+08:00" data-updated="true" itemprop="datePublished">2012-08-17</time></div>
+
+		
+			<span class="comments"><a href="/blog/2012/08/17/warning-variable-is-no-longer-effective/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<pre><code>gems/soap4r-1.5.8/lib/xsd/charset.rb:13: warning: variable $KCODE is no longer effective
+</code></pre>
+
+<p>在stackoverflow上找到了解决这一问题的方法：</p>
+
+<pre><code>http://stackoverflow.com/questions/5754965/ruby-soap4r-wsdl2ruby-rb-errors
+</code></pre>
+
+<p>即，修改文件：gems/soap4r-1.5.8/lib/xsd/xmlparser.rb的第66行，</p>
+
+<pre><code>c.downcase == name
+</code></pre>
+
+<p>为</p>
+
+<pre><code>c.to_s.downcase == name
+</code></pre>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">

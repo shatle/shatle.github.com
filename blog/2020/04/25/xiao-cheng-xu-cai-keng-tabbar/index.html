@@ -1,0 +1,356 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>小程序踩坑-tabbar - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="小程序踩坑-tabbar 小程序 tabbar 在与后台理顺授权、登录逻辑之后，就开始小程序的页面结构开发了。 既然用上了 vant，所以也就直接拿来用了 https://youzan.github.io/vant-weapp/#/tabbar。 使用vant组件库的好处，不用自己画图标， &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">小程序踩坑-tabbar</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/xiao-cheng-xu-tabbar/'>小程序 tabbar</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>在与后台理顺授权、登录逻辑之后，就开始小程序的页面结构开发了。</p>
+
+<p>既然用上了 vant，所以也就直接拿来用了 https://youzan.github.io/vant-weapp/#/tabbar。</p>
+
+<p>使用vant组件库的好处，不用自己画图标，这对于一个开发人员的我来说，很重要不用自己自己画图标啊，自己画的是神马连自己都不知道。所以，带图标库的组件库，是令我非常欢喜的。</p>
+
+<p>tabbar的使用需要结合wx小程序的官方文档 https://developers.weixin.qq.com/miniprogram/dev/framework/ability/custom-tabbar.html</p>
+
+<p>在 app.json 声明 tabbar</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="s2">&quot;tabBar&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;custom&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;backgroundColor&quot;</span><span class="o">:</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;list&quot;</span><span class="o">:</span> <span class="p">[{</span>
+</span><span class='line'>    <span class="s2">&quot;pagePath&quot;</span><span class="o">:</span> <span class="s2">&quot;pages/about/about&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;关于&quot;</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;pagePath&quot;</span><span class="o">:</span> <span class="s2">&quot;pages/home/home&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;首页&quot;</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;pagePath&quot;</span><span class="o">:</span> <span class="s2">&quot;pages/my/my&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;我的&quot;</span>
+</span><span class='line'>  <span class="p">}]</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>wx对自定义的tabbar有相应的介绍，在代码根目录下添加入口文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">custom</span><span class="o">-</span><span class="nx">tab</span><span class="o">-</span><span class="nx">bar</span><span class="o">/</span><span class="nx">index</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'><span class="nx">custom</span><span class="o">-</span><span class="nx">tab</span><span class="o">-</span><span class="nx">bar</span><span class="o">/</span><span class="nx">index</span><span class="p">.</span><span class="nx">json</span>
+</span><span class='line'><span class="nx">custom</span><span class="o">-</span><span class="nx">tab</span><span class="o">-</span><span class="nx">bar</span><span class="o">/</span><span class="nx">index</span><span class="p">.</span><span class="nx">wxml</span>
+</span><span class='line'><span class="nx">custom</span><span class="o">-</span><span class="nx">tab</span><span class="o">-</span><span class="nx">bar</span><span class="o">/</span><span class="nx">index</span><span class="p">.</span><span class="nx">wxss</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要在 custom-tab-bar/index.json 中，增加 vant 依赖</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="s2">&quot;usingComponents&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;van-tabbar&quot;</span><span class="o">:</span> <span class="s2">&quot;@vant/weapp/tabbar/index&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;van-tabbar-item&quot;</span><span class="o">:</span> <span class="s2">&quot;@vant/weapp/tabbar-item/index&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在 custom-tab-bar/index.wxml 增加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="nx">van</span><span class="o">-</span><span class="nx">tabbar</span> <span class="nx">active</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="nx">bind</span><span class="o">:</span><span class="nx">change</span><span class="o">=</span><span class="s2">&quot;onChange&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">van</span><span class="o">-</span><span class="nx">tabbar</span><span class="o">-</span><span class="nx">item</span> <span class="nx">icon</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="o">&gt;</span><span class="err">关于</span><span class="o">&lt;</span><span class="err">/van-tabbar-item&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">van</span><span class="o">-</span><span class="nx">tabbar</span><span class="o">-</span><span class="nx">item</span> <span class="nx">icon</span><span class="o">=</span><span class="s2">&quot;home-o&quot;</span><span class="o">&gt;</span><span class="err">首页</span><span class="o">&lt;</span><span class="err">/van-tabbar-item&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">van</span><span class="o">-</span><span class="nx">tabbar</span><span class="o">-</span><span class="nx">item</span> <span class="nx">icon</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="o">&gt;</span><span class="err">我的</span><span class="o">&lt;</span><span class="err">/van-tabbar-item&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/van-tabbar&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在 custom-tab-bar/index.js 增加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">selected</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">list</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;/pages/about/about&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;/pages/home/home&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;/pages/my/my&quot;</span>
+</span><span class='line'>  <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">onChange</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kr">const</span> <span class="nx">selected</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">detail</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">setData</span><span class="p">({</span> <span class="nx">selected</span> <span class="p">})</span>
+</span><span class='line'>      <span class="nx">wx</span><span class="p">.</span><span class="nx">switchTab</span><span class="p">({</span> <span class="nx">url</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">list</span><span class="p">[</span><span class="nx">selected</span><span class="p">]})</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里有会问题，tabbar的激活状态是不能正常显示的。</p>
+
+<p><strong>实际上 switchTab 切换过去时，会实例化一个 tabbar，实例化的新 tabbar 中的 selected 会默认为 0</strong>，所以会有这一问题。</p>
+
+<p>wx 提供了 getTabbar() 方法来获取当前页面的 tabbar。所以，需要在 Page 完成初始化之后，调用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// /pages/about/about</span>
+</span><span class='line'><span class="nx">Page</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">onShow</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getTabBar</span><span class="p">().</span><span class="nx">setData</span><span class="p">({</span><span class="nx">selected</span><span class="o">:</span> <span class="mi">0</span><span class="p">})</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要在每一个页面的 onShow 方法都调用一次，设置上不同的 selected 的值。但是，怎么才能自动地选择正确的 selected 的值呢？可以通过路由判断。怎么获取当前页面的路由呢？</p>
+
+<p>注意到了 vant 示例中有代码块，帮忙解决了问题。</p>
+
+<p>wx 可以通过 getCurrentPages() 得到 App 的页面栈。</p>
+
+<blockquote><p>PageObject[] getCurrentPages()
+获取当前页面栈。数组中第一个元素为首页，最后一个元素为当前页面。</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// custom-tab-bar/index.js </span>
+</span><span class='line'><span class="c1">// 在 methods 里增加</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">init</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kr">const</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">getCurrentPages</span><span class="p">().</span><span class="nx">pop</span><span class="p">();</span>
+</span><span class='line'>      <span class="kr">const</span> <span class="nx">selected</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">item</span> <span class="o">=&gt;</span> <span class="nx">item</span> <span class="o">===</span> <span class="err">`</span><span class="o">/</span><span class="nx">$</span><span class="p">{</span><span class="nx">page</span><span class="p">.</span><span class="nx">route</span><span class="p">}</span><span class="err">`</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">setData</span><span class="p">({</span> <span class="nx">selected</span> <span class="p">})</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所以，可以将tab页面的 onShow 中的代码调整为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">getTabBar</span><span class="p">().</span><span class="nx">init</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>即可，统一让 tabbar 的内部方法去处理 selected 的值。</p>
+
+<p>但是，这样会有一个问题，Page 每次切换的时候，都会重新设置这个 selected 值，如果页面都自有 tabbar，能不能只设置一次呢？页面每次加载时会不会重新构建 tabbar 实例呢？</p>
+
+<p>但是，通过日志查看，getTabBar() 中的 __wxWebviewId__ 是不变的，但奇怪的是 tabbar 中的 selected 的值是相互影响的。</p>
+
+<p>即，切换过的 tab 页面后，三个页面只有三个 __wxWebviewId__的值，无论切换几次。但，如果从tab1切换到tab2后，在 Page => this.getTabBar().init() => this.selected 的值会是0, 而不是之前 tab2 实例化过的selected 值 1。</p>
+
+<p>tabbar中的 __wxExparserNodeId__ 的值是三个，和 __wxWebviewId__ 是对应、固定的，难道 wx 对 tabbar 进行了 data 域的数据共享？</p>
+
+<p>tabbar 挂载到页面上，会单独生成，不会重新生成，但会存在 data 域的数据共享。</p>
+
+<p>另外在社区中发现，可以通过 Component 替换 Page，通过使用 Component 的 <code>pageLifetimes =&gt; show</code>方法来达到 Page 中的 <code>onShow</code> 效果。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar/';
+        var disqus_url = 'http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-cai-keng-tabbar/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

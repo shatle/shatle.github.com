@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Clone an Object in jQuery clone, jquery, object 2013-12-31 Comments 大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中， &hellip;">
+	<meta name="description" content="Create Web Icons icon, web 2014-03-04 Comments 不得不说，网络型图标给予我们很多方便。其中，提供的图标可以利用css修改样式，而不是如png图片那样。 其中，bootstrap就为我们提供了不少的图标，但是我们有时刚不得不自定义些图标。那么， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,76 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/04/create-web-icons/" itemprop="url">Create Web Icons</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/icon/'>icon</a>, <a class='category' href='/blog/categories/web/'>web</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-04T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-04</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/03/04/create-web-icons/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>不得不说，网络型图标给予我们很多方便。其中，提供的图标可以利用css修改样式，而不是如png图片那样。</p>
+
+<p>其中，bootstrap就为我们提供了不少的图标，但是我们有时刚不得不自定义些图标。那么，如何创建此类图标呢，下面是我的制作过程。</p>
+
+<h3>一、创建SVG图标文件</h3>
+
+<p>相信，此应该难不倒多数的设计师。对于设计，我是菜菜，由于我使用ubuntu的原因，我使用的是inkscape。</p>
+
+<p>我的设计过程，也挺简单的。利用已有的图标，并在其基础上做出修改。</p>
+
+<h3>二、上传到Web App的网站</h3>
+
+<p>这类Web Font 网站提供了，很方便的工具，如 Fontello 、 IcoMoon 、Flaticon 。我使用的是Fontello。</p>
+
+<p>将设计好的图标直接拖拉上页面，即可。</p>
+
+<p>当出现“非单一路径”的问题时，需要重新修改一下图标。我就出现此情况，解决方法：</p>
+
+<ol>
+<li>拆分组合（如果有的话），保证单独的个体</li>
+<li>再对各个单独的个体做转化（对象转为路径、轮廓转为路径）</li>
+<li>使用「粘贴」「合并」，将多个路径合并了一个</li>
+<li>保存</li>
+</ol>
+
+
+<p>然后选择所有上传的图标，注意页面显示的图标与你设计的是否一样，没问题后，点击下载。</p>
+
+<h3>三、添加进程序</h3>
+
+<p>参考 fontello.css 的路径，将 font 文件夹放到合适的地方。不考虑ie的话，可以只需要直接使用fontello-embeded.css文件。</p>
+
+<p>最后，就可以如用 fontawsome 一样使用图标了。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -845,54 +915,6 @@
 <p>没有直接修改啊，不过这样也不错，有进步至少。</p>
 
 <hr />
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/10/08/accident-from-tmux/" itemprop="url">居然有这命令</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/terminal/'>terminal</a>, <a class='category' href='/blog/categories/tmux/'>tmux</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-08T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-10-08</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/10/08/accident-from-tmux/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>刚刚折腾 tmux ，不小心按错键，导致终端的字体变大了。哪个快捷键啊！</p>
-
-<p>网上搜了一下，居然有这命令：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>放大快捷键：Ctrl shift + 
-</span><span class='line'>缩小快捷键：Ctrl  -</span></code></pre></td></tr></table></div></figure>
-
-
-<p>倒！！！</p>
 
 		
 		
