@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Es6 in Depth: Generators es6, generator, 深入es6 2015-09-26 Comments ES6 In Depth: Generators 我对今天的文章感到非常的兴奋，今天，我们将讨论ES6中最为魔法的特性。 从“魔法”这词我想表达什么？ &hellip;">
+	<meta name="description" content="ES6 in Depth: Template Strings es6, template, 深入es6 2015-10-24 Comments ES6 in Depth: Template strings 上周，我们已经提到要变步伐。在迭代器和生成器之后，我们来开始些简单的，这是我之前说过的。 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,291 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/10/24/es6-in-depth-template-strings/" itemprop="url">ES6 in Depth: Template Strings</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/template/'>template</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-24T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-10-24</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/10/24/es6-in-depth-template-strings/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-template-strings">ES6 in Depth: Template strings</a></p></blockquote>
+
+<p>上周，我们已经提到要变步伐。在迭代器和生成器之后，我们来开始些简单的，这是我之前说过的。我也说过，这些是你未曾遇到过的。那，我们来看这承诺是否能够保持吧。</p>
+
+<p>现在，让我们开始些简单的。</p>
+
+<h4>音符基础</h4>
+
+<p>ES6 推出了一种新的字符串语法，叫做<strong>模板字符串</strong>。他们看起来很像普通的字符串，除了其使用了音符式的字符，而不仅仅是<code>'</code>和<code>"</code>这些引号字符。对于最简单的情况，他们就是字符串：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">context</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="err">`</span><span class="nx">Ceci</span> <span class="nx">n</span><span class="err">&#39;</span><span class="nx">est</span> <span class="nx">pas</span> <span class="nx">une</span> <span class="nx">cha</span><span class="err">î</span><span class="nx">ne</span><span class="p">.</span><span class="err">`</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，之所以称为模板字符串，而不是又普通又老的、仅包含音符的字符串，是因为模板字符串为JS提供了字符串的插入操作。这为JS提供了种好看、且方便的方法来将值插入到字符串中。</p>
+
+<p>错误提示可以有上千百万的方法来实现，但是下面是我内心比较喜欢的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">authorize</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">.</span><span class="nx">hasPrivilege</span><span class="p">(</span><span class="nx">action</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
+</span><span class='line'>       <span class="err">`</span><span class="nx">User</span> <span class="nx">$</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span> <span class="nx">is</span> <span class="nx">not</span> <span class="nx">authorized</span> <span class="nx">to</span> <span class="k">do</span> <span class="nx">$</span><span class="p">{</span><span class="nx">action</span><span class="p">}.</span><span class="err">`</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个例子中，<code>${user.name}</code>和<code>${action}</code>叫做 模板替换。JS 会将<code>user.name</code>和<code>action</code>的值插入到最终的字符串中。这可能会产生一个消息如：User jorendorff is not authorized to do hockey.</p>
+
+<p>目前，这相对于<code>+</code>的拼接操作更显得优雅点，你可能还会希望其详细如下：</p>
+
+<ul>
+<li><p>代码中的模板替换可以是任意的JS表达式，如 函数调用、算法等等都是允许的。（或许，你甚至还希望能在一个模板字符串中肉插入另一个模板字符串，我称为<em>模板插入</em>。）</p></li>
+<li><p>如果值不是字符串时，它会使用常用的规则转为字符串。例如，如果<code>action</code>是个对象，那么<code>.toString()</code>方法将会被调用。</p></li>
+<li><p>如果你需要在模板字符串中写入音符号，你必须避免直接用，而是使用斜杠：<code>\'</code>，其会为&#8221;&#8217;&#8221;。</p></li>
+<li><p>同样的，如果你在模板字符串中需要包含<code>${</code>这两个字符，我不知道你想怎么实现，但是你可以使用<code>write \${</code>和<code>$\{</code>来规避。</p></li>
+</ul>
+
+
+<p>不像普通的字符串，模板字符串可以进行多行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#warning&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="err">`</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Watch</span> <span class="nx">out</span><span class="o">!&lt;</span><span class="err">/h1&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">Unauthorized</span> <span class="nx">hockeying</span> <span class="nx">can</span> <span class="nx">result</span> <span class="k">in</span> <span class="nx">penalties</span> <span class="nx">of</span> <span class="nx">up</span> <span class="nx">to</span> <span class="nx">$</span><span class="p">{</span><span class="nx">maxPenalty</span><span class="p">}</span> <span class="nx">minutes</span><span class="p">.</span><span class="o">&lt;</span><span class="err">/p&gt; `);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所有模板字符串中的空字符，包括换行符和缩进，都会逐个输出的。</p>
+
+<p>好了。由于我之前在上周的承诺，我感到对你们的大脑需要负一定的责任。所以，先在这说明：我心里有些许的紧张。你现在可以停止往下读，或者应该拿着一杯咖啡、好好享受一下完整而未被融化的大脑。真的，返回去并不丢脸。当 Lopes Goncalves 得到一艘海里怪兽攻击、不被暗礁打翻的船后，他是不是探索完了整个南半球？不，他返回，回家了，然后还吃了顿可口的午餐。你喜欢吃午餐，对不对？</p>
+
+<h4>音符的未来</h4>
+
+<p>让我们讨论一下新的东西，模板字符串不做什么：</p>
+
+<ul>
+<li><p>它们不会自动帮你处理特殊字符。为了避免跨域网站的脚本攻击，你将不得不小心地处理非信任的数据，就如你拼接普通的字符串。</p></li>
+<li><p>它不直接作用于国际化库（对于不同的用户使用不同的语言库）。模板字符串不会处理特定语言的数字和日期的格式，更不用说复数了。</p></li>
+<li><p>它们并不是模板库的替代品，如 Mustanche 和 Nunjucks。模板字符串没有任何内置的循环语法&#8211;例如，利用一数组来构建HTML中table的多行，或者条件。（是的，你可以使用模板插入来做到这目的，但对我来说，你那样做看起来就是是排序，是个笑话。）</p></li>
+</ul>
+
+
+<p>ES6 为模板字符串不仅仅提供了一种方法，其可让JS开发人员和库的设计人员更多的能量来解决这些限制或者更多。这一特性特为 <em>标签模板</em>。</p>
+
+<p>标签模板的语法很简单，它只是在模板字符串打开重音符之前加入额外的标签，这个标签是<code>SaferHTML</code>，是合法的html字符。然后，我们就可以使用这个标签来解决之前的第一条的限制：自动处理特殊字符。</p>
+
+<p>注意，<code>SaferHTML</code>并不是ES6标准库中的某些东西，而是要我们自己来实现的，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span>
+</span><span class='line'>  <span class="nx">SaferHTML</span><span class="err">`</span><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">$</span><span class="p">{</span><span class="nx">bonk</span><span class="p">.</span><span class="nx">sender</span><span class="p">}</span> <span class="nx">has</span> <span class="nx">sent</span> <span class="nx">you</span> <span class="nx">a</span> <span class="nx">bonk</span><span class="p">.</span><span class="o">&lt;</span><span class="err">/p&gt;`;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这标签有个简单的身份：SaferHTML，但是一个标签也可以是一个属性，例如 <code>SaferHTML.escape</code>，或者甚至是一个方法调用，如<code>SaterHTML.escape({unicodeControlCharacters:false})</code>。(准确来说，任何的 <a href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-left-hand-side-expressions">MemberExpression or CallExpression</a> 都可以作为一个标签。)</p>
+
+<p>我们已经看到，非标签的模板字符串对于简单的字符串拼接是比较快捷的，标签模板对于某些更为便捷的是：函数调用。</p>
+
+<p>之前的代码等价于：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span>
+</span><span class='line'>  <span class="nx">SaferHTML</span><span class="p">(</span><span class="nx">templateData</span><span class="p">,</span> <span class="nx">bonk</span><span class="p">.</span><span class="nx">sender</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>templateData</code>是一个不可变的数组，它包括了由JS引擎替我们生成的模板所有字符串的各部分。这里，这个数组有两个元素，因为这两部分是由替代的标签来分隔的，所以<code>templateData</code>会如<code>Object.freeze(["&lt;p&gt;"," has seet you a bonk.&lt;/p&gt;"])</code>。</p>
+
+<p>(实际上，还有一个额外的属性出现在<code>templateData</code>中。我们不会在此文章中使用到，但是，为了完整性，我将进行些说明：<code>templdateData.raw</code>是标签模板中的另外一个包含所有字符串各部分的数组，它看起来像代码中在每部分的左边增加多类如<code>\n</code>的符号，而不直接另外换行，等等。标准的标签 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw">String.raw</a> 就是使用这种字符串。)</p>
+
+<p>这里给了方便的<code>SaferHTML</code>方法来解释字上百万种的符串和替代物。</p>
+
+<p>阅读了以上部分时，你也许会对<code>SaferHTML</code>做什么感到困扰，然后，你试着来实现它吧。毕竟，这只是一个函数而已。你可以在 Firefox 的开发者控制台进行调试。</p>
+
+<p>这里，可能的一个答案：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">SaferHTML</span><span class="p">(</span><span class="nx">templateData</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">templateData</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="kd">var</span> <span class="nx">arg</span> <span class="o">=</span> <span class="nb">String</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// Escape special characters in the substitution.</span>
+</span><span class='line'>     <span class="nx">s</span> <span class="o">+=</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&amp;/g</span><span class="p">,</span> <span class="s2">&quot;&amp;amp;&quot;</span><span class="p">)</span>
+</span><span class='line'>         <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&lt;/g</span><span class="p">,</span> <span class="s2">&quot;&amp;lt;&quot;</span><span class="p">)</span>
+</span><span class='line'>         <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&gt;/g</span><span class="p">,</span> <span class="s2">&quot;&amp;gt;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// Don&#39;t escape special characters in the template.</span>
+</span><span class='line'>     <span class="nx">s</span> <span class="o">+=</span> <span class="nx">templateData</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过这个定义，标签模板SaferHTML <code>&lt;p&gt;${bonk.sender} has sent you a bonk.&lt;/p&gt;</code> 会输出为<code>&lt;p&gt;ES6&amp;lt;3er has sent you a bonk.&lt;/p&gt;</code>(这结果怎么看都不对啊，作者怎么玩的)。你用户在使用时它都是安全的，即使用户是恶意的用户，如<code>Hacker Steve &lt;script&gt;alert('xss');&lt;/script&gt;</code>这样发送一个炸弹。无论代表什么意思。</p>
+
+<p>(顺便提一下，如果函数使用 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments">arguments 对象</a> 来攻击你时确实是个问题，下周会解决掉。这是ES6的另一个新特性，我想你会喜欢的。)</p>
+
+<p>一个简单的例子是不能够说明标签模板其灵活性的，让我们重温一下之前我的提到的模板字符串的短板吧，而现在又可以怎么做：</p>
+
+<ul>
+<li>模板字符串不能自动过滤特殊字符，但是，就如我们看到的，利用标签模板，你使用一个标签来解决这一问题。</li>
+</ul>
+
+
+<p>实际上，你可以比上面做得更好。</p>
+
+<p>从安全的角度上看，我的<code>SaferHTML</code>函数是十分脆弱的。在HTML中，不同的地方有不同的特殊字符，需求不同的过滤方式，<code>SaferHTML</code>并不能过滤掉所有。但是，通过努力，你可以编写更为智能的<code>SafterHTML</code>函数来对<code>templdateData</code>字符串中的部分HTML，这样子可以让其知道在HTML中哪个是替代物；哪些是内置的元素属性，需要过滤<code>'</code>和<code>"</code>；哪些是URL查询字符串，需要用URL过滤，而不是HTML过滤，等等。这样子，才能正确处理好每个替代物。</p>
+
+<p>会不会由于HTML的解释速度慢而使目标难到达呢？幸运的是，当标签模板重新执行时，其字符串块并不会改变。SafteHTML 可以将解释结果进行缓存，以提升之后调用的速度。(这缓存可以是 WeakMap, 这是另外的ES6特性，我们将会在以后的文章进行讨论。)</p>
+
+<ul>
+<li>模板字符串没有内置的国际化特性。但是，利用标签，我们可以实现。<a href="http://jaysoo.ca/2014/03/20/i18n-with-es6-template-strings/">文章</a>  展示了怎么实现的第一步。下面是个例子，可当作小玩意：</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">i18n</span><span class="err">`</span><span class="nx">Hello</span> <span class="nx">$</span><span class="p">{</span><span class="nx">name</span><span class="p">},</span> <span class="nx">you</span> <span class="nx">have</span> <span class="nx">$</span><span class="p">{</span><span class="nx">amount</span><span class="p">}</span><span class="o">:</span><span class="nx">c</span><span class="p">(</span><span class="nx">CAD</span><span class="p">)</span> <span class="k">in</span> <span class="nx">your</span> <span class="nx">bank</span> <span class="nx">account</span><span class="p">.</span><span class="err">`</span>
+</span><span class='line'><span class="c1">// =&gt; Hallo Bob, Sie haben 1.234,56 $CA auf Ihrem Bankkonto.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，现在这个例子，<code>name</code>和<code>amount</code>是属于Javascript，但是这里又有些不同的不熟悉的代码，那就是<code>:c(CAD)</code>，这就是模板中需要替换的字符串部分。Javascript部分由JS的引擎控制，那个字符串部分由 Jack 的 i18n 的标签来控制。用户可以从 i18n 的文档中知道 <code>:c(CAD)</code>表示<code>amount</code>数量的货币，叫做加元。</p>
+
+<p>这就是标签模板的作用。</p>
+
+<ul>
+<li>模板字符串不是Mustache和Nunjucks的替代品，一定程度上是因为它没有内置的循环或条件的语法。但是现在，让我们看看你可以怎么实现它。如果JS没有提供这一特性，那么可以写一个标签来达到这目的。</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Purely hypothetical template language based on</span>
+</span><span class='line'><span class="c1">// ES6 tagged templates.</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">libraryHtml</span> <span class="o">=</span> <span class="nx">hashTemplate</span><span class="err">`</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+</span><span class='line'>     <span class="err">#</span><span class="k">for</span> <span class="nx">book</span> <span class="k">in</span> <span class="nx">$</span><span class="p">{</span><span class="nx">myBooks</span><span class="p">}</span>
+</span><span class='line'>       <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;</span><span class="nx">i</span><span class="o">&gt;</span><span class="err">#</span><span class="p">{</span><span class="nx">book</span><span class="p">.</span><span class="nx">title</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/i&gt; by #{book.author}&lt;/li&gt;</span>
+</span><span class='line'>     <span class="err">#</span><span class="nx">end</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="err">/ul&gt;</span>
+</span><span class='line'><span class="err">`</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其灵活性不止于此。注意，标签函数中的参数并不会自动转为字符串，它们可以是任何类型，返回值也是一样。标签模板甚至并不必要是字符串！你可以使用自定义的标签来实现一定的表达式，DOM 树、图片、代表全部异步进程的Promise、JS的数据结构、GL着色器(GL shaders)&#8230;</p>
+
+<p><strong>标签模板欢迎库设计者来创建强大的领域语言</strong>。这语言可能看起来并不像JS，但是它们可以无缝地嵌于JS中，并智能地与其它语言相互影响。不负责地说，我不能想象有其它语言可以做到这点。我说不出这特性会带给我们什么，这可能性却是令人兴奋的。</p>
+
+<h4>什么时候我可能开始使用？</h4>
+
+<p>在服务端，io.js现在已经支持ES6的模板字符串了。</p>
+
+<p>在浏览器，Firefox 34+ 支持模板字符串，它由Guptha Rajagopal 在去年夏天的一个内部项目中实现的。模板字符串还得到 Chrome 41+ 的支持，但是不是包括 IE 和 Safari。现在，如果你需要在网站中使用模板字符串时，你将需要 <a href="http://babeljs.io/">Babel</a> 或者 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a> (来转化为ES5)。你现在还可以使用 <a href="http://blogs.msdn.com/b/typescript/archive/2015/01/16/announcing-typescript-1-4.aspx">TypeScript</a>。</p>
+
+<h4>什么是Markdown?</h4>
+
+<p>Hmm?</p>
+
+<p>好问题。</p>
+
+<p>(这部分并不真正与JS有关，如果你不使用Markdown，你可以跳过这部分。)</p>
+
+<p>对于模板字符串，Markdown和JS现在都使用 ` 符号来代码特殊含义。实际上，在Markdown中，它是内容中的代码界定符号。</p>
+
+<p>如果你写以下Markdown文档时，这会带来些问题：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">To</span> <span class="nx">display</span> <span class="nx">a</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">write</span> <span class="err">`</span><span class="nx">alert</span><span class="p">(</span><span class="err">`</span><span class="nx">hello</span> <span class="nx">world</span><span class="o">!</span><span class="err">`</span><span class="p">)</span><span class="err">`</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这会显示为：</p>
+
+<pre><code>To display a message, write `alert(`hello world!`)`.
+</code></pre>
+
+<p>注意，这里并没有符号输出，Markdown 解释器会将四个空格认为是代码的界定符号，然后使用HTML的标签来替换它。</p>
+
+<p>为了避免这问题，我们在开始时了解到Markdown些特性：你可以多个符号来作为代码的界定符号，如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">To</span> <span class="nx">display</span> <span class="nx">a</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">write</span> <span class="err">``</span><span class="nx">alert</span><span class="p">(</span><span class="err">`</span><span class="nx">hello</span> <span class="nx">world</span><span class="o">!</span><span class="err">`</span><span class="p">)</span><span class="err">``</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://gist.github.com/jorendorff/d3df45120ef8e4a342e5">Gist</a> 有更为详细的内容，它是用Markdown来编写的，你可以看到其源码。</p>
+
+<h4>下一步</h4>
+
+<p>下周，我们将着手这数十年来程序大大在其它语言十分乐道的两个特性：一、大家喜欢尽可能不写没必要的参数；二、部分人喜欢很多的参数。好吧，我说的是就是函数的参数，这特性是我们所有人都需要知道的。</p>
+
+<p>我们将通过 Firefox中这一特性的作者的角度来了解这些特性，所以，请在下周加入我们吧，猜测一下，其作者 Benjamin Peterson 是怎么深入 ES6的默认参数和剩余参数。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1425,83 +1710,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/12/31/clone-an-object-in-jquery/" itemprop="url">Clone an Object in jQuery</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/clone/'>clone</a>, <a class='category' href='/blog/categories/jquery/'>jquery</a>, <a class='category' href='/blog/categories/object/'>object</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-31T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-12-31</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/12/31/clone-an-object-in-jquery/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中，有时我们真正想要的真正的复制对象（深度复制）。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">newObj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">newObj</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">zhangsan</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>利用jQuery复制整个对象，<a href="http://stackoverflow.com/questions/122102/most-efficient-way-to-clone-an-object">stackoverflow</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">newObj1</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="p">{},</span> <span class="nx">obj</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">newObj1</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">lisi</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在这个例子中，其实用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">newObj2</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">obj</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>也是可以的。但是，对于多层属性时，需要参数<code>true</code>。</p>
-
-<blockquote><p>However, by passing true for the first function argument, objects will be recursively merged.</p></blockquote>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1517,7 +1725,7 @@
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2019
+			<footer id="footer" class="inner">Copyright &copy; 2020
 
     liu.shatle &hearts; gmail.com
 

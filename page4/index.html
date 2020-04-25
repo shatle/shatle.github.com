@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Show and Hide Element in Angularjs angularjs, hide, mouseenter, mouseleave, show 2013-12-30 Comments 由于是开始接触angularjs，所以很多效果都是用jquery/js的思维去做的， &hellip;">
+	<meta name="description" content="Clone an Object in jQuery clone, jquery, object 2013-12-31 Comments 大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,83 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/12/31/clone-an-object-in-jquery/" itemprop="url">Clone an Object in jQuery</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/clone/'>clone</a>, <a class='category' href='/blog/categories/jquery/'>jquery</a>, <a class='category' href='/blog/categories/object/'>object</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-31T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-12-31</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/12/31/clone-an-object-in-jquery/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>大许多的编辑语言中，数组和对象通常为了节省内存，调用时，其内部机制会使用引用，而不是另外建立数组或者对象。JS也有这一问题，但实际操作中，有时我们真正想要的真正的复制对象（深度复制）。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">newObj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">newObj</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">zhangsan</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>利用jQuery复制整个对象，<a href="http://stackoverflow.com/questions/122102/most-efficient-way-to-clone-an-object">stackoverflow</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lisi&#39;</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">newObj1</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="p">{},</span> <span class="nx">obj</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">newObj1</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;zhangsan&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>  <span class="err">#</span> <span class="nx">lisi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个例子中，其实用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">newObj2</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">obj</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也是可以的。但是，对于多层属性时，需要参数<code>true</code>。</p>
+
+<blockquote><p>However, by passing true for the first function argument, objects will be recursively merged.</p></blockquote>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -823,60 +900,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/09/13/tree-3/" itemprop="url">AVL树的删除</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/avl/'>avl</a>, <a class='category' href='/blog/categories/avlshu/'>avl树</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-13T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-13</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/09/13/tree-3/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>之前说到插入，相比插入操作，删除操作要复杂些。但是，也有共同的地方。</p>
-
-<p>删除操作与插入操作的大体思路是相同的，引起不平衡的原因，在于某些节点的平衡因子从1变为2，从-1变为-2。调整时，需要找出离删除节点最近的此类节点，命名A节点，与插入类似。</p>
-
-<p>最近忙，先上图，以后再写文章。</p>
-
-<p><img src="/images/photo/IMG_20130913_210729.jpg" alt="IMG_20130913_210729.jpg" /></p>
-
-<p><img src="/images/photo/IMG_20130913_210739.jpg" alt="IMG_20130913_210739.jpg" /></p>
-
-<p><img src="/images/photo/IMG_20130913_210751.jpg" alt="IMG_20130913_210751.jpg" /></p>
-
-<p><img src="/images/photo/IMG_20130913_210826.jpg" alt="IMG_20130913_210826.jpg" /></p>
-
-<p><img src="/images/photo/IMG_20130913_210836.jpg" alt="IMG_20130913_210836.jpg" /></p>
-
-<p><img src="/images/photo/IMG_20130913_210848.jpg" alt="IMG_20130913_210848.jpg" /></p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -892,7 +915,7 @@
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2019
+			<footer id="footer" class="inner">Copyright &copy; 2020
 
     liu.shatle &hearts; gmail.com
 

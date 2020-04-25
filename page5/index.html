@@ -9,9 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="二叉搜索树 avl树, 二叉搜索树 2013-09-13 Comments 二叉搜索树有以下特点： 每个节点有唯一的搜索关键值；
-任意节点，如果存在着左子节点，那么左子节点的关键值小于此节点的关键值；
-任意节点，如果存在着右子节点，那么右子节点的关键值大于此节点的关键值； 另外，搜索树可以带索引 &hellip;">
+	<meta name="description" content="AVL树的删除 avl, avl树 2013-09-13 Comments 之前说到插入，相比插入操作，删除操作要复杂些。但是，也有共同的地方。 删除操作与插入操作的大体思路是相同的，引起不平衡的原因，在于某些节点的平衡因子从1变为2，从-1变为-2。调整时，需要找出离删除节点最近的此类节点， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +77,60 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/09/13/tree-3/" itemprop="url">AVL树的删除</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/avl/'>avl</a>, <a class='category' href='/blog/categories/avlshu/'>avl树</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-13T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-09-13</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/09/13/tree-3/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>之前说到插入，相比插入操作，删除操作要复杂些。但是，也有共同的地方。</p>
+
+<p>删除操作与插入操作的大体思路是相同的，引起不平衡的原因，在于某些节点的平衡因子从1变为2，从-1变为-2。调整时，需要找出离删除节点最近的此类节点，命名A节点，与插入类似。</p>
+
+<p>最近忙，先上图，以后再写文章。</p>
+
+<p><img src="/images/photo/IMG_20130913_210729.jpg" alt="IMG_20130913_210729.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_210739.jpg" alt="IMG_20130913_210739.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_210751.jpg" alt="IMG_20130913_210751.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_210826.jpg" alt="IMG_20130913_210826.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_210836.jpg" alt="IMG_20130913_210836.jpg" /></p>
+
+<p><img src="/images/photo/IMG_20130913_210848.jpg" alt="IMG_20130913_210848.jpg" /></p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1285,58 +1337,6 @@ so a clear interface can be followed, my personal belief.</p></blockquote>
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/07/21/sublime-ppa/" itemprop="url">Sublime Ppa</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/ppa/'>ppa</a>, <a class='category' href='/blog/categories/sublime/'>sublime</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-21T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-07-21</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/07/21/sublime-ppa/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。</p>
-
-<p>这第三方为：webupd8</p>
-
-<h3>Install</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sudo add-apt-repository ppa:webupd8team/sublime-text-2 
-</span><span class='line'>sudo apt-get update
-</span><span class='line'>sudo apt-get install sublime-text</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当前，你还可以安装开发版本：sublime-text-dev</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1352,7 +1352,7 @@ so a clear interface can be followed, my personal belief.</p></blockquote>
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2019
+			<footer id="footer" class="inner">Copyright &copy; 2020
 
     liu.shatle &hearts; gmail.com
 

@@ -1,0 +1,202 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>小程序踩坑-vant - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="小程序踩坑-vant 小程序 vant 可能会有很多坑吧，一个一个记录下来 小程序出来不长时间的很久之前，做了一个“丢丢测运”的小程序，没有后端的逻辑；全部使用前端进行计算操作。
+当初，纯粹地想体验一下小程序的开发过程。但当时的那个对我来说，只是简单的前端开发，没有真正使用到wx提供的任何API &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">小程序踩坑-vant</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/xiao-cheng-xu-vant/'>小程序 vant</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><blockquote><p>可能会有很多坑吧，一个一个记录下来</p></blockquote>
+
+<p>小程序出来不长时间的很久之前，做了一个“丢丢测运”的小程序，没有后端的逻辑；全部使用前端进行计算操作。
+当初，纯粹地想体验一下小程序的开发过程。但当时的那个对我来说，只是简单的前端开发，没有真正使用到wx提供的任何API。</p>
+
+<p>最近，在折腾一下小程序，记录下来踩坑的过程吧。</p>
+
+<hr />
+
+<p>折腾之前，跟朋友了解到，现在比较多的使用到的第三方的组件库有 <a href="https://youzan.github.io/vant-weapp">vant</a>。之前小程序使用的是官方的组件，页面相对简单，这次就使用 vant 组件。</p>
+
+<p>好，第一坑就是来自 vant。</p>
+
+<p>在使用wx开发工具，构建好一个小程序时候，需要安装 vant 组件库，相关参照 https://youzan.github.io/vant-weapp/#/quickstart。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* npm i @vant/weapp -S --production
+</span><span class='line'>* 开发工具上构建 npm
+</span><span class='line'>
+</span><span class='line'>&lt;!-- 如果没有成功，尝试以下过程 --&gt;
+</span><span class='line'>* npm init # 重新初始化
+</span><span class='line'>* npm i @vant/weapp -S --production
+</span><span class='line'>* 开发工具上构建 npm</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看过小程序的官网，应该知道，安装组件时建议使用 production 以减少包大小。“构建 npm”的作用是，将 node_modules 的依赖包，复制到 miniprogram_npm 目录中。（想到了什么呢，其实手动走这个流程应该也是可以的，不过我没有尝试过）</p>
+
+<p>vant 在示例网站上，显示的使用是1.x，但实际上我安装后的版本是 0.5.x。部分组件是不存在的，node_modules下的组件目录结构也是不一样的。</p>
+
+<p>使用指定版本安装，提示说没有找到，很尴尬。后来直接在 package.json 中指定资源的 github 链接，是能下载下来了。当时的最新版本是 v1.2.0，这是一个有坑的版本。</p>
+
+<p>问题类似于 https://github.com/youzan/vant-weapp/issues?q=bem , 可能是团队在兼容wepy时引入的问题，由于时间关系没有去细究，社区也比较活跃，修复应该也比较快的。</p>
+
+<p>果不其然，github然后连续出了 0.5.28 的版本，后又出了 1.2.1 的版本，修复了相关问题。</p>
+
+<p>这，就是使用第三方组件库带来的风险。上手就遇到组件库的问题，比较打击人的动力啊。
+所以，在选择引入第三方库时，需要考虑库的活跃度的问题，慎重。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/';
+        var disqus_url = 'http://shatle.github.io/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

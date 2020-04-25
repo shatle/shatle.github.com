@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Use Carrierwave to Crop Image With MiniMagick carrierwave, minimagick 2013-07-16 Comments 做Web应用，常常要涉及到文件的上传，图片的上传就是其中之一。在Rails中， &hellip;">
+	<meta name="description" content="Sublime Ppa ppa, sublime 2013-07-21 Comments 最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。 这第三方为：webupd8 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,58 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/07/21/sublime-ppa/" itemprop="url">Sublime Ppa</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ppa/'>ppa</a>, <a class='category' href='/blog/categories/sublime/'>sublime</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-21T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-07-21</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/07/21/sublime-ppa/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>最近出现状况：之前下载的submlime提示更新，重新下载后，又没多久又要更新。于是，有了用ppa的想法，但是ubuntu官方并没有提供ppa，不过网上有第三方提供的ppa。</p>
+
+<p>这第三方为：webupd8</p>
+
+<h3>Install</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo add-apt-repository ppa:webupd8team/sublime-text-2 
+</span><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install sublime-text</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当前，你还可以安装开发版本：sublime-text-dev</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1121,79 +1173,6 @@ end
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2012/08/17/guan-yu-linux-quan-xian/" itemprop="url">关于linux权限</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/work/'>work</a>, <a class='category' href='/blog/categories/quan-xian/'>权限</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-17T00:00:00+08:00" data-updated="true" itemprop="datePublished">2012-08-17</time></div>
-
-		
-			<span class="comments"><a href="/blog/2012/08/17/guan-yu-linux-quan-xian/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>最近在linux权限上遇到了一个问题：</p>
-
-<p>一个用户位于一个组中，这个组对某个文件夹拥有权限，此用户想通过组获取文件夹的权限。这对于URP模型应该是比较符合逻辑的。</p>
-
-<p>但实际上我并没有此权限。</p>
-
-<p>过程：</p>
-
-<p>有一用户test1，想获取/var/lib/mysql文件夹的所有权限。显然/var/lib/mysql通常用户是mysql，组是mysql。</p>
-
-<p>通过赋予组权限，如得到/var/lib/mysql的信息：</p>
-
-<pre><code>drwxrwx---  5 mysql         mysql         4096 2012-08-04 08:27 mysql
-</code></pre>
-
-<p>用户与组都拥有所有权限。</p>
-
-<p>test1刚开始不属于mysql组内的，加入组</p>
-
-<pre><code>sudo usermod -G mysql test1
-</code></pre>
-
-<p>查看test1的信息</p>
-
-<pre><code>id test1
-uid=1000(test1) gid=1000(test1) 组=1000(test1),125(mysql)
-</code></pre>
-
-<p>显示test1属于mysql的组了吧，但是实际上并没有进入/var/lib/mysql的权限，纠结。试了多次，没成功，没办法，只有直接点了。</p>
-
-<pre><code>sudo chmod -R 777 /var/lib/mysql
-</code></pre>
-
-<p>即所有人都有完全的权限，终于可以进入此文件夹。但是，我刚开始的想法逻辑应该没错吧。</p>
-
-<p>有空要继续看看为什么会有此问题。</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1209,7 +1188,7 @@ uid=1000(test1) gid=1000(test1) 组=1000(test1),125(mysql)
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2019
+			<footer id="footer" class="inner">Copyright &copy; 2020
 
     liu.shatle &hearts; gmail.com
 

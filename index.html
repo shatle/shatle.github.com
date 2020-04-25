@@ -9,7 +9,8 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Usage of Mapbox mapbox 2019-02-15 Comments 朋友需要帮忙，使用地图进行数据的展示。网上，不少人使用 mapbox，看了些示例与文档，手动折腾了一下，确实是强大。 下面将折腾的过程记录下来。 先说一下需求： &hellip;">
+	<meta name="description" content="小程序踩坑-vant 小程序 vant 2020-04-25 Comments 可能会有很多坑吧，一个一个记录下来 小程序出来不长时间的很久之前，做了一个“丢丢测运”的小程序，没有后端的逻辑；全部使用前端进行计算操作。
+当初，纯粹地想体验一下小程序的开发过程。但当时的那个对我来说， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,86 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/" itemprop="url">小程序踩坑-vant</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/xiao-cheng-xu-vant/'>小程序 vant</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-04-25T00:00:00+08:00" data-updated="true" itemprop="datePublished">2020-04-25</time></div>
+
+		
+			<span class="comments"><a href="/blog/2020/04/25/xiao-cheng-xu-zhi-cai-keng/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p>可能会有很多坑吧，一个一个记录下来</p></blockquote>
+
+<p>小程序出来不长时间的很久之前，做了一个“丢丢测运”的小程序，没有后端的逻辑；全部使用前端进行计算操作。
+当初，纯粹地想体验一下小程序的开发过程。但当时的那个对我来说，只是简单的前端开发，没有真正使用到wx提供的任何API。</p>
+
+<p>最近，在折腾一下小程序，记录下来踩坑的过程吧。</p>
+
+<hr />
+
+<p>折腾之前，跟朋友了解到，现在比较多的使用到的第三方的组件库有 <a href="https://youzan.github.io/vant-weapp">vant</a>。之前小程序使用的是官方的组件，页面相对简单，这次就使用 vant 组件。</p>
+
+<p>好，第一坑就是来自 vant。</p>
+
+<p>在使用wx开发工具，构建好一个小程序时候，需要安装 vant 组件库，相关参照 https://youzan.github.io/vant-weapp/#/quickstart。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>* npm i @vant/weapp -S --production
+</span><span class='line'>* 开发工具上构建 npm
+</span><span class='line'>
+</span><span class='line'>&lt;!-- 如果没有成功，尝试以下过程 --&gt;
+</span><span class='line'>* npm init # 重新初始化
+</span><span class='line'>* npm i @vant/weapp -S --production
+</span><span class='line'>* 开发工具上构建 npm</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看过小程序的官网，应该知道，安装组件时建议使用 production 以减少包大小。“构建 npm”的作用是，将 node_modules 的依赖包，复制到 miniprogram_npm 目录中。（想到了什么呢，其实手动走这个流程应该也是可以的，不过我没有尝试过）</p>
+
+<p>vant 在示例网站上，显示的使用是1.x，但实际上我安装后的版本是 0.5.x。部分组件是不存在的，node_modules下的组件目录结构也是不一样的。</p>
+
+<p>使用指定版本安装，提示说没有找到，很尴尬。后来直接在 package.json 中指定资源的 github 链接，是能下载下来了。当时的最新版本是 v1.2.0，这是一个有坑的版本。</p>
+
+<p>问题类似于 https://github.com/youzan/vant-weapp/issues?q=bem , 可能是团队在兼容wepy时引入的问题，由于时间关系没有去细究，社区也比较活跃，修复应该也比较快的。</p>
+
+<p>果不其然，github然后连续出了 0.5.28 的版本，后又出了 1.2.1 的版本，修复了相关问题。</p>
+
+<p>这，就是使用第三方组件库带来的风险。上手就遇到组件库的问题，比较打击人的动力啊。
+所以，在选择引入第三方库时，需要考虑库的活跃度的问题，慎重。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -3660,302 +3741,6 @@ or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/u
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2016/03/12/es6-in-depth-let-and-const/" itemprop="url">ES6 in Depth: Let and Const</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/const/'>const</a>, <a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/let/'>let</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-03-12T00:00:00+08:00" data-updated="true" itemprop="datePublished">2016-03-12</time></div>
-
-		
-			<span class="comments"><a href="/blog/2016/03/12/es6-in-depth-let-and-const/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote><p><a href="https://hacks.mozilla.org/2015/07/es6-in-depth-let-and-const/">ES6 In Depth: let and const</a></p></blockquote>
-
-<p>今天我要讨论的特性刚第一眼可能显得很简单，但实际上是很强大的。</p>
-
-<p>当BrenDan Eich在1995年开始设计JS的第一个版本时，它做了很多错误的事情，这些事情还包括之后的语言发展中。例如，当你不小心错误处理<code>Date</code>和其它对象时，会自动转为<code>NaN</code>。但是，有些重要的事情他是正确的，有先见之明：对象、原型、第一类函数有词法作用域（就是函数是有作用域的）、默认是可变的。这语言基础是十分良好的，它优于大家对它的第一印象。</p>
-
-<p>同时，Brendan 创建了个特别的设计并影响到今天的文章 &#8211; &#8211; 我认为他这决定是可以称为一个错误的。它是个小事情，十分微小的事情，你可能使用JS多年还没注意到它。但是，它是重要的，因为从这语言来看，这个错误的设计部分在今天来看，我们认为它是好的部分。</p>
-
-<p>它不得不与变量一起处理。</p>
-
-<h4>问题1：代码块没有作用域</h4>
-
-<p>这问题看起来很无辜：<strong>在JS函数中进行<code>var</code>声明时，变量作用域是可以在整个函数体中的</strong>。其中，有两个方式来看到此问题引起的后果。</p>
-
-<p>一个是在代码块中声明的变量的作用域不仅仅是在此代码块中，它会作用于整个函数。</p>
-
-<p>你之前也许并不会注意到这点，但我担心这一点可能会你并不想看到的。让我们通过一场景来看一下这个狡猾的Bug。</p>
-
-<p>你在某些代码中使用一个名称为<code>t</code>的变量：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>function runTowerExperiment(tower, startTime) {
-</span><span class='line'>  var t = startTime;
-</span><span class='line'>
-</span><span class='line'>  tower.on('click', function() {
-</span><span class='line'>    ... code that uses t ...
-</span><span class='line'>  });
-</span><span class='line'>  ... more code ...
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>目前，每件事都工作得很好。现在，你想增加保龄球的测速功能，所以，你在内部的callback函数中增加些<code>if</code>表达式。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>function runTowerExperiment(tower, startTime) {
-</span><span class='line'>  var t = startTime;
-</span><span class='line'>
-</span><span class='line'>  tower.on('click', function() {
-</span><span class='line'>    ... code that uses t ...
-</span><span class='line'>    if (bowlingBall.altitude() &lt;= 0 ) {
-</span><span class='line'>      var t = readTachymeter();
-</span><span class='line'>      ...
-</span><span class='line'>    }
-</span><span class='line'>  });
-</span><span class='line'>  ... more code ...
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>噢，你无意地增加了第二个名称为<code>t</code>的变量。现在，之前正常工作的<code>t</code>，与一个新的内部的变量<code>t</code>关联上了，替代了外部早已存在的那个变量。</p>
-
-<p>JS中<code>var</code>的作用域类似于PS中的桶刷工具，它会从声明、向前、向后各方向得到扩展，直到它碰到函数的边界，否则一直会起作用。因此，此处目前的<code>t</code>的作用域是向后兼容的，它就是我们在开始进行函数时创建的，这称作为变量升域(hoisting)。我几乎认为，JS引擎通过一个微小的代码起重机，将每个<code>var</code>和<code>function</code>提升到函数闭域的顶部。</p>
-
-<p>现在，升域也是有它好处的。没有这一特性，很多在全局作用域中能很好工作的完美的好的技术将不能在<a href="https://en.wikipedia.org/wiki/Immediately-invoked_function_expression">即时调用函数表达式(IIFE)</a> 使用。但与此同时，升域会导致一个恶心的Bug： 当你使用<code>t</code>去计算时可能会得到<code>NaN</code>，这时你很难去追踪到它，特别是当你的代码大于此时的小例子时。</p>
-
-<p>添加一个新的代码块会导致之前的代码块出现意想不到的错误。它只影响到我？它是不是真的怪异？我们并不想影响到之前的结果。</p>
-
-<p>但是，相对于<code>var</code>的第二个问题，这个问题还是小的。</p>
-
-<h4>问题2：变量在循环中会过度地分享</h4>
-
-<p>你可以先猜测一下，当你运行这代码时会出现什么情况。它很简单：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="s2">&quot;I&#39;m a web page!&quot;</span><span class="p">,</span> <span class="s2">&quot;alert() is fun!&quot;</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">;){</span>
-</span><span class='line'>  <span class="nx">alert</span><span class="p">(</span><span class="nx">messages</span><span class="p">[</span><span class="nx">i</span><span class="p">]);;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果你看了这一系列的文章，你会知道我很喜欢在例子代码中使用<code>alert()</code>。也许，你也知道<code>alert()</code>是个糟糕的API，它是同步操作的。所以，当一个警告提示窗出现时，输入事件是不会传递的。在你的JS代码、实际在你的整个UI界面基本会是暂停的，直到用户点击确定选项。</p>
-
-<p>多数时候，你在网页中使用<code>alert()</code>是个错误的选择，我之所以使用它，是因为我只觉得<code>alert()</code>是个很好的教学工具。</p>
-
-<p>同时，我还应该被劝说放弃所有的杂乱和坏的行为，它意味着我可以这样创造一个说话的猫：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Meow!&quot;</span><span class="p">,</span> <span class="s2">&quot;I&#39;m a taling cat!&quot;</span><span class="p">,</span> <span class="s2">&quot;callbacks are fun!&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">cat</span><span class="p">.</span><span class="nx">say</span><span class="p">(</span><span class="nx">messages</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-</span><span class='line'>  <span class="p">},</span> <span class="nx">i</span> <span class="o">*</span> <span class="mi">1500</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>但是这会出错。这并不会顺序地说出三个消息，这代码猫会说出三次的&#8221;undefined&#8221;。</p>
-
-<p>你能指出这个问题吗？</p>
-
-<p>这问题出现在唯一的变量<code>i</code>中，它会作用于循环内部和三个延时的返回函数。但当循环完成时，<code>i</code>的值会变成3，因为<code>messages.length</code>等于3，但任一返回函数并没有被调用。</p>
-
-<p>所以，当第一个延时函数工作时，会调用<code>cat.say(messages[i])</code>，它实际会是<code>messages[3]</code>，而这会导致出现<code>undefined</code>。</p>
-
-<p>有很多的方法来解决这一问题，但这个是<code>var</code>的作用域规则导致的第二个问题。首先，确保代码不会有这一问题是十分好的。</p>
-
-<h4>let 新于 var</h4>
-
-<p>在很多时候，JS在设计上的缺陷是不能弥补的（其它语言也会设计缺陷，但JS犹为突出）。向后兼容意味着不能改变已经存在的Web中JS代码行为。甚至，标准委员会也没致力于此，认为解决这些怪异的问题就是自动插入分号(意思是注意细节？)。浏览器制作人并不想对这种破坏性的改变进行实现，因为这些改变会成为其用户的惩罚（也可能会因此失去部分用户）。</p>
-
-<p>所以，大概十年之前，当 Brendan Eich 决定解决这问题时，那时只有一种方式来实现。</p>
-
-<p>他添加了一个新的关键字<code>let</code>，它可以用来声明变量，就像<code>var</code>一样，但其作用域规则更好。</p>
-
-<p>它看起来这样子：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">readTachymeter</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者这样：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>let</code>和<code>var</code>是不一样的。如果你只是需要在你代码中做个全局的搜索和替换，又可以在你的部分代码中进行中断（有可能是无意的），那么你可以使用怪异的<code>var</code>。但是在更多时候，在ES6中，你应该在任何地方都要停止使用<code>var</code>，而使用<code>let</code>。正因为如此，标题为“let 新于 var”。</p>
-
-<p><code>let</code>和<code>var</code>到底有哪些不一样呢？很高兴你会提问：</p>
-
-<ul>
-<li><strong><code>let</code>变量是代码块作用域的</strong>  使用<code>let</code>来声明一个变量，其作用域只会在包含的作用域中，而不是整个函数的内部。</li>
-</ul>
-
-
-<p><code>let</code>也会有一定的升域情况，但是它并不是任意的。用<code>let</code>替换<code>var</code>，可以简单地解决<code>runTowerExperiment</code>例子中的问题。如果你在任何的地方都使用<code>let</code>，你将不会再遇到此类问题。</p>
-
-<ul>
-<li><p><strong>全局的<code>let</code>变量并不会成为全局对象的属性</strong> 是的，你不能通过编写<code>window.variableName</code>来访问它们。相反，它们运行在网页中的一个不可见的包含所有JS代码的块中。</p></li>
-<li><p><strong>在<code>for (let x ...)</code>的每次循环中会创建新的绑定的变量<code>x</code></strong>。这会有些微小的不同的，意味着<code>for (let ...)</code>循环执行多次时，每次其内部包含一个闭包。就像之前我们的猫例子，每个闭包会得到循环的不同的一个复本，而不是每次闭包得到同一个循环变量。</p></li>
-</ul>
-
-
-<p>所以，对于猫这例子说，将<code>var</code>修改为<code>let</code>就可以解决之前的问题。</p>
-
-<p>这作用于所有的三类<code>for</code>循环表达式：for-of, for-in 和老式C语言的分号方式。</p>
-
-<ul>
-<li><strong>在没有遇到<code>let</code>声明之前使用变量会出错</strong>  当控制流没有到达变量声明的代码行时，其是未初始化的。例如：</li>
-</ul>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;current time:&quot;</span><span class="p">,</span> <span class="nx">t</span><span class="p">);</span> <span class="c1">//ReferenceError</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'>  <span class="kd">let</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">readTachymeter</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这一规则可以帮助你抓取到Bug。结果并不是<code>NaN</code>，你将会在出现问题的代码行中得到一个异常。</p>
-
-<p>这个变量在作用域但并没有被初始化的这一区域，被称为 <em>temporal deal zone</em>(临时死区间)。我一直等待更为专业的术语来描述这事情，就像在写科幻小说一样，然而没有。</p>
-
-<p>（性能详情：在多数情况下，（在变量查找方式中）你可以告知变量是否声明，或者不仅仅去查找相关代码。所以，JS引擎实际上并不是每次都会进行额外的检查，以确认变量是否初始化。但是，在闭包中有时是不明确的，在这些情况下，就意味着使用<code>let</code>会比<code>var</code>慢。）</p>
-
-<p>（作用域详情：在某些编程语言中，变量的作用域开始于其声明的地方，而不是在整个闭合的代码中向后查找。标准委员会认为可以通过<code>let</code>来使用这作用域规则。如此，当<code>t</code>在<code>let t</code>的语句后面调用时，会简单得到一个引用错误，所以，它也不会关联到任一变量。它应该在闭合的作用域中关联到变量<code>t</code>上，但这方法对于闭包或者函数式的升域都是无效的，所以它实际上会被忽略掉。）</p>
-
-<ul>
-<li><strong>重复声明变量会引起语法错误</strong> 这一规则也是利于检测细小的错误。同时，它的不同点还有：当你试图将全局的<code>let</code>转化为<code>var</code>，会导致些问题，因为它曾经是个全局<code>let</code>的变量。</li>
-</ul>
-
-
-<p>如果你的某些脚本声明了相同的全局变量，你最好保持使用<code>var</code>。如果你试图转化为<code>let</code>时，那些第二个用到此变量的脚本会出错的。</p>
-
-<p>或者，使用ES6的模块，但是那是之后某天的故事了。</p>
-
-<p>（语法详情：<code>let</code>是在严格的代码模式下是保留关键它。在非严格代码模式下，为了向后兼容，你依然可以声明变量、函数和参数的名称为<code>let</code>。你可以编写<code>var let = 'q';</code>，但你最好不要这让做。同时，<code>let let;</code>也是不允许的。）</p>
-
-<p>除了这些不一样的地方，<code>let</code>和<code>var</code>其实是一样的。它们可以通过逗号来分开声明多个变量，例如，他们也都支持解构(释构？destructuring)。</p>
-
-<p>注意，类<code>class</code>的声明类似于<code>let</code>，而不<code>var</code>。如果你在加载的脚本中多个声明一个类<code>class</code>，在第二次时你会因为重复声明类而得到一个错误。</p>
-
-<h4>常量(const)</h4>
-
-<p>是的，新的东西。</p>
-
-<p>ES6介绍了一个三方的关键字，它可以在<code>let</code>的旁边使用: <code>const</code>。</p>
-
-<p>使用<code>const</code>声明变量类似于<code>let</code>，但不能在声明之外对它进行赋值，这会引起一个语法错误。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">const</span> <span class="nx">MAX_CAT_SIZE_KG</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">;</span> <span class="c1">//</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">MAX_CAT_SIZE_KG</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">;</span> <span class="c1">// SyntaxError</span>
-</span><span class='line'><span class="nx">MAX_CAT_SIZE_KG</span><span class="o">++</span><span class="p">;</span> <span class="c1">// nice try, but still a SyntaxError</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>明显够了，你不能只声明一个<code>const</code>变量而不赋值：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">const</span> <span class="nx">theFairest</span><span class="p">;</span> <span class="c1">// SyntaxError, you troublemaker</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>命名空间的秘密</h4>
-
-<p><em>&#8220;命名空间是一个非常好的主意 &#8211; 让我们更多地使用它&#8221; &#8211; Tim Peters，&#8221;Python 的秘决&#8221;</em></p>
-
-<p>在私底下，内嵌式的作用域是始终围绕编程语言的一个核心概念。自从<a href="https://en.wikipedia.org/wiki/ALGOL">ALGOL</a> 出来后一直就是这样，已经大概有57年了，但对今天来说，此结论更为正确。</p>
-
-<p>在ES3之前，JS只有全局的任务域和函数作用域。（让我们忽略掉<code>with</code>表达式。）ES3介绍了<code>try-catch</code>的表达式，它会增加一个新类型的作用域，此作用域只用来操作异常的变量并作用于<code>catch</code>代码块。ES5通过调用<code>eval()</code>会产生一个新的作用域。ES6添加了代码块作用域，for循环作用域，新的全局<code>let</code>作用域，模块作用域，还有用来解释参数中默认参数的额外作用域。</p>
-
-<p>所有在ES3之后添加的作用域都是必要的，它们使得JS在程序上和面向对象特性上更合理、精确、直观，就如闭包一样；同时，可以和闭包无缝协作。也许你之前并没有注意到这些作用域的规则，如果是这样，说明JS做的工作并没有困扰你。</p>
-
-<h4>现在我能使用<code>let</code>和<code>const</code>吗？</h4>
-
-<p>可以。为了在Web中使用它们，你不得不使用ES6的编译器，如Babel, Traceur, 或者 TypeScript。（Babel 和 Traceur 并不支持 <em>temporal deal zone</em>(临时死区间)。）</p>
-
-<p>io.js 支持<code>let</code>和<code>const</code>，但只能在严格模式下使用，Node.js 在支持上是一样的，但参数<code>--harmony</code>也是必要的。</p>
-
-<p>Brendan Eich 在九年前实现了Firefox中<code>let</code>的第一个版本，这一特性在其标准化进程中进行了彻底的重新设计。为了符合标准，Shu-yu Guo 更新了此实现方式，代码审核由Jeff Walden和其它人完成。</p>
-
-<p>好了，我们展开双手来欢迎新特性。ES6史诗级的特性到现在结束了。在之前两周中，我们完成了多数人渴望在ES6看到的特性的文章。但是首先要说明，下周我们将对之前早些时间提到的新特性：super。所以，和Eric Faust 一块加入我们，深入了解ES6的子类化。</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -3966,7 +3751,7 @@ or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/u
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2019
+			<footer id="footer" class="inner">Copyright &copy; 2020
 
     liu.shatle &hearts; gmail.com
 
