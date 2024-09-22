@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="ES6 in Depth: Rest Parameters and Defaults default, es6, parameter, 深入es6 2015-10-25 Comments ES6 in Depth: Rest parameters and defaults &hellip;">
+	<meta name="description" content="ES6 in Depth: Destructuring destructure, es6, 深入es6 2015-11-15 Comments ES6 in Depth: Destructuring 编辑者说明：今天文章的早期版本是由Firefox工具开发工程师 Nick Fitzgerald &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,522 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2015/11/15/es6-in-depth-destructuring/" itemprop="url">ES6 in Depth: Destructuring</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/destructure/'>destructure</a>, <a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-15T00:00:00+08:00" data-updated="true" itemprop="datePublished">2015-11-15</time></div>
+
+		
+			<span class="comments"><a href="/blog/2015/11/15/es6-in-depth-destructuring/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote><p><a href="https://hacks.mozilla.org/2015/05/es6-in-depth-destructuring/">ES6 in Depth: Destructuring</a></p></blockquote>
+
+<p><em>编辑者说明：今天文章的早期版本是由Firefox工具开发工程师 Nick Fitzgerald 完成的，其起初来自 Nick 的博客 (Destructuring Assignment in ES6)[http://fitzgeraldnick.com/weblog/50/]</em></p>
+
+<h4>什么是解构的赋值</h4>
+
+<p>解构的赋值允许你给数组或者对象的变量赋值时，其语法类似于数组或者对象。这种语法非常简洁，其表达的意思也比传统的属性赋值要易懂。</p>
+
+<p>没有解构的赋值，你可能访问一个三元素的数组时会如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">someArray</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">second</span> <span class="o">=</span> <span class="nx">someArray</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">third</span> <span class="o">=</span> <span class="nx">someArray</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过解构的赋值，与其等价的代码，而且更为精确和可读：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="nx">second</span><span class="p">,</span> <span class="nx">third</span><span class="p">]</span> <span class="o">=</span> <span class="nx">someArray</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>SpiderMonky作为Firefox的JS的解释器，已经支持大部分的解构，但是并不是所有。(Track SpiderMonkey’s destructuring (and general ES6) support in bug 694100)[https://bugzilla.mozilla.org/show_bug.cgi?id=694100]。</p>
+
+<h4>数组和迭代的解构</h4>
+
+<p>我们已经在上面看到解构的赋值，其通用的语法如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span> <span class="nx">variable1</span><span class="p">,</span> <span class="nx">variable2</span><span class="p">,</span> <span class="p">...,</span> <span class="nx">variableN</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">array</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这会将 array 中的元素对应地分配到 variable1 到 variableN。如果你想同时声明变量，你可以在分配的前面增加<code>var</code>、<code>let</code>、<code>const</code>：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[</span> <span class="nx">variable1</span><span class="p">,</span> <span class="nx">variable2</span><span class="p">,</span> <span class="p">...,</span> <span class="nx">variableN</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">array</span><span class="p">;</span>
+</span><span class='line'><span class="kd">let</span> <span class="p">[</span> <span class="nx">variable1</span><span class="p">,</span> <span class="nx">variable2</span><span class="p">,</span> <span class="p">...,</span> <span class="nx">variableN</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">array</span><span class="p">;</span>
+</span><span class='line'><span class="kr">const</span> <span class="p">[</span> <span class="nx">variable1</span><span class="p">,</span> <span class="nx">variable2</span><span class="p">,</span> <span class="p">...,</span> <span class="nx">variableN</span> <span class="p">]</span> <span class="o">=</span> <span class="nx">array</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>实际上，用<code>variable</code>并不合适，因为你可以用你想的多深的内嵌模式(来分配值)，如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">foo</span><span class="p">,</span> <span class="p">[[</span><span class="nx">bar</span><span class="p">],</span> <span class="nx">baz</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">]];</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 1</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 2</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">baz</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 3</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再者，你可以用解构来跳过数组的部分元素：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[,,</span><span class="nx">third</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">third</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;baz&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你还可以通过 “剩余”的模式来抓取数组中的尾部的元素：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">head</span><span class="p">,</span> <span class="p">...</span><span class="nx">tail</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">];</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">tail</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// [2, 3, 4]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当你访问数组中超边界或者不存在的元素时，你会得到通过索引返回的值：undefined.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">([][</span><span class="mi">0</span><span class="p">]);</span>
+</span><span class='line'><span class="c1">// undefined</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">missing</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">missing</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// undefined</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，利用数组的分配模式的解构分配方式也适用于迭代中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="o">*</span> <span class="nx">fibs</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>     <span class="k">yield</span> <span class="nx">a</span><span class="p">;</span>
+</span><span class='line'>     <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">b</span><span class="p">,</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="nx">second</span><span class="p">,</span> <span class="nx">third</span><span class="p">,</span> <span class="nx">fourth</span><span class="p">,</span> <span class="nx">fifth</span><span class="p">,</span> <span class="nx">sixth</span><span class="p">]</span> <span class="o">=</span> <span class="nx">fibs</span><span class="p">();</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">sixth</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 5</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解构对象</h4>
+
+<p>对对象解构可以让你将对象的不同属性绑定到变量中。当你指定要绑定的属性时，相关你绑定的变量的值就等于其属性值。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">robotA</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Benber&quot;</span> <span class="p">};</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">robotB</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Flexo&quot;</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">nameA</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">robotA</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">nameB</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">robotB</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">nameA</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;Benber&quot;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">nameB</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;Flexo&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>还有个有益的简单语法，当属性和变量的名称一致时：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">foo</span><span class="o">:</span> <span class="s2">&quot;lorem&quot;</span><span class="p">,</span> <span class="nx">bar</span><span class="o">:</span> <span class="s2">&quot;ipsum&quot;</span> <span class="p">};</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;lorem&quot;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">bar</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;ipsum&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>类似数组的解构，你可以解构更多的内嵌和组合：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">complicatedObj</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">arrayProp</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>     <span class="s2">&quot;Zapp&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="p">{</span> <span class="nx">second</span><span class="o">:</span> <span class="s2">&quot;Brannigan&quot;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">]</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">arrayProp</span><span class="o">:</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="p">{</span> <span class="nx">second</span> <span class="p">}]</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">complicatedObj</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">first</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;Zapp&quot;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">second</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;Brannigan&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当你解构的属性并没有定义时，你会得到 <code>undefined</code> ：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">missing</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">missing</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// undefined</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一个潜在的问题你应该了解，当你解构一个对象并分配到变量中时，但是你并没有声明它们（就是没有 let, const, 或者 var ）:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span> <span class="nx">blowUp</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">blowUp</span><span class="o">:</span> <span class="mi">10</span><span class="p">};</span>
+</span><span class='line'><span class="c1">// Syntax error</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>之所以会发生这事，因为JS语法告诉解释引擎将<code>{</code>开头的表达式认为是一个块表达式（例如，<code>{ console }</code>就是个合法的块表达式）。解决方案还可以是将整个表达式用括号括起来：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">({</span> <span class="nx">safe</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{});</span>
+</span><span class='line'><span class="c1">// No errors</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解构的值不是对象、数组或者迭代</h4>
+
+<p>当你对<code>null</code>和<code>undefined</code>的解构时，你会得到错误：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">{</span><span class="nx">blowUp</span><span class="p">}</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="c1">// TypeError: null has no properties</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，你可以解构其它原始的类型，如 布尔、数值、字符串，然后得到<code>undefined</code>：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">{</span><span class="nx">wtf</span><span class="p">}</span> <span class="o">=</span> <span class="kc">NaN</span><span class="p">;</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">wtf</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// undefined</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这结果有点意想不到，但是通过更多的测试可以其实其原因很简单。当我们使用对象的分配模式，其值要求可被强制解释为对象。多数类型可以转化为对象，但是null 和 undefined 不行。当使用数组分配模式时，值必须允许迭代。</p>
+
+<h4>默认值</h4>
+
+<p>当你解构的属性没有定义时，你可以提供默认值：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">missing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">missing</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// true</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">message</span><span class="o">:</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Something went wrong&quot;</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// &quot;Something went wrong&quot;</span>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{};</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 3</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>（笔者注：前第一二个特性已经在Firefox中实现了，但第三个没有，详见 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080">bug 932080</a> ）</p>
+
+<h4>解构的应用实践</h4>
+
+<h5>定义函数参数</h5>
+
+<p>作为开发人员，我们希望使用更加合理的API，使用一个多属性的对象作为参数，而不是强制我们的用户来记住多个独立的参数（来作为函数的参数）。当我们想要引用其属性值时，我们可以使用解构来避免重复传入对象的属性。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">removeBreakpoint</span><span class="p">({</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">column</span> <span class="p">})</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这代码块来源于真实的代码，它来自Firefox的JS调试工具（也是JS的实现方式）。我们发现这模式令人很是愉快。</p>
+
+<h5>注册对象参数</h5>
+
+<p>扩展之前的例子，我们可以在解构时给予对象属性默认值。当我们存在的一个对象，这个对象是用来存储注册信息的，其部分属性已有合理的默认值时，解构就显得十分有好处了。例如，jQuery 的 <code>ajax</code>函数传递一个注册对象作为第二个参数，可以重写成这样：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">jQuery</span><span class="p">.</span><span class="nx">ajax</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">async</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">beforeSend</span> <span class="o">=</span> <span class="nx">noop</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">cache</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">complete</span> <span class="o">=</span> <span class="nx">noop</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">crossDomain</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">global</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">// ... more config</span>
+</span><span class='line'><span class="p">})</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ... do stuff</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这避免对注册对象的每个属性重复地进行类如 <code>var foo = config.foo || theDefaultFoo;</code> 的情况。</p>
+
+<p>(笔者注：不幸，在Firefox中，对象默认值的缩略语法并没有实现。我知道，我们已经有些段落已经进行了说明。详见 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932080">bug 932080</a> )</p>
+
+<h5>在ES6迭代协议中</h5>
+
+<p>ES6 定义了迭代的协议，我们已经在这系列文章的早期文章中有谈到。当你对 <code>Map</code>进行迭代时，你会得到一系列的 <code>[key, value]</code> 键值对。我们可能解构这一对结构，可很容易访问基 key 和 value：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">();</span>
+</span><span class='line'><span class="nx">map</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s2">&quot;the global&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">map</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="s2">&quot;the document&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="p">[</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">]</span> <span class="nx">of</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot; is &quot;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">// &quot;[object Window] is the global&quot;</span>
+</span><span class='line'><span class="c1">// &quot;[object HTMLDocument] is the document&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>迭代时仅要 key :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span> <span class="kd">var</span> <span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="nx">of</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者迭代只要 value，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="p">[,</span><span class="nx">value</span><span class="p">]</span> <span class="nx">of</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>多个返回值</h5>
+
+<p>尽管JS语言并没有完全地支持返回多个值，但是这并不必要，因为你可以返回一个数组并对结果进行解构：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">returnMultipleValues</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kd">var</span> <span class="p">[</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">]</span> <span class="o">=</span> <span class="nx">returnMultipleValues</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外，你可以使用一个对象来作为容器，并命名返回的值：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">returnMultipleValues</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>     <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>     <span class="nx">bar</span><span class="o">:</span> <span class="mi">2</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kd">var</span> <span class="p">{</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">returnMultipleValues</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实，这两种模式更好的方式是将结果保存到临时容器中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">returnMultipleValues</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>     <span class="nx">foo</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>     <span class="nx">bar</span><span class="o">:</span> <span class="mi">2</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">temp</span> <span class="o">=</span> <span class="nx">returnMultipleValues</span><span class="p">();</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">temp</span><span class="p">.</span><span class="nx">foo</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="nx">temp</span><span class="p">.</span><span class="nx">bar</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者，可能使用延续传递的样式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">returnMultipleValues</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">k</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">returnMultipleValues</span><span class="p">((</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">...);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>导入CommonJS的模块名称</h5>
+
+<p>还没有使用 ES6 的模块？还依然使用 CommonJS模块？没问题！当导入某些 CommonJS 模块 X 时，而模块 X 导出比你想要的还要更多的函数。利用解构，你可以精确地使用你想要使用的模块，避免命名的混乱：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">const</span> <span class="p">{</span> <span class="nx">SourceMapConsumer</span><span class="p">,</span> <span class="nx">SourceNode</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;source-map&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>总结</h4>
+
+<p>所以，你可以看到解构在很多细节上的应用都很有用，在 Mozilla 中我们已经对其有很多经验。Lars Hansen 在十年之前介绍过 Opera 中的解构，接着 Brendan Eich 为 Firefox 也增加了支持。我们知道，解构如果能应用于此语言的每天工作中，会使得所有的你的代码看起来更加的简洁。</p>
+
+<p>五周之前，我们说过，ES6会改变你编写JS的方式。我们在大脑中有一系列的具体特性，每段时间学习到的东西都能使自己有些提升。合并在一起，它们将会最终影响到你工作中的每个项目。方式的改革引导变革。</p>
+
+<p>顺应地应用ES6的解构需要团队的努力。特别感谢 Tooru Fujisawa (arai) 和 Arpad Borsos (Swatinem) 作出的贡献。</p>
+
+<p>对于解构的支持，Chrome的开发工作正在进行中，其它的浏览器也毫无疑问地在以后的某时会支持。现在，如果你想在Web中使用解构，那么你需要使用 <a href="http://babeljs.io/">Babel</a> 和 <a href="https://github.com/google/traceur-compiler#what-is-traceur">Traceur</a>。</p>
+
+<hr />
+
+<p>再次感谢 Nick Fitzgerald 的文章。</p>
+
+<p>下周，我们将谈到一个特性，它或多或少地使用更简单的方式来改变你已经编写的JS代码，这些代码通常自始自终是语言的底层代码。你会关心吗？更为简洁的语法你是否会兴奋呢？我确信答案是肯定的，但是先不要回答我。在下周加入我们并进行了解，我们将会深入 箭头函数（arrow function）。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1688,133 +2204,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2014/03/11/refresh-in-simple-captcha/" itemprop="url">Refresh in Simple_captcha</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/refresh/'>refresh</a>, <a class='category' href='/blog/categories/simple-captcha/'>simple_captcha</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-11T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-11</time></div>
-
-		
-			<span class="comments"><a href="/blog/2014/03/11/refresh-in-simple-captcha/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>对于登录，为了防止机器人，部分网站需要配合验证码进行登录。常用的Gem有 recaptcha 和 simple_captcha。</p>
-
-<p>下面简要描写一下，我的使用过程。项目是在他人的基础上修改的，他人已经使用 simple_captcha 提供了验证码登录的功能。但是没有刷新的按键功能。</p>
-
-<p>对于“无刷新的验证码”登录功能，可以参考 <a href="https://github.com/galetahub/simple-captcha">https://github.com/galetahub/simple-captcha</a>。 以下是添加刷新功能的过程。</p>
-
-<p>原代码中，登录页面的views代码为：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>此代码会自动添加输入框和验证码图片，其中的参数可以参考之前 github 项目链接。</p>
-
-<p>需要添加刷新功能，就添加按钮：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
-</span><span class='line'><span class="x">&lt;div class=&quot;refresh_simple_captcha&quot;&gt;</span>
-</span><span class='line'><span class="x">    &lt;a href=&quot;javascript:;&quot;&gt;点击刷新验证码&lt;/a&gt;</span>
-</span><span class='line'><span class="x">&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>通过观察，页面中的验证码图片的链接值：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;http://127.0.0.1:3000/simple_captcha/simple_captcha?distortion=high&amp;amp;image_style=simply_green&amp;amp;simple_captcha_key=9e02709d78e964e4802b6b56937cdc63a45eac87&amp;amp;time=1394527382&quot;</span> <span class="na">alt=</span><span class="s">&quot;simple_captcha.jpg&quot;</span><span class="nt">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>可以看到有四个参数值，包括：distortion, image_style, simple_captcha_key, time.</p>
-
-<p>从资源的链接值中，可以试图简单并直接去改变time的值。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;time=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;time=&#39;</span><span class="o">+</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">valueOf</span><span class="p">();</span>
-</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个方案或许能够改变，但是字符还是那几个；甚至，可能没有发生变化。可以想象一下其它的参数，毕竟是刷新吧，可以将distortion=low了，提升一下差别特性。</p>
-
-<hr />
-
-<p>那么，如果想进一步，如何使得字符也改变呢？</p>
-
-<p>需要添加额外的接口，</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">SimpleCaptchaController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">update_simple_captcha</span>
-</span><span class='line'>    <span class="n">render</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>添加 views/simple_captcha/update_simple_captcha.erb 文件，</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span><span class="n">raw</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意，参数是要加上去的。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.refresh_simple_captcha a&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
-</span><span class='line'>  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/simple_captcha/update_simple_captcha&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
-</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div#simple_captcha&quot;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样就字符就可以改变了。</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1830,7 +2219,7 @@
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2020
+			<footer id="footer" class="inner">Copyright &copy; 2024
 
     liu.shatle &hearts; gmail.com
 

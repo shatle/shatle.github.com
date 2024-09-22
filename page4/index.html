@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Create Web Icons icon, web 2014-03-04 Comments 不得不说，网络型图标给予我们很多方便。其中，提供的图标可以利用css修改样式，而不是如png图片那样。 其中，bootstrap就为我们提供了不少的图标，但是我们有时刚不得不自定义些图标。那么， &hellip;">
+	<meta name="description" content="Refresh in Simple_captcha refresh, simple_captcha 2014-03-11 Comments 对于登录，为了防止机器人，部分网站需要配合验证码进行登录。常用的Gem有 recaptcha 和 simple_captcha。 下面简要描写一下， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,133 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/03/11/refresh-in-simple-captcha/" itemprop="url">Refresh in Simple_captcha</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/refresh/'>refresh</a>, <a class='category' href='/blog/categories/simple-captcha/'>simple_captcha</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-11T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-03-11</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/03/11/refresh-in-simple-captcha/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>对于登录，为了防止机器人，部分网站需要配合验证码进行登录。常用的Gem有 recaptcha 和 simple_captcha。</p>
+
+<p>下面简要描写一下，我的使用过程。项目是在他人的基础上修改的，他人已经使用 simple_captcha 提供了验证码登录的功能。但是没有刷新的按键功能。</p>
+
+<p>对于“无刷新的验证码”登录功能，可以参考 <a href="https://github.com/galetahub/simple-captcha">https://github.com/galetahub/simple-captcha</a>。 以下是添加刷新功能的过程。</p>
+
+<p>原代码中，登录页面的views代码为：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此代码会自动添加输入框和验证码图片，其中的参数可以参考之前 github 项目链接。</p>
+
+<p>需要添加刷新功能，就添加按钮：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span><span class='line'><span class="x">&lt;div class=&quot;refresh_simple_captcha&quot;&gt;</span>
+</span><span class='line'><span class="x">    &lt;a href=&quot;javascript:;&quot;&gt;点击刷新验证码&lt;/a&gt;</span>
+</span><span class='line'><span class="x">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过观察，页面中的验证码图片的链接值：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;http://127.0.0.1:3000/simple_captcha/simple_captcha?distortion=high&amp;amp;image_style=simply_green&amp;amp;simple_captcha_key=9e02709d78e964e4802b6b56937cdc63a45eac87&amp;amp;time=1394527382&quot;</span> <span class="na">alt=</span><span class="s">&quot;simple_captcha.jpg&quot;</span><span class="nt">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到有四个参数值，包括：distortion, image_style, simple_captcha_key, time.</p>
+
+<p>从资源的链接值中，可以试图简单并直接去改变time的值。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;time=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;time=&#39;</span><span class="o">+</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">valueOf</span><span class="p">();</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#simple_captcha img&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个方案或许能够改变，但是字符还是那几个；甚至，可能没有发生变化。可以想象一下其它的参数，毕竟是刷新吧，可以将distortion=low了，提升一下差别特性。</p>
+
+<hr />
+
+<p>那么，如果想进一步，如何使得字符也改变呢？</p>
+
+<p>需要添加额外的接口，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">SimpleCaptchaController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">update_simple_captcha</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>添加 views/simple_captcha/update_simple_captcha.erb 文件，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='erb'><span class='line'><span class="cp">&lt;%=</span><span class="n">raw</span> <span class="n">show_simple_captcha</span><span class="p">(</span><span class="ss">:distortion</span> <span class="o">=&gt;</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="ss">:image_style</span> <span class="o">=&gt;</span> <span class="s1">&#39;simply_green&#39;</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意，参数是要加上去的。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div.refresh_simple_captcha a&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/simple_captcha/update_simple_captcha&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div#simple_captcha&quot;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就字符就可以改变了。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -860,68 +987,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/10/10/modify-tags-in-evernote/" itemprop="url">Evernote 修改标签</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/evernote/'>evernote</a>, <a class='category' href='/blog/categories/biao-qian/'>标签</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-10T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-10-10</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/10/10/modify-tags-in-evernote/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>虽然用了 evernote 快两年了，但最近一年多用的都是印象笔记，没办法网络速度是硬伤。使用期间也没遇到什么问题，可能之前记录东西相对较少吧。</p>
-
-<p>可是，在这段时间，由于找工作的原因，印象笔记的使用程序直线上升，用来记录自己不懂的知识点、错题等等。于是，时不时就会有这样子的操作。</p>
-
-<ul>
-<li>添加标签时 输入字符</li>
-<li>evernote 提示字符</li>
-<li>顺手敲回车</li>
-<li>之前添加的类似标签上去了。</li>
-</ul>
-
-
-<p>功能很好，但是，有时却不是我想要的标签，只是类似而已，但已经上去了。想修改此标签，却怎么点都不行，习惯性的右键，唉，它又不是本地应用。无奈＋手懒，没太多理会，就留在上面了。</p>
-
-<p>最近，这情况出现的次数多了，不能忍受。于是，看了网上的人是怎么做的。好吧，其实也简单 －－ <strong>直接删除</strong>。</p>
-
-<ul>
-<li>鼠标选择要删除的标签</li>
-<li>按下键盘上的 Del(ete) 按钮</li>
-</ul>
-
-
-<p>没有直接修改啊，不过这样也不错，有进步至少。</p>
-
-<hr />
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -937,7 +1002,7 @@
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2020
+			<footer id="footer" class="inner">Copyright &copy; 2024
 
     liu.shatle &hearts; gmail.com
 

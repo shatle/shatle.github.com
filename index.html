@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="小程序踩坑-tabbar 小程序 tabbar 2020-04-25 Comments 在与后台理顺授权、登录逻辑之后，就开始小程序的页面结构开发了。 既然用上了 vant，所以也就直接拿来用了 https://youzan.github.io/vant-weapp/#/tabbar。 &hellip;">
+	<meta name="description" content="Use Sqlalchemy-migrate sqlalchemy migrate 2022-07-30 Comments 记录一下使用 sqlalchemy-migrate 的问题。 官网： https://sqlalchemy-migrate.readthedocs.io/en/latest &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,235 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2022/07/30/use-sqlalchemy-migrate/" itemprop="url">Use Sqlalchemy-migrate</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/sqlalchemy-migrate/'>sqlalchemy migrate</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2022-07-30T00:00:00+08:00" data-updated="true" itemprop="datePublished">2022-07-30</time></div>
+
+		
+			<span class="comments"><a href="/blog/2022/07/30/use-sqlalchemy-migrate/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>记录一下使用 sqlalchemy-migrate 的问题。</p>
+
+<p>官网： https://sqlalchemy-migrate.readthedocs.io/en/latest/download.html</p>
+
+<h2>说明</h2>
+
+<p>在寻找 python 层面，类 rails migration 的工具，发现了 sqlalchemy-migrate。
+大致看着还可以，尝试使用中。</p>
+
+<h2>下载</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pip install sqlalchemy-migrate</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装成功后，应该可以运行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate help</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以查看 migrate 脚本支持的功能命令。</p>
+
+<h2>使用</h2>
+
+<p>根据官网说明，手动尝试运行，但遇到了些问题。</p>
+
+<h4>创建迁移项目目录</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate create migration "Example project"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此命令会创建一个迁移项目的文件夹 migration，里面包含有 versions 目录、manage.py、manage.cfg 文件。</p>
+
+<h4>构建数据库的基本结构</h4>
+
+<p>官网上，有</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ python migration/manage.py version_control mysql+mysqldb://root:@localhost/activity?charset=utf8mb4 migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>官网上说，这命令会在相应的数据库中增加版本控制的表 migrate_version。但在我的机器中，会出现错误</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Traceback (most recent call last):
+</span><span class='line'>  File "migration/manage.py", line 2, in &lt;module&gt;
+</span><span class='line'>    from migrate.versioning.shell import main
+</span><span class='line'>ModuleNotFoundError: No module named 'migrate'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查阅文件 migration/manage.py 文件，</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/usr/bin/env python
+</span><span class='line'>from migrate.versioning.shell import main
+</span><span class='line'>
+</span><span class='line'>if __name__ == '__main__':
+</span><span class='line'>    main(debug='False')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报错没有正常找到 migrate 包，折腾了许久，没有找到有效的解决方案。
+但本质上，migration/manage.py 文件也是使用 migrate 命令去实现迁移操作的，
+所以，尝试手动使用 migrate 命令去实现数据迁移。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate version_control mysql+mysqldb://root:@localhost/activity?charset=utf8mb4 migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行上面的命令之后，查看数据库，会发现有数据表 migrate_version。</p>
+
+<p>查看当前版本</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate db_version mysql+pymysql://root:@localhost/activity?charset=utf8mb4 migration
+</span><span class='line'># 0</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>创建迁移脚本</h4>
+
+<p>创建迁移脚本使用 <code>script</code> 命令实现</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate script "add init tables" migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命令会生成文件 <code>migration/xxx_add_init_tables.py</code> 文件，<code>xxx</code> 可以是 001 增序编号，也可以是日期时间。</p>
+
+<p>查阅文件，有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">migrate</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">upgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Upgrade operations go here. Don&#39;t create your own engine; bind</span>
+</span><span class='line'>    <span class="c"># migrate_engine to your metadata</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">downgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Operations to reverse the above upgrade go here.</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>遇到问题：使用timestamp做为文件名前缀时，migrate包的部分版本处理有错误，建议使用普通数字。</p></blockquote>
+
+<p>增加一个 users 表， 有代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">migrate</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+</span><span class='line'><span class="n">account</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+</span><span class='line'>    <span class="s">&#39;account&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">40</span><span class="p">)),</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;passwd&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">40</span><span class="p">)),</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">upgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">meta</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">migrate_engine</span>
+</span><span class='line'>    <span class="n">account</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">downgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">meta</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">migrate_engine</span>
+</span><span class='line'>    <span class="n">account</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>例子中，利用 sqlalchemy  构建表，并分别定义了 upgrade 、downgrade 方法。方法中，分别对 account 表进行了创建或删除。</p>
+
+<p>代码中定义了表，需要将表落实到数据库中，运行命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">migrate</span> <span class="n">upgrade</span> <span class="n">mysql</span><span class="o">+</span><span class="n">pymysql</span><span class="p">:</span><span class="o">//</span><span class="n">root</span><span class="p">:</span><span class="nd">@localhost</span><span class="o">/</span><span class="n">activity</span><span class="err">?</span><span class="n">charset</span><span class="o">=</span><span class="n">utf8mb4</span> <span class="n">migration</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命令会直接在数据库创建相应的表。</p>
+
+<p>想删除表，可以执行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">migrate</span> <span class="n">downgrade</span> <span class="n">mysql</span><span class="o">+</span><span class="n">pymysql</span><span class="p">:</span><span class="o">//</span><span class="n">root</span><span class="p">:</span><span class="nd">@localhost</span><span class="o">/</span><span class="n">activity</span><span class="err">?</span><span class="n">charset</span><span class="o">=</span><span class="n">utf8mb4</span> <span class="n">migration</span> <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>0</code> 表示要回滚到的版本。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -3106,375 +3335,6 @@ or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/u
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2016/03/20/es6-in-depth-modules/" itemprop="url">ES6 in Depth: Modules</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/es6/'>es6</a>, <a class='category' href='/blog/categories/module/'>module</a>, <a class='category' href='/blog/categories/shen-ru-es6/'>深入es6</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-03-20T00:00:00+08:00" data-updated="true" itemprop="datePublished">2016-03-20</time></div>
-
-		
-			<span class="comments"><a href="/blog/2016/03/20/es6-in-depth-modules/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote><p><a href="https://hacks.mozilla.org/2015/08/es6-in-depth-modules/">ES6 In Depth: Modules</a></p></blockquote>
-
-<p>当我在2007年加入到Mozilla的JS团队时，有一笑话是经典的JS程序只有一行代码。</p>
-
-<p>那时已经是Google Map开始的两年之后了。在此之前，最为卓越的JS代码就是表单的验证，那么你在<code>&lt;input onchange=&gt;</code>上的平均处理代码也就是一行，对的，已经足够了。</p>
-
-<p>事情已经发生了变化。JS项目已经成长为令人惊奇的量级，同时社区中也开发了一些工具来适应规模的变化。其中一个最为基本的事情是你需要模块系统，它可以将你的工作分离到多个文件和目录中，但是它依然保证在必要时能访问其他部分，同时使得加载所有代码更为有效。所以实际上，JS已经有了模块系统，并且有几种。同时，还有些包管理工具来安装软件和复制其高层的依赖。你可能会想到ES6，它为JS带来了新的模块系统，确实有点晚了些。</p>
-
-<p>好的，今天我们就开始来看ES6为这已经存在的系统增加了些什么功能，同时看一下可以使用它来做些什么标准和工具吧。但是首先，让我们开始查看ES6模块长什么样子吧。</p>
-
-<h4>模块基础</h4>
-
-<p>ES6的模块是一个包含有JS代码的模块。它没有<code>module</code>的关键字，一个模块几乎可以看成为一个脚本。这里有两个区别：</p>
-
-<ul>
-<li>ES6模块会自动启用 严格模式，即使你没有在代码中使用&#8221;use strict&#8221;</li>
-<li>你可以在模块中使用<code>import</code>和<code>export</code></li>
-</ul>
-
-
-<p>让我们先来说一下<code>export</code>。在模块中的任何声明，默认都只会作用于此模块。如果你想在模块中的声明公开出去，也就是其它模块能使用它，你必须<em>暴露</em>这个特性(变量、函数等）。有些方式可以做到这点，最为简单的方式就是添加一个<code>export</code>的关键字。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// kittydar.js - Find the locations of all the cats in an image.</span>
-</span><span class='line'><span class="c1">//(Heather Arthur wrote this library for real)</span>
-</span><span class='line'><span class="c1">// (but she didn&#39;t use modules, because it was 2013)</span>
-</span><span class='line'>
-</span><span class='line'><span class="kr">export</span> <span class="kd">function</span> <span class="nx">delectCats</span><span class="p">(</span><span class="nx">cavas</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">kittydar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Kittydar</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nx">kittydar</span><span class="p">.</span><span class="nx">detectCats</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kr">export</span> <span class="nx">clas</span> <span class="nx">Kittydar</span> <span class="p">{</span>
-</span><span class='line'>  <span class="p">...</span> <span class="nx">several</span> <span class="nx">methods</span> <span class="nx">doing</span> <span class="nx">image</span> <span class="nx">processing</span> <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// This helper function isn&#39;t exported.</span>
-</span><span class='line'><span class="kd">function</span> <span class="nx">resizeCanvas</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>你可以<code>export</code>任何顶级的<code>function</code>、<code>class</code>、<code>var</code>、<code>let</code>、<code>const</code>。</p>
-
-<p>这也就是你需要知道有关模块的所有信息。你并不需要使用IIFE或者一个回调函数。你只要正常地声明你所需要的任何事情。因此，这代码就是模块，不是脚本，所有的声明的作用域都会在此模块中，并不会在全局所有的脚本和模块是可见的。将这些声明暴露出去，会使这成为此模块对外的公开API，这就是你想要的。</p>
-
-<p>与暴露代码不同，在模块中的代码仅仅只是普通的代码。你可以使用全局字面量，如<code>Object</code>和<code>Array</code>。如果你模块运行于浏览器中，你可以使用<code>document</code>和<code>XMLHttpRequest</code>。</p>
-
-<p>在一个分离的文件中，我们可能导入并使用<code>detectCats()</code>函数：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// domo.js - Kittydar demo program</span>
-</span><span class='line'>
-</span><span class='line'><span class="kr">import</span> <span class="p">{</span><span class="nx">detectCats</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;kittydar.js&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">go</span><span class="p">(){</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;catpix&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">cats</span> <span class="o">=</span> <span class="nx">detectCats</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
-</span><span class='line'>  <span class="nx">drawRectangles</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">cats</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>为了从一个模块中导入多个名称，你可以编写:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="p">{</span><span class="nx">detectCats</span><span class="p">,</span> <span class="nx">Kittydar</span><span class="p">)</span> <span class="nx">from</span> <span class="s2">&quot;kittydar.js&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当你运行一个含有<code>import</code>声明的模块时，需要导入的模块会先被加载，每个模块的代码体会根据整个依赖图进行深度遍历执行，并跳过已经执行的模块来避免循环加载。</p>
-
-<p>这就是模块的基础内容了，这确实是十分简单的，;-)</p>
-
-<h4>导出列表</h4>
-
-<p>相比于在每个特性中进行导出的标记，你可以编写一个简单的列表来指出你想导出的所有名称，并放到大括号中：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">export</span> <span class="p">{</span><span class="nx">detectCats</span><span class="p">,</span> <span class="nx">Kittydar</span><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// no export keyword required here</span>
-</span><span class='line'><span class="kd">function</span> <span class="nx">detectCats</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span><span class='line'><span class="kr">class</span> <span class="nx">Kittydar</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>export</code>的列表并不一定需要在文件的第一行，它可以出现在模块的顶级的任意地方。你可以拥有多个<code>export</code>列表，或者与其它的<code>export</code>混合起来用，只要保证导出的名称不超过一次就好。</p>
-
-<h4>对导入导出重命名</h4>
-
-<p>有时，一个导入的名称可能会与其它你同样需要使用的名称是一样的，所以ES6允许你对导入的名称进行重命名：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// suburbia.js</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Both these modules export something named `flip`.</span>
-</span><span class='line'><span class="c1">// To import them both, we must rename at least one.</span>
-</span><span class='line'><span class="kr">import</span> <span class="p">{</span><span class="nx">flip</span> <span class="nx">as</span> <span class="nx">flipOmelet</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;eggs.js&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="kr">import</span> <span class="p">{</span><span class="nx">flip</span> <span class="nx">as</span> <span class="nx">flipHouse</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;real-estate.js&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>类似的，你可以对导出的名称进行重命名。有时可能会出现，你希望以不同的名称导出相同的值，如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// unlicensed_nuclear_accelerator.js - media streaming without drm</span>
-</span><span class='line'><span class="c1">// (not a real library, but maybe it should be)</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">v1</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span><span class='line'><span class="kd">function</span> <span class="nx">v2</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kr">export</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">v1</span> <span class="nx">as</span> <span class="nx">streamV1</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">v2</span> <span class="nx">as</span> <span class="nx">streamV2</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">v2</span> <span class="nx">as</span> <span class="nx">streamLatestVersion</span>
-</span><span class='line'><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>默认导出</h4>
-
-<p>设计的新标准是能与已经存在的CommonJS和AMD模块能正常溶合，所以当你一个Node项目，并且完成命令<code>npm install lodash</code>。你的ES6代码可以从<code>lodash</code>导入单独的函数：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="p">{</span><span class="nx">each</span><span class="p">,</span> <span class="nx">map</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;lodash&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">each</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="nx">x</span><span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>但是，你可能已经习惯看到<code>_.each</code>而不是<code>each</code>，并且你希望编写代码依然保持这方式。或者自从有 <a href="https://lodash.com/docs#_">这个</a>，你还想使用<code>_</code>作为一个函数。</p>
-
-<p>为了做到这点，你可以稍微地调整为不同的语法：导入模块时不使用大括号：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="nx">_</span> <span class="nx">from</span> <span class="s2">&quot;lodash&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这其实就是等价于<code>import {default as _} from "lodash"</code>。所有的CommonJS和AMD模块都会为ES6提供一个<code>default</code>的导出名称，这其实就类似于你<code>require()</code>这模块，也就是<code>exports</code>对象。</p>
-
-<p>ES6模块被设计为可以让你导出多个事物，但在已经存在的CommonJS模块中，默认的导出是包含所有事物。例如，有名的<a href="https://github.com/Marak/colors.js">colors</a>包在我说之前并没有任何对ES6的支持。它就是一个CommonJS的集合，就像很多在npm的包一样。但是，你可以明确地告诉ES6代码需要导入的内容。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// ES6 equivalent of `var colors = require(&quot;colors/safte&quot;);`</span>
-</span><span class='line'><span class="kr">import</span> <span class="nx">colors</span> <span class="nx">from</span> <span class="s2">&quot;colors/safe&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果你希望你的ES6模块有个默认的导出，那很容易。这并没有什么魔法性的操作，它就像其它的导出操作，只是将其命名为<code>"default"</code>。你可以使用我们之前提到的重命名的语法：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">let</span> <span class="nx">myObject</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">field1</span><span class="o">:</span> <span class="nx">value1</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">field2</span><span class="o">:</span> <span class="nx">value2</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'><span class="kr">export</span> <span class="p">{</span><span class="nx">myObject</span> <span class="nx">as</span> <span class="k">default</span><span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者使用缩写：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">field1</span><span class="o">:</span> <span class="nx">value1</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">field2</span><span class="o">:</span> <span class="nx">value2</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>关键字<code>export default</code>后面可以接任意的值：一个函数，一个类，一个你命名的对象字面量。</p>
-
-<h4>模块对象</h4>
-
-<p>十分抱歉，这部分内容有些长。但是，这并不仅仅是JS特有的。因为某些原因，所有语言中的模块系统都试图做到足够的小、方便。幸运，还剩一个特性。好吧，是两个。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">cows</span> <span class="nx">from</span> <span class="s2">&quot;cows&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当你使用<code>import *</code>时，它导入的是一个模块命名对象。它的属性是这一模块的所有导出。所以，如果&#8221;cow&#8221;模块导出有一个名为<code>moo()</code>的函数，那么在此行代码导入&#8221;cows&#8221;之后，你可以使用<code>cows.moo()</code>。</p>
-
-<h4>聚合模块</h4>
-
-<p>有时，主模块可能会将其它模块的包导入进来，同时会将它们又以非统一的方式导出。为了简化这一类的代码，下面有个聚合的从导入到导出的缩写：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// world-foods.js - good stuff from all over</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// import &quot;sri-lanka&quot; and re-export some of its exports</span>
-</span><span class='line'><span class="kr">export</span> <span class="p">{</span><span class="nx">Tea</span><span class="p">,</span> <span class="nx">Cinnamon</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;sri-lanka&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// import &quot;equatorial-guinea&quot; and re-export some of its exports</span>
-</span><span class='line'><span class="kr">export</span> <span class="p">{</span><span class="nx">Coffee</span><span class="p">,</span> <span class="nx">Cocoa</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;equatorial-guinea&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// import &quot;singapore&quot; and export ALL of its exports</span>
-</span><span class='line'><span class="kr">export</span> <span class="o">*</span> <span class="nx">from</span> <span class="s2">&quot;singapore&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>每个这些<code>export-from</code>的表达式都类似于<code>import-from</code>，只是调整为<code>export</code>。并不像导入一样，这并不会重新添加导出的绑定到主模块的作用域中。所以，如果你想在<code>world-foods.js</code>中编写代码使用<code>Tea</code>，就不要使用这一缩写。你会发现找不到这字面量。</p>
-
-<p>如果在导出&#8221;singapore&#8221;时会与其它的导出有冲突，会产生一个错误，所以请小心使用<code>export *</code>。</p>
-
-<p>好了，我们介绍完语法了。让我们开始些有趣的事情。</p>
-
-<h4><code>import</code>实际上做了什么</h4>
-
-<p>你会相信 它没什么吗？</p>
-
-<p>好吧，你不是那么好欺骗的。好的，你会相信标准委员会几乎没有对<code>import</code>进行说明？这是好事吗？</p>
-
-<p>ES6的模块加载的整个详情可以移步到 <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hostresolveimportedmodule">其实现</a>，它的实现详情可移步于 <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-toplevelmoduleevaluationjob">详细说明</a>。</p>
-
-<p>粗略来讲，当你告诉JS引擎在运行一个模块时，它不得不进行如下四个步骤：</p>
-
-<ul>
-<li>1、解析：读取模块资源的实现代码并检查语法错误</li>
-<li>2、加载：递归地加载所有需要导入的模块，这一部分还没有标准化。</li>
-<li>3、链接：对于每个加载完成的模块，会为其创建一个作用域，并将此模块声明绑定到此作用域中，包括从其它模块导入过来的事物。</li>
-</ul>
-
-
-<p>这就是<code>import {cake} from "paleo"</code>的部分。但是，如果&#8221;paleo&#8221;模块并没有导出任何名为&#8221;cake&#8221;的字面量，你将会得到一个错误。这是很坏的体验，因为你已经实际上运行了一些JS代码了。</p>
-
-<ul>
-<li>4、运行：最后，开始运行每个新加载的模块体。这时候，<code>import</code>的处理进程已经完成了，所以当代码执行到含有<code>import</code>声明的代码行时，没有什么会发生。</li>
-</ul>
-
-
-<p>看？我之前就告诉你答案是“没什么”。我对编程语言并不会撒谎。</p>
-
-<p>但是，现在我们开始接触这模块系统的有趣部分了，这是个感觉好玩的点。因为模块系统并没有指定怎么加载模块，你可以在开始时候，找出在资源代码中所有的<code>import</code>声明。ES6的其中一个实现方式，是将所有的工作都放到编译阶段，并将所有的模块捆绑放入一个文件中，才发送给网络上。webpack这工具实际上就是这么做的。</p>
-
-<p>这是个大的话题，因为加载脚本会花费网络的时间。当你每次获取时，你会查找其<code>import</code>的声明，时间就会成倍增长了。比较天真的加载方式是会发送多个网络请求，但通过webpack，这不仅仅是今天使用ES6模块，你会自动得到所有软件工程所要到达的运行时优点。</p>
-
-<p>ES6模块加载的详情还是与原始计划的一样，并构建起来的。其中一个原因就是因为没有统一怎么实现此特性，所以它并不是最后的标准。我希望某人能够指出来，因为就如我们看到的，模块的加载确实需要标准化，而且打包非常有用，是不能放弃的。</p>
-
-<h4>静态 vs 动态，或者：规则或打破规则</h4>
-
-<p>作为动态语言，JS已经拥有其令人惊奇的静态模块系统。</p>
-
-<ul>
-<li><p>所有的<code>import</code>和<code>export</code>都只允许在模块的顶级声明，导入导出没有额外的限制条件，但你不能在函数作用域中使用。</p></li>
-<li><p>所有的导出定义必须是在资源代码中存在有明确的名称。你不能通过编程来循环一个数组并导出一堆的名称。</p></li>
-<li><p>模块对象是冻结的。不能通过hack的方式来操作模块对象，polyfill方式的也不行。</p></li>
-<li><p>在任一模块代码运行之前，所有模块依赖必须加载完成、解析和关联上。按照要求，不允许<code>import</code>导入模块懒加载的。</p></li>
-<li><p>对于<code>import</code>的错误没有任何的恢复机制。一个App可能会有上百的模块，如果有任何的加载或者关联失败，所有代码将不会运行。你不能在<code>try/catch</code>中使用<code>import</code>。（这里有个优点，因为这模块系统是静态的，所以webpack可以在编译阶段检查出可能存在的错误。）</p></li>
-<li><p>在没有加载完依赖之前，不允许运行模块中的任何代码。这意味着如果依赖没有加载完成时，模块本身不知道怎么控制代码的运行。</p></li>
-</ul>
-
-
-<p>如果你需求是静态的话，这模块系统是十分好的。但是，有时你可能需要些hack，是不是？</p>
-
-<p>这就是为什么你需要编程API来处理与ES6的<code>import/export</code>语法相违背的模块系统加载机制。例如，<a href="http://webpack.github.io/docs/code-splitting.html">webpack includes an API</a> 你可以使用“code splitting&#8221;，按需求对某些模块进行懒加载。这个API可以让你打破上面所提到的多数规则。</p>
-
-<p>ES6的模块语法是十分静态的(晕，什么叫十分静态），同时它也是好的，因为这样可以缩短其编译工具的时间。但是，通过编程后的加载API，这静态的语法已经可以动态操作了。</p>
-
-<h4>什么时候可以使用这ES6的模块？</h4>
-
-<p>现在为了使用模块，你需要一个编译器，如 Traceur 或者 Babel。早些时候，Gaston I. Silva 有一<a href="http://shatle.github.io/blog/2015/12/16/es6-in-depth-using-es6-today-with-babel-and-broccoli/">文章</a> 来说明怎么为Web编译ES6代码。在这一文章中，Gaston 已经有一个例子是有关ES6模块的。这有个Axel Rauschmayer 编写的<a href="http://www.2ality.com/2015/04/webpack-es6.html">例子</a>，它使用Bable和webpack。</p>
-
-<p>模块系统主要由 Dave Herman 和 Sam Tobin-Hochstadt 设计，他们为此模块系统的静态化辩护，同时为此长年与包括我在内的很多人抗争着。Jon Coppeard 实现了 Firefox 中的模块。另外的<a href="https://github.com/whatwg/loader">JS 加载器标准化</a>也正在进行中，人们所希望的在HTML中添加<code>&lt;script type=module&gt;</code>的特性也会随之而来。</p>
-
-<p>这就是ES6。</p>
-
-<p>这些实在是太有意思了，以致我并不想结束。也许，我们只是完成了部分的故事情节。我们可以讨论些ES6说明中零碎的特性，但它们又不能足够单独写成文章。也许，将来会对这些进行讨论。请在下周加入我们，一起对深入ES6进行个完美的总结吧。</p>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -3485,7 +3345,7 @@ or u can only test <code>user_spec.rb</code> file with <code>rspec spec/models/u
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2020
+			<footer id="footer" class="inner">Copyright &copy; 2024
 
     liu.shatle &hearts; gmail.com
 

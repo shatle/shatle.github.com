@@ -1,0 +1,350 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Use sqlalchemy-migrate - Liu.Shatle</title>
+	<meta name="author" content="liu.shatle &hearts; gmail.com">
+
+	
+	<meta name="description" content="Use Sqlalchemy-migrate sqlalchemy migrate 记录一下使用 sqlalchemy-migrate 的问题。 官网： https://sqlalchemy-migrate.readthedocs.io/en/latest/download.html 说明 &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Liu.Shatle" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://shatle.github.io/blog/2022/07/30/use-sqlalchemy-migrate/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	<img src="https://avatars1.githubusercontent.com/u/1129872?v=3&s=460" alt="Profile Picture" style="width: 160px;" />
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/author">Author</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/shatle" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Use Sqlalchemy-migrate</h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/sqlalchemy-migrate/'>sqlalchemy migrate</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+
+</div>
+	</div>
+	<div class="entry-content" itemprop="articleBody"><p>记录一下使用 sqlalchemy-migrate 的问题。</p>
+
+<p>官网： https://sqlalchemy-migrate.readthedocs.io/en/latest/download.html</p>
+
+<h2>说明</h2>
+
+<p>在寻找 python 层面，类 rails migration 的工具，发现了 sqlalchemy-migrate。
+大致看着还可以，尝试使用中。</p>
+
+<h2>下载</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pip install sqlalchemy-migrate</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装成功后，应该可以运行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate help</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以查看 migrate 脚本支持的功能命令。</p>
+
+<h2>使用</h2>
+
+<p>根据官网说明，手动尝试运行，但遇到了些问题。</p>
+
+<h4>创建迁移项目目录</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate create migration "Example project"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此命令会创建一个迁移项目的文件夹 migration，里面包含有 versions 目录、manage.py、manage.cfg 文件。</p>
+
+<h4>构建数据库的基本结构</h4>
+
+<p>官网上，有</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ python migration/manage.py version_control mysql+mysqldb://root:@localhost/activity?charset=utf8mb4 migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>官网上说，这命令会在相应的数据库中增加版本控制的表 migrate_version。但在我的机器中，会出现错误</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Traceback (most recent call last):
+</span><span class='line'>  File "migration/manage.py", line 2, in &lt;module&gt;
+</span><span class='line'>    from migrate.versioning.shell import main
+</span><span class='line'>ModuleNotFoundError: No module named 'migrate'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查阅文件 migration/manage.py 文件，</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/usr/bin/env python
+</span><span class='line'>from migrate.versioning.shell import main
+</span><span class='line'>
+</span><span class='line'>if __name__ == '__main__':
+</span><span class='line'>    main(debug='False')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报错没有正常找到 migrate 包，折腾了许久，没有找到有效的解决方案。
+但本质上，migration/manage.py 文件也是使用 migrate 命令去实现迁移操作的，
+所以，尝试手动使用 migrate 命令去实现数据迁移。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate version_control mysql+mysqldb://root:@localhost/activity?charset=utf8mb4 migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行上面的命令之后，查看数据库，会发现有数据表 migrate_version。</p>
+
+<p>查看当前版本</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate db_version mysql+pymysql://root:@localhost/activity?charset=utf8mb4 migration
+</span><span class='line'># 0</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>创建迁移脚本</h4>
+
+<p>创建迁移脚本使用 <code>script</code> 命令实现</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>migrate script "add init tables" migration</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命令会生成文件 <code>migration/xxx_add_init_tables.py</code> 文件，<code>xxx</code> 可以是 001 增序编号，也可以是日期时间。</p>
+
+<p>查阅文件，有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">migrate</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">upgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Upgrade operations go here. Don&#39;t create your own engine; bind</span>
+</span><span class='line'>    <span class="c"># migrate_engine to your metadata</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">downgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Operations to reverse the above upgrade go here.</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>遇到问题：使用timestamp做为文件名前缀时，migrate包的部分版本处理有错误，建议使用普通数字。</p></blockquote>
+
+<p>增加一个 users 表， 有代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">migrate</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+</span><span class='line'><span class="n">account</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+</span><span class='line'>    <span class="s">&#39;account&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">40</span><span class="p">)),</span>
+</span><span class='line'>    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;passwd&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">40</span><span class="p">)),</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">upgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">meta</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">migrate_engine</span>
+</span><span class='line'>    <span class="n">account</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">downgrade</span><span class="p">(</span><span class="n">migrate_engine</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">meta</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">migrate_engine</span>
+</span><span class='line'>    <span class="n">account</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>例子中，利用 sqlalchemy  构建表，并分别定义了 upgrade 、downgrade 方法。方法中，分别对 account 表进行了创建或删除。</p>
+
+<p>代码中定义了表，需要将表落实到数据库中，运行命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">migrate</span> <span class="n">upgrade</span> <span class="n">mysql</span><span class="o">+</span><span class="n">pymysql</span><span class="p">:</span><span class="o">//</span><span class="n">root</span><span class="p">:</span><span class="nd">@localhost</span><span class="o">/</span><span class="n">activity</span><span class="err">?</span><span class="n">charset</span><span class="o">=</span><span class="n">utf8mb4</span> <span class="n">migration</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命令会直接在数据库创建相应的表。</p>
+
+<p>想删除表，可以执行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">migrate</span> <span class="n">downgrade</span> <span class="n">mysql</span><span class="o">+</span><span class="n">pymysql</span><span class="p">:</span><span class="o">//</span><span class="n">root</span><span class="p">:</span><span class="nd">@localhost</span><span class="o">/</span><span class="n">activity</span><span class="err">?</span><span class="n">charset</span><span class="o">=</span><span class="n">utf8mb4</span> <span class="n">migration</span> <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>0</code> 表示要回滚到的版本。</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2024
+
+    liu.shatle &hearts; gmail.com
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'shatleblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shatle.github.io/blog/2022/07/30/use-sqlalchemy-migrate/';
+        var disqus_url = 'http://shatle.github.io/blog/2022/07/30/use-sqlalchemy-migrate/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
