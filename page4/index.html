@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="Refresh in Simple_captcha refresh, simple_captcha 2014-03-11 Comments 对于登录，为了防止机器人，部分网站需要配合验证码进行登录。常用的Gem有 recaptcha 和 simple_captcha。 下面简要描写一下， &hellip;">
+	<meta name="description" content="Reset My Octopress config, git, octopress 2014-10-20 Comments 好久不写东西了，上来看了自己的github，空了好长的时间。 之前电脑重装，之前的项目已经不在了。重新的时候只是将md文件备份，其它的样式都没有备份。 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,54 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2014/10/20/reset-my-octopress/" itemprop="url">Reset My Octopress</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/config/'>config</a>, <a class='category' href='/blog/categories/git/'>git</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-20T00:00:00+08:00" data-updated="true" itemprop="datePublished">2014-10-20</time></div>
+
+		
+			<span class="comments"><a href="/blog/2014/10/20/reset-my-octopress/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>好久不写东西了，上来看了自己的github，空了好长的时间。</p>
+
+<p>之前电脑重装，之前的项目已经不在了。重新的时候只是将md文件备份，其它的样式都没有备份。所以不得不重新抽时间折腾了。</p>
+
+<p>很简单，直接走octopress的流程就可以了。二货的我（突然想到今天电影《银河战队》的foreigner说二货有点搞，中国市场真心大啊）将github地址搞错了，以为将<code>.git/config</code>的remote改了就可以了，不然，其实要修改的是<code>_deploy/.git/config</code>。下次记住了。</p>
+
+<p>之前正确使用这工具，没有那么傻的事情，突然傻一回，反而搞懂了其大致的原理。</p>
+
+<p>我还对样式进行了修改，最近迷上了紫色，主题颜色打紫了。</p>
+
+<p>充数了，睡觉。</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -907,86 +955,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2013/10/12/new-Date-Syntax/" itemprop="url">New Date Syntax</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/date/'>date</a>, <a class='category' href='/blog/categories/js/'>js</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-12T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-10-12</time></div>
-
-		
-			<span class="comments"><a href="/blog/2013/10/12/new-Date-Syntax/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p><img src="/images/photo/date2013.jpg" alt="date2013.jpg" /></p>
-
-<p>前两天笔试时，多选 Date 的语法，我经常用的有</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>new Date(1999,10,10);
-</span><span class='line'>new Date("1999-10-10");</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其它的不敢多选，回来查看了 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date ，基本语法有：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>new Date();
-</span><span class='line'>new Date(value);
-</span><span class='line'>new Date(dateString);
-</span><span class='line'>new Date(year, month, day [, hour, minute, second, millisecond]);</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好吧，这个<code>dateString</code>很恼人啊，幸好链接了 http://tools.ietf.org/html/rfc2822#page-14 。</p>
-
-<p>下面形象地列出些<code>dateString</code>实例：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>new Date("1999-10-10");
-</span><span class='line'>new Date("1999/10/10");
-</span><span class='line'>new Date("Oct* 10, 1999");
-</span><span class='line'>new Date("October 10, 1999");
-</span><span class='line'>new Date("1999-Oct-10");
-</span><span class='line'>new Date("1999/Oct/10");</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>#Date</code> <code>#js</code></p>
-
-<hr />
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1002,7 +970,7 @@
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2024
+			<footer id="footer" class="inner">Copyright &copy; 2025
 
     liu.shatle &hearts; gmail.com
 

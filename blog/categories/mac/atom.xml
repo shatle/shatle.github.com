@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mac | Liu.Shatle]]></title>
+  <link href="http://shatle.github.io/blog/categories/mac/atom.xml" rel="self"/>
+  <link href="http://shatle.github.io/"/>
+  <updated>2025-11-29T11:02:43+08:00</updated>
+  <id>http://shatle.github.io/</id>
+  <author>
+    <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[4K display no signal]]></title>
+    <link href="http://shatle.github.io/blog/2025/11/29/4k-display-no-signal/"/>
+    <updated>2025-11-29T10:45:22+08:00</updated>
+    <id>http://shatle.github.io/blog/2025/11/29/4k-display-no-signal</id>
+    <content type="html"><![CDATA[<p>记录一下问题解决。</p>
+
+<p>上周买了个4K的显示器，在收到试用是可以正常使用的，新显示器能收到信息，只是刷新率只能30Hz。</p>
+
+<p>后来，纠结于 30HZ 的问题，期间折腾了很久，也没有解决，最后在网上下单一条 typec 转 dp1.4 的线。目前，还没有收到。</p>
+
+<p>但是，今天发现 4K 显示器一直提示没有信号，但能正常通电。</p>
+
+<p><strong>所以问题是：之前能正常显示，现在能通电，但没有信号，什么问题？</strong></p>
+
+<p>我的电脑是有集成显卡和独立显卡的 mac 笔记本电脑，所以，在尝试来回换线之后，还是未能有信号。</p>
+
+<p>思考：是否可能是最近折腾，将默认的自动切换显卡 调整为 集成显卡。</p>
+
+<p>结果，还真是。</p>
+
+<pre><code class="bash"># 强制使用集成显卡
+sudo pmset -a GPUSwitch 0
+
+# 强制使用独立显卡
+sudo pmset -a GPUSwitch 1
+
+# 自动切换显卡
+sudo pmset -a GPUSwitch 2
+
+# 当前显卡的使用状态
+pmset -g
+
+查看 gpuswitch 对应值，0 是集成显卡，1 是独立显卡，2 是自动切换
+</code></pre>
+
+<p>4K显示器正常有信号后，看 Mac 电脑的能耗中，有</p>
+
+<p><img src="/images/photo/Jietu20251129-105548.jpg" alt="Jietu20251129-105548.jpg" /></p>
+
+<p>意思是使用独立显卡之后，才能正常连接 4K 显示器，集成显示带不动。</p>
+]]></content>
+  </entry>
+  
+</feed>

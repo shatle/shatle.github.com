@@ -9,7 +9,7 @@
 	<meta name="author" content="liu.shatle &hearts; gmail.com">
 
 	
-	<meta name="description" content="好看样式CSS css, html 2013-08-11 Comments 收集一些好看的样式 Input 代码地址：http://codepen.io/anon/pen/jivxd ，其利用 css3 的特性展现多种动画 http://dropthebit.com/demos/ &hellip;">
+	<meta name="description" content="可恶的浏览器兼容 jquery, trim 2013-08-14 Comments 怎么说呢，浏览器我一直主要担心的是css的问题，真正细调起来，晕，js也可能有这一问题。不多说，再次推荐网站：http://browserhacks.com/ 其实，上网站的主要也是谈到的是css的问题， &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,165 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	
+	<h1 class="title" itemprop="name"><a href="/blog/2013/08/14/the-hell-of-browser-hack/" itemprop="url">可恶的浏览器兼容</a></h1>
+	<div class="meta">
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/jquery/'>jquery</a>, <a class='category' href='/blog/categories/trim/'>trim</a>
+
+
+</div>
+		<div class="date">
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-14T00:00:00+08:00" data-updated="true" itemprop="datePublished">2013-08-14</time></div>
+
+		
+			<span class="comments"><a href="/blog/2013/08/14/the-hell-of-browser-hack/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<div class="entry-content" itemprop="articleBody">
+		<p>怎么说呢，浏览器我一直主要担心的是css的问题，真正细调起来，晕，js也可能有这一问题。不多说，再次推荐网站：http://browserhacks.com/</p>
+
+<p>其实，上网站的主要也是谈到的是css的问题，当然包括些js的控制。</p>
+
+<p>这里主要记录我遇到的问题。</p>
+
+<h3>.trim()</h3>
+
+<p>使用 jquery 的用户，相信已经习惯了这一方法。其作用是除去字符串前后的空字符：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">().</span><span class="nx">trim</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可惜 IE8 对此会报错，如果你在js提交数据时，使用了这一方法，这一操作在IE8中是不会成功的！</p>
+
+<p>在jquery中，你需要用到 <code>$.trim()</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>.indexOf()</h3>
+
+<p>此方法判断所指定字符的位置，可以用到 String 中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="s2">&quot;12345&quot;</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>    <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实主流浏览器中还可以对 Array 使用：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>      <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可惜 IE8 是不支持的，在jquery中，需要用<code>$.inArray()</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>   <span class="c1">//# =&gt; 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>.split(/\D/)</h3>
+
+<p>根据数字来分组。但是，在不同的浏览器中，对于部分的字符串，分组的情况是不一样的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">string</span> <span class="o">=</span> <span class="s2">&quot;[123, 1234]&quot;</span>
+</span><span class='line'><span class="nx">arr1</span><span class="o">=</span><span class="nx">string</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\D/</span><span class="p">)</span>     <span class="c1">//chrome# =&gt; [&quot;&quot;, 123, &quot;&quot;, 1234]</span>
+</span><span class='line'><span class="nx">arr2</span><span class="o">=</span><span class="nx">string</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\D/</span><span class="p">)</span>     <span class="c1">//IE8# =&gt; [123, 1234] </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>http://blog.stevenlevithan.com/archives/cross-browser-split ，IE &lt; 9 对<code>/../</code>这一正则语法支持并不好。</p>
+
+<p>可以去掉空串：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">grep</span><span class="p">(</span><span class="nx">arr1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span> <span class="k">return</span> <span class="nx">value</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">;})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实，对于此字符串，可以这样：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nb">eval</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>  <span class="c1">//# =&gt; [123, 123]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>:last-child</h3>
+
+<p>不多说，IE8是不支持这一伪类的。所以，我不得不添加一个<code>last-child</code>的类，如：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='haml'><span class='line'><span class="nc">.tabs</span>
+</span><span class='line'>  <span class="nc">.tab</span> hello1
+</span><span class='line'>  <span class="nc">.tab</span> hello2
+</span><span class='line'>  <span class="nc">.tab.last-child</span> hello3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是，奇怪的是css样式定义中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.tab.last-child</span><span class="o">,</span> <span class="nc">.tab</span><span class="nd">:last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样子在IE8中是不成功的，我很费解，非要将其分开：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'><span class="nc">.tab.last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.tab</span><span class="nd">:last-child</span> <span class="p">{</span>
+</span><span class='line'>  <span class="na">padding-right</span><span class="o">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>具体也不知道什么原因！！！</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1125,74 +1284,6 @@ git commit -m "test_job ok"
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	
-	<h1 class="title" itemprop="name"><a href="/blog/2012/08/17/ubuntu-one-ji-shi/" itemprop="url">Ubuntu One记事</a></h1>
-	<div class="meta">
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/ubuntu-one/'>ubuntu one</a>, <a class='category' href='/blog/categories/work/'>work</a>
-
-
-</div>
-		<div class="date">
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-17T00:00:00+08:00" data-updated="true" itemprop="datePublished">2012-08-17</time></div>
-
-		
-			<span class="comments"><a href="/blog/2012/08/17/ubuntu-one-ji-shi/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<div class="entry-content" itemprop="articleBody">
-		<p>前段时间，我不小心从ubuntu one官网上删除了我自己机器上的，于是其只剩下公司电脑了。</p>
-
-<p>回到宿舍想重新添加时，一直不知道怎么办。</p>
-
-<p>有人说，可以从ubuntu one的客户端点击，出网页，会出现添加此设备的按钮，实际上我的没有。</p>
-
-<p>终于方法到了：</p>
-
-<ul>
-<li>删除本地的ubuntu one 帐号。</li>
-</ul>
-
-
-<p>打开&#8221;密码与密钥&#8221;程序，在&#8221;密码&#8221;中找到 ubuntu one 的行，右键删除。</p>
-
-<ul>
-<li><p>打开终端运行命令。</p>
-
-<pre><code>  u1sdtool -q
-
-  u1sdtool -c
-</code></pre></li>
-</ul>
-
-
-<p>重启同步进程。</p>
-
-<ul>
-<li>打开ubuntu one的客户端，输入帐号，就没问题。</li>
-</ul>
-
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1208,7 +1299,7 @@ git commit -m "test_job ok"
 </nav>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2024
+			<footer id="footer" class="inner">Copyright &copy; 2025
 
     liu.shatle &hearts; gmail.com
 

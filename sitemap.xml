@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://shatle.github.io/blog/2025/11/29/4k-display-no-signal/</loc>
+<lastmod>2025-11-29T10:45:22+08:00</lastmod>
+</url>
+<url>
 <loc>http://shatle.github.io/blog/2022/07/30/use-sqlalchemy-migrate/</loc>
 <lastmod>2022-07-30T14:14:54+08:00</lastmod>
 </url>
@@ -646,6 +650,15 @@
 </url>
 <url>
 <loc>http://shatle.github.io/blog/categories/sqlalchemy-migrate/</loc>
+</url>
+<url>
+<loc>http://shatle.github.io/blog/categories/mac/</loc>
+</url>
+<url>
+<loc>http://shatle.github.io/blog/categories/4k/</loc>
+</url>
+<url>
+<loc>http://shatle.github.io/blog/categories/xian-shi-qi/</loc>
 </url>
 <url>
 <loc>http://shatle.github.io/apps/dedit/index.html</loc>
