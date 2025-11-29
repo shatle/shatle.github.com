@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 显示器 | Liu.Shatle]]></title>
   <link href="http://shatle.github.io/blog/categories/xian-shi-qi/atom.xml" rel="self"/>
   <link href="http://shatle.github.io/"/>
-  <updated>2025-11-29T11:02:43+08:00</updated>
+  <updated>2025-11-29T21:19:39+08:00</updated>
   <id>http://shatle.github.io/</id>
   <author>
     <name><![CDATA[liu.shatle &hearts; gmail.com]]></name>
@@ -34,6 +34,8 @@
 
 <p>结果，还真是。</p>
 
+<p>这是调整显卡的命令：</p>
+
 <pre><code class="bash"># 强制使用集成显卡
 sudo pmset -a GPUSwitch 0
 
@@ -49,11 +51,17 @@ pmset -g
 查看 gpuswitch 对应值，0 是集成显卡，1 是独立显卡，2 是自动切换
 </code></pre>
 
-<p>4K显示器正常有信号后，看 Mac 电脑的能耗中，有</p>
+<p>前几天，为了尝试独立显卡是否能将 4K 显示器调整为 60Hz，所以调整了上面的命令，但是没有变化。后来，觉得没有变化，直接将值设置为 0，也就是集成显卡。</p>
+
+<p>而且，Mac的显卡设置并不会立即生效，所以当时没有问题。今天，电脑重新启动，是以集成显卡启动了，所以 4K 显示器没有信号了。</p>
+
+<p>将显卡设置为自动切换，4K显示器就可以正常有信号了。</p>
+
+<p>系统是否使用独立显卡，看 Mac 电脑的能耗中，有</p>
 
 <p><img src="/images/photo/Jietu20251129-105548.jpg" alt="Jietu20251129-105548.jpg" /></p>
 
-<p>意思是使用独立显卡之后，才能正常连接 4K 显示器，集成显示带不动。</p>
+<p>高性能的意思就是独立显卡。</p>
 ]]></content>
   </entry>
   
